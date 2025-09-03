@@ -3,6 +3,7 @@
 import { Component, useRef, onMounted, useState, xml } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 class GolfzonDashboard extends Component {
   static template = xml`
@@ -14,10 +15,10 @@ class GolfzonDashboard extends Component {
                   <span class="drawer-title">GOLFZON</span>
               </div>
               <nav class="drawer-nav">
-                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'dashboard' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('dashboard')">Dashboard</a>
-                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'member' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('member')">Member</a>
-                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'membergroup' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('membergroup')">Member Group</a>
-                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'crmcampaign' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('crmcampaign')">CRM Campaign</a>
+                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'dashboard' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('dashboard')"><t t-esc="_t('Dashboard')"/></a>
+                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'member' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('member')"><t t-esc="_t('Member')"/></a>
+                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'membergroup' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('membergroup')"><t t-esc="_t('Member Group')"/></a>
+                  <a class="drawer-item" t-att-class="state.activeMenuItem === 'crmcampaign' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('crmcampaign')"><t t-esc="_t('CRM Campaign')"/></a>
               </nav>
           </div>
 
@@ -33,9 +34,9 @@ class GolfzonDashboard extends Component {
                   
                   <div class="header-right">
                       <div class="language-switcher">
-                          <a href="/web?lang=en_US" style="font-weight:bold;">ENG</a>
+                          <a href="#" t-on-click="() => this.switchLanguage('en_US')" style="font-weight:bold;">ENG</a>
                           <span>|</span>
-                          <a href="/web?lang=ko_KR" style="font-weight:bold;">KOR</a>
+                          <a href="#" t-on-click="() => this.switchLanguage('ko_KR')" style="font-weight:bold;">KOR</a>
                       </div>
                       <div class="user-info">
                           <span class="username" t-esc="state.userName"/>
@@ -54,7 +55,7 @@ class GolfzonDashboard extends Component {
                           <!-- Date Section -->
                           <div class="info-section date-section">
                               <div class="info-content">
-                                  <div class="info-value" t-esc="'Today: ' + state.currentDate"/>
+                                  <div class="info-value" t-esc="_t('Today:') + ' ' + state.currentDate"/>
                               </div>
                           </div>
 
@@ -64,11 +65,11 @@ class GolfzonDashboard extends Component {
                                 <img src="/golfzon_dashboard/static/src/img/weather-logo.svg" alt="Weather" class="weather-icon" />
                               </div>
                               <div class="info-content">
-                                  <div class="info-label">WEATHER</div>
+                                  <div class="info-label"><t t-esc="_t('WEATHER')"/></div>
                                   <div class="info-value">
-                                      <t t-esc="'Temperature ' + state.weather.temperature"/>°C, 
-                                      <t t-esc="'Chance of precipitation ' + state.weather.chance"/>%, 
-                                      <t t-esc="'Precipitation ' + state.weather.precipitation"/>mm
+                                      <t t-esc="_t('Temperature') + ' ' + state.weather.temperature"/>°C, 
+                                      <t t-esc="_t('Chance of precipitation') + ' ' + state.weather.chance"/>%, 
+                                      <t t-esc="_t('Precipitation') + ' ' + state.weather.precipitation"/>mm
                                   </div>
                               </div>
                           </div>
@@ -79,7 +80,7 @@ class GolfzonDashboard extends Component {
                                 <img src="/golfzon_dashboard/static/src/img/reservation-logo.svg" alt="Reservations" class="reservations-icon" />
                               </div>
                               <div class="info-content">
-                                  <div class="info-label">TOTAL RESERVATIONS</div>
+                                  <div class="info-label"><t t-esc="_t('TOTAL RESERVATIONS')"/></div>
                                   <div class="info-value">
                                       <t t-esc="state.reservations.current"/>/<t t-esc="state.reservations.total"/>
                                   </div>
@@ -92,11 +93,11 @@ class GolfzonDashboard extends Component {
                                 <img src="/golfzon_dashboard/static/src/img/tee-time-logo.svg" alt="Tee Time" class="tee-time-icon" />
                               </div>
                               <div class="info-content">
-                                  <div class="info-label">FULL TEE TIME</div>
+                                  <div class="info-label"><t t-esc="_t('FULL TEE TIME')"/></div>
                                   <div class="info-value">
-                                      Part1 <t t-esc="state.teeTime.part1.current"/>/<t t-esc="state.teeTime.part1.total"/>, 
-                                      Part2 <t t-esc="state.teeTime.part2.current"/>/<t t-esc="state.teeTime.part2.total"/>, 
-                                      Part3 <t t-esc="state.teeTime.part3.current"/>/<t t-esc="state.teeTime.part3.total"/>
+                                      <t t-esc="_t('Part1')"/> <t t-esc="state.teeTime.part1.current"/>/<t t-esc="state.teeTime.part1.total"/>, 
+                                      <t t-esc="_t('Part2')"/> <t t-esc="state.teeTime.part2.current"/>/<t t-esc="state.teeTime.part2.total"/>, 
+                                      <t t-esc="_t('Part3')"/> <t t-esc="state.teeTime.part3.current"/>/<t t-esc="state.teeTime.part3.total"/>
                                   </div>
                               </div>
                           </div>
@@ -104,7 +105,7 @@ class GolfzonDashboard extends Component {
                           <!-- Dropdown Button -->
                           <div class="info-section dropdown-section">
                               <button class="weather-details-btn" t-on-click="toggleWeatherDetails">
-                                  <span>Weather &amp; Round Details</span>
+                                  <span><t t-esc="_t('Weather &amp; Round Details')"/></span>
                                   <span class="dropdown-arrow" t-att-class="state.showWeatherDetails ? 'open' : ''">▼</span>
                               </button>
                           </div>
@@ -140,11 +141,11 @@ class GolfzonDashboard extends Component {
                                                   <table class="reservation-table">
                                                       <thead>
                                                           <tr>
-                                                              <th>Reservation Person</th>
-                                                              <th>ID</th>
-                                                              <th>Reservation Date</th>
-                                                              <th>Tee Time</th>
-                                                              <th>Rounds</th>
+                                                              <th><t t-esc="_t('Reservation Person')"/></th>
+                                                              <th><t t-esc="_t('ID')"/></th>
+                                                              <th><t t-esc="_t('Reservation Date')"/></th>
+                                                              <th><t t-esc="_t('Tee Time')"/></th>
+                                                              <th><t t-esc="_t('Rounds')"/></th>
                                                           </tr>
                                                       </thead>
                                                       <tbody>
@@ -168,11 +169,11 @@ class GolfzonDashboard extends Component {
                                                   <table class="reservation-table">
                                                       <thead>
                                                           <tr>
-                                                              <th>Reservation Person</th>
-                                                              <th>ID</th>
-                                                              <th>Reservation Date</th>
-                                                              <th>Tee Time</th>
-                                                              <th>Rounds</th>
+                                                              <th><t t-esc="_t('Reservation Person')"/></th>
+                                                              <th><t t-esc="_t('ID')"/></th>
+                                                              <th><t t-esc="_t('Reservation Date')"/></th>
+                                                              <th><t t-esc="_t('Tee Time')"/></th>
+                                                              <th><t t-esc="_t('Rounds')"/></th>
                                                           </tr>
                                                       </thead>
                                                       <tbody>
@@ -305,7 +306,7 @@ class GolfzonDashboard extends Component {
                   <!-- Reservation Forecast Section - Updated Layout -->
                   <div class="reservation-forecast-section">
                       <div class="section-header">
-                          <h2 class="main-section-title">Reservation Status</h2>
+                          <h2 class="main-section-title"><t t-esc="_t('Reservation Status')"/></h2>
                           <div class="analysis-period-info">
                               <span t-esc="state.forecastData.analysis_period"/>
                           </div>
@@ -318,19 +319,19 @@ class GolfzonDashboard extends Component {
                                   <div class="chart-header">
                                       <div class="chart-title-section">
                                           <div class="title-with-tooltip">
-                                              <h3>Reservation Trend by Period</h3>
+                                              <h3><t t-esc="_t('Reservation Trend by Period')"/></h3>
                                               <div class="tooltip-wrapper">
                                                   <span class="help-icon">?</span>
-                                                  <div class="tooltip-content">30 days after the inquiry date</div>
+                                                  <div class="tooltip-content"><t t-esc="_t('30 days after the inquiry date')"/></div>
                                               </div>
                                           </div>
                                           <div class="chart-meta">
-                                              <span class="period-text">Last 30 Days (August 3rd, 2025 - September 1st, 2025)</span>
+                                              <span class="period-text"><t t-esc="state.last30DaysLabel"/></span>
                                           </div>
                                       </div>
                                       <div class="time-period-buttons">
-                                          <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">Last 7 Days</button>
-                                          <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">Last 30 Days</button>
+                                          <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')"><t t-esc="_t('Last 7 Days')"/></button>
+                                          <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')"><t t-esc="_t('Last 30 Days')"/></button>
                                       </div>
                                   </div>
                                   
@@ -342,29 +343,29 @@ class GolfzonDashboard extends Component {
                                   <div class="stats-cards-below">
                                       <div class="stat-card horizontal">
                                           <div class="stat-info">
-                                              <span class="stat-label">Total number of reservations</span>
+                                              <span class="stat-label"><t t-esc="_t('Total number of reservations')"/></span>
                                               <div class="tooltip-wrapper">
                                                   <span class="help-icon">?</span>
                                               </div>
                                           </div>
                                           <div class="stat-value">2,926</div>
                                           <div class="stat-comparison">
-                                              <span class="comparison-label">compared to same period last year</span>
+                                              <span class="comparison-label"><t t-esc="_t('compared to same period last year')"/></span>
                                               <span class="comparison-value increase">↑ 10%</span>
                                           </div>
                                       </div>
                                       <div class="stat-card horizontal">
                                           <div class="stat-info">
-                                              <span class="stat-label">Total Operation rate</span>
+                                              <span class="stat-label"><t t-esc="_t('Total Operation rate')"/></span>
                                               <div class="tooltip-wrapper">
                                                   <span class="help-icon">?</span>
                                               </div>
                                           </div>
                                           <div class="stat-value">78.5%</div>
                                           <div class="stat-breakdown horizontal-parts">
-                                              <span>Part 1 82.4%</span>
-                                              <span>Part 2 76.2%</span>
-                                              <span>Part 3 75.3%</span>
+                                              <span><t t-esc="_t('Part 1')"/> 82.4%</span>
+                                              <span><t t-esc="_t('Part 2')"/> 76.2%</span>
+                                              <span><t t-esc="_t('Part 3')"/> 75.3%</span>
                                           </div>
                                       </div>
                                   </div>
@@ -378,7 +379,7 @@ class GolfzonDashboard extends Component {
                                   <div class="heatmap-main-container">
                                       <div class="heatmap-content">
                                           <div class="heatmap-header">
-                                              <h3>Reservation Trends</h3>
+                                              <h3><t t-esc="_t('Reservation Trends')"/></h3>
                                           </div>
                                           <div class="heatmap-container">
                                               <!-- Heatmap Section with Error Handling -->
@@ -410,16 +411,16 @@ class GolfzonDashboard extends Component {
                                                           </tbody>
                                                       </table>
                                                       <div t-else="" class="heatmap-loading">
-                                                          <span>Loading heatmap data...</span>
+                                                          <span><t t-esc="_t('Loading heatmap data...')"/></span>
                                                       </div>
                                                       
                                                       <!-- Heatmap Legend -->
                                                       <div class="heatmap-legend">
-                                                          <div class="legend-item"><div class="legend-color top-20"></div><span>Top 20%</span></div>
-                                                          <div class="legend-item"><div class="legend-color top-20-40"></div><span>Top 20-40%</span></div>
-                                                          <div class="legend-item"><div class="legend-color median-20"></div><span>Median 20%</span></div>
-                                                          <div class="legend-item"><div class="legend-color bottom-20-40"></div><span>Bottom 20-40%</span></div>
-                                                          <div class="legend-item"><div class="legend-color bottom-20"></div><span>Bottom 20%</span></div>
+                                                          <div class="legend-item"><div class="legend-color top-20"></div><span><t t-esc="_t('Top 20%')"/></span></div>
+                                                          <div class="legend-item"><div class="legend-color top-20-40"></div><span><t t-esc="_t('Top 20-40%')"/></span></div>
+                                                          <div class="legend-item"><div class="legend-color median-20"></div><span><t t-esc="_t('Median 20%')"/></span></div>
+                                                          <div class="legend-item"><div class="legend-color bottom-20-40"></div><span><t t-esc="_t('Bottom 20-40%')"/></span></div>
+                                                          <div class="legend-item"><div class="legend-color bottom-20"></div><span><t t-esc="_t('Bottom 20%')"/></span></div>
                                                       </div>
                                                   </t>
                                               </div>
@@ -431,7 +432,7 @@ class GolfzonDashboard extends Component {
                               <!-- Bottom Half - Pie Charts -->
                               <div class="pie-charts-card">
                                   <div class="pie-charts-header">
-                                      <h3>Reservation member composition status</h3>
+                                      <h3><t t-esc="_t('Reservation member composition status')"/></h3>
                                   </div>
                                   
                                   <div class="pie-charts-grid">
@@ -439,29 +440,28 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="memberTypeChart"></canvas>
-                                              <div class="chart-center-title">Member</div>
-                                              <div class="chart-center-title">Type</div>
+                                              <div class="chart-center-title"><t t-esc="_t('Member Type')"/></div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
                                                   <div class="legend-entry">
                                                       <span class="dot individual"></span>
-                                                      <span>Individual</span>
+                                                      <span><t t-esc="_t('Individual')"/></span>
                                                       <span class="legend-value">76%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot joint"></span>
-                                                      <span>Joint Organization</span>
+                                                      <span><t t-esc="_t('Joint Organization')"/></span>
                                                       <span class="legend-value">13%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot general"></span>
-                                                      <span>General Organization</span>
+                                                      <span><t t-esc="_t('General Organization')"/></span>
                                                       <span class="legend-value">2%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot temporary"></span>
-                                                      <span>Temporary Organization</span>
+                                                      <span><t t-esc="_t('Temporary Organization')"/></span>
                                                       <span class="legend-value">8%</span>
                                                   </div>
                                               </div>
@@ -472,8 +472,7 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="advanceBookingChart"></canvas>
-                                              <div class="chart-center-title">Advance</div>
-                                              <div class="chart-center-title">Booking</div>
+                                              <div class="chart-center-title"><t t-esc="_t('Advance Booking')"/></div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
@@ -515,34 +514,33 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="regionalChart"></canvas>
-                                              <div class="chart-center-title">Regional</div>
-                                              <div class="chart-center-title">Distribution</div>
+                                              <div class="chart-center-title"><t t-esc="_t('Regional Distribution')"/></div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
                                                   <div class="legend-entry">
                                                       <span class="dot phone"></span>
-                                                      <span>Phone</span>
+                                                      <span><t t-esc="_t('Phone')"/></span>
                                                       <span class="legend-value">48%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot internet"></span>
-                                                      <span>Internet</span>
+                                                      <span><t t-esc="_t('Internet')"/></span>
                                                       <span class="legend-value">19%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot agency1"></span>
-                                                      <span>Agency</span>
+                                                      <span><t t-esc="_t('Agency')"/></span>
                                                       <span class="legend-value">8%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot agency2"></span>
-                                                      <span>Agency</span>
+                                                      <span><t t-esc="_t('Agency')"/></span>
                                                       <span class="legend-value">7%</span>
                                                   </div>
                                                   <div class="legend-entry">
                                                       <span class="dot other"></span>
-                                                      <span>Other</span>
+                                                      <span><t t-esc="_t('Other')"/></span>
                                                       <span class="legend-value">18%</span>
                                                   </div>
                                               </div>
@@ -560,7 +558,7 @@ class GolfzonDashboard extends Component {
                       <div class="visitor-status">
                         <div class="reservation-forecast-section">
                                 <div class="section-header">
-                                    <h2 class="main-section-title">Visitor Status</h2>
+                                    <h2 class="main-section-title"><t t-esc="_t('Visitor Status')"/></h2>
                                         <div class="analysis-period-info">
                                             <span t-esc="state.forecastData.analysis_period"/>
                                     </div>
@@ -571,15 +569,15 @@ class GolfzonDashboard extends Component {
                                   <div class="chart-header">
                                       <div class="chart-title-section">
                                             <div class="title-with-tooltip">
-                                              <h3>Visitor Trends</h3>
+                                              <h3><t t-esc="_t('Visitor Trends')"/></h3>
                                             </div>
                                             <div class="chart-meta">
-                                              <span class="period-text">(Last 30 Days)</span>
+                                              <span class="period-text"><t t-esc="state.simpleLast30DaysLabel"/></span>
                                             </div>
                                       </div>
                                       <div class="time-period-buttons">
-                                          <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">Last 7 Days</button>
-                                          <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">Last 30 Days</button>
+                                          <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')"><t t-esc="_t('Last 7 Days')"/></button>
+                                          <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')"><t t-esc="_t('Last 30 Days')"/></button>
                                       </div>
                                   </div>
                                   <div class="visitor-trend-graph">
@@ -590,11 +588,11 @@ class GolfzonDashboard extends Component {
                                   <div class="visitor-trend-card-container">
                                       <div class="visitor-trend-card">
                                           <div class="visitor-numbers">
-                                              <span class="trend-card-title">Total visitors</span>
+                                              <span class="trend-card-title"><t t-esc="_t('Total visitors')"/></span>
                                               <span class="trend-card-title">9,000</span>
                                           </div>
                                           <div class="trend-wrapper sales-numbers">
-                                              <span class="trend-card-title">Compared to last year</span>
+                                              <span class="trend-card-title"><t t-esc="_t('Compared to last year')"/></span>
                                               <div class="trend-indicator trend-up">
                                                   <span class="trend-icon">▲</span>
                                                   <span t-esc="state.performanceData.sales_performance.monthly_trend"/>
@@ -604,7 +602,7 @@ class GolfzonDashboard extends Component {
                                       
                                       <div class="visitor-trend-card">
                                           <div class="visitor-numbers">
-                                              <span class="trend-card-title">Total visitors by section</span>
+                                              <span class="trend-card-title"><t t-esc="_t('Total visitors by section')"/></span>
                                               <span class="trend-card-title">4,500</span>
                                           </div>
                                       </div>
@@ -616,7 +614,7 @@ class GolfzonDashboard extends Component {
                                        <div class="chart-header">
                                             <div class="chart-title-section">
                                                 <div class="title-with-tooltip">
-                                                    <h3>Visitor Ratio by Age Group</h3>
+                                                    <h3><t t-esc="_t('Visitor Ratio by Age Group')"/></h3>
                                                 </div>
                                             </div>
                                         </div>
@@ -627,7 +625,7 @@ class GolfzonDashboard extends Component {
 
                                   <div class="card-gender">
                                               <div class="card-body">
-                                                <h3 class="mb-3">Gender Ratio</h3>
+                                                <h3 class="mb-3"><t t-esc="_t('Gender Ratio')"/></h3>
                                                 <div class="d-flex justify-content-center gap-5">
                                                   
                                                   <!-- Male -->
@@ -645,7 +643,7 @@ class GolfzonDashboard extends Component {
                                                             <rect id="maleFill" class="fill" x="0" y="400" width="200" height="0" clip-path="url(#maleClip)"/>
                                                           </svg>
                                                         </div>
-                                                        <div class="label">man</div>
+                                                        <div class="label"><t t-esc="_t('man')"/></div>
                                                       </div>
 
                                                   <!-- Female -->
@@ -662,7 +660,7 @@ class GolfzonDashboard extends Component {
                                                           <rect id="femaleFill" class="fill female" x="0" y="400" width="200" height="0" clip-path="url(#femaleClip)"/>
                                                         </svg>
                                                       </div>
-                                                      <div class="label">female</div>
+                                                      <div class="label"><t t-esc="_t('female')"/></div>
                                                     </div>
 
                                                 </div>
@@ -676,7 +674,7 @@ class GolfzonDashboard extends Component {
                       
                             <div class="sales-trends-section">
                                 <div class="section-header">
-                                    <h2 class="main-section-title">Reservation Status</h2>
+                                    <h2 class="main-section-title"><t t-esc="_t('Reservation Status')"/></h2>
                                         <div class="analysis-period-info">
                                             <span t-esc="state.forecastData.analysis_period"/>
                                         </div>
@@ -686,15 +684,15 @@ class GolfzonDashboard extends Component {
                                     <div class="chart-header">
                                         <div class="chart-title-section">
                                                 <div class="title-with-tooltip">
-                                                <h3>Sales Trends</h3>
+                                                <h3><t t-esc="_t('Sales Trends')"/></h3>
                                                 </div>
                                                 <div class="chart-meta">
-                                                <span class="period-text">Last 30 Days</span>
+                                                <span class="period-text"><t t-esc="state.last30DaysTitle"/></span>
                                                 </div>
                                         </div>
                                         <div class="time-period-buttons">
-                                            <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">Last 7 Days</button>
-                                            <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">Last 30 Days</button>
+                                            <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')"><t t-esc="_t('Last 7 Days')"/></button>
+                                            <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')"><t t-esc="_t('Last 30 Days')"/></button>
                                         </div>
                                     </div>
                                 <div class="sales-trend-graph">
@@ -705,11 +703,11 @@ class GolfzonDashboard extends Component {
                                 <div class="sales-trend-card-container">
                                     <div class="sales-trend-card">
                                         <div class="sales-numbers">
-                                            <span class="trend-card-title">Total Sales</span>
+                                            <span class="trend-card-title"><t t-esc="_t('Total Sales')"/></span>
                                             <span class="trend-card-title">1,000,000</span>
                                         </div>
                                         <div class="trend-wrapper sales-numbers">
-                                            <span class="trend-card-title">Compared to last year</span>
+                                            <span class="trend-card-title"><t t-esc="_t('Compared to last year')"/></span>
                                             <div class="trend-indicator trend-up">
                                                 <span class="trend-icon">▲</span>
                                                 <span t-esc="state.performanceData.sales_performance.monthly_trend"/>
@@ -719,7 +717,7 @@ class GolfzonDashboard extends Component {
                                 
                                     <div class="sales-trend-card">
                                         <div class="sales-numbers">
-                                            <span class="trend-card-title">Average transaction value</span>
+                                            <span class="trend-card-title"><t t-esc="_t('Average transaction value')"/></span>
                                             <span class="trend-card-title">190,000</span>
                                         </div>
                                     </div>
@@ -740,6 +738,8 @@ class GolfzonDashboard extends Component {
       console.warn("RPC service not available, using fallback behavior");
     }
     this.rpc = rpcService;
+    // Expose _t to the template context
+    this._t = _t;
 
     // All chart references
     this.canvasRef = useRef("salesChart");
@@ -768,36 +768,36 @@ class GolfzonDashboard extends Component {
         female: 40,
       },
       performanceData: {
-        main_title: "Cloud CC Core Performance Indicators",
+        main_title: _t("Cloud CC Core Performance Indicators"),
         sales_performance: {
-          title: "Sales Performance Indicators",
+          title: _t("Sales Performance Indicators"),
           current_revenue: "120,000,000,000",
           monthly_revenue: "100,000,000",
           current_trend: "+11%",
           monthly_trend: "+11%",
-          current_label: "Cumulative Sales This Year",
-          monthly_label: "Current Monthly Sales",
-          trend_period: "(year-over-year)",
+          current_label: _t("Cumulative Sales This Year"),
+          monthly_label: _t("Current Monthly Sales"),
+          trend_period: _t("(year-over-year)"),
         },
         avg_order_value: {
-          title: "Average Order Value Performance",
+          title: _t("Average Order Value Performance"),
           current_weekly_value: "200,000",
           monthly_value: "200,000",
           current_trend: "+11%",
           monthly_trend: "+13%",
-          current_label: "Cumulative Unit Price This Year",
-          monthly_label: "Current Monthly Guest Price",
-          trend_period: "(year-over-year)",
+          current_label: _t("Cumulative Unit Price This Year"),
+          monthly_label: _t("Current Monthly Guest Price"),
+          trend_period: _t("(year-over-year)"),
         },
         utilization_rate: {
-          title: "Utilization Rate Performance",
+          title: _t("Utilization Rate Performance"),
           current_weekly_capacity: "120,000,000,000",
           monthly_capacity: "100,000,000",
           current_trend: "-5%",
           monthly_trend: "+20%",
-          current_label: "Cumulative Operation Rate This Year",
-          monthly_label: "Current Month Operation Rate",
-          trend_period: "(year-over-year)",
+          current_label: _t("Cumulative Operation Rate This Year"),
+          monthly_label: _t("Current Month Operation Rate"),
+          trend_period: _t("(year-over-year)"),
         },
       },
       activities: [],
@@ -840,17 +840,28 @@ class GolfzonDashboard extends Component {
         },
         analysis_period: this.generateAnalysisPeriod(),
       },
+      last30DaysLabel: "",
+      simpleLast30DaysLabel: "",
+      last30DaysTitle: "",
       selectedPeriod: "30days",
       showReservationDetails: false,
       selectedSlot: { day: "", period: "", count: 0 },
       // Initialize heatmapData with proper structure
       heatmapData: {
-        headers: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        headers: [
+          _t("Sun"),
+          _t("Mon"),
+          _t("Tue"),
+          _t("Wed"),
+          _t("Thu"),
+          _t("Fri"),
+          _t("Sat"),
+        ],
         rows: [
-          { label: "Dawn (5-7 AM)", data: [0, 0, 0, 0, 0, 0, 0] },
-          { label: "Morning (8am-12pm)", data: [0, 0, 0, 0, 0, 0, 0] },
-          { label: "Afternoon (1-4 PM)", data: [0, 0, 0, 0, 0, 0, 0] },
-          { label: "Night (5-7 PM)", data: [0, 0, 0, 0, 0, 0, 0] },
+          { label: _t("Dawn (5-7 AM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+          { label: _t("Morning (8am-12pm)"), data: [0, 0, 0, 0, 0, 0, 0] },
+          { label: _t("Afternoon (1-4 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+          { label: _t("Night (5-7 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
         ],
       },
     });
@@ -858,7 +869,18 @@ class GolfzonDashboard extends Component {
     onMounted(() => this.onMounted());
   }
 
-  // Add this method to generate dynamic analysis period
+  // Get current locale from saved dashboard language or browser fallback
+  getCurrentLocale() {
+    let lang = "en-US";
+    try {
+      const stored = localStorage.getItem("dashboard_lang");
+      if (stored === "ko_KR") lang = "ko-KR";
+      else if (stored === "en_US") lang = "en-US";
+    } catch (e) {}
+    return lang;
+  }
+
+  // Add this method to generate dynamic analysis period (localized)
   generateAnalysisPeriod() {
     const endDate = new Date();
     const startDate = new Date(endDate);
@@ -870,10 +892,11 @@ class GolfzonDashboard extends Component {
       day: "numeric",
     };
 
-    const startDateStr = startDate.toLocaleDateString("en-US", options);
-    const endDateStr = endDate.toLocaleDateString("en-US", options);
+    const locale = this.getCurrentLocale();
+    const startDateStr = startDate.toLocaleDateString(locale, options);
+    const endDateStr = endDate.toLocaleDateString(locale, options);
 
-    return `Analysis period: The last 30 days (${startDateStr} - ${endDateStr})`;
+    return `${_t("Analysis period:")} ${_t("The last 30 days")} (${startDateStr} - ${endDateStr})`;
   }
 
   async onMounted() {
@@ -885,10 +908,20 @@ class GolfzonDashboard extends Component {
       month: "long",
       day: "numeric",
     };
-    this.state.currentDate = today.toLocaleDateString("en-US", options);
+    this.state.currentDate = today.toLocaleDateString(this.getCurrentLocale(), options);
 
-    // Update analysis period on mount
+    // Update analysis period and period labels on mount
     this.state.forecastData.analysis_period = this.generateAnalysisPeriod();
+    const endDate = new Date();
+    const startDate = new Date(endDate);
+    startDate.setDate(endDate.getDate() - 29);
+    const fmt = { year: "numeric", month: "long", day: "numeric" };
+    const locale = this.getCurrentLocale();
+    const startStr = startDate.toLocaleDateString(locale, fmt);
+    const endStr = endDate.toLocaleDateString(locale, fmt);
+    this.state.last30DaysLabel = `${_t("Last 30 Days")} (${startStr} - ${endStr})`;
+    this.state.simpleLast30DaysLabel = `(${_t("Last 30 Days")})`;
+    this.state.last30DaysTitle = _t("Last 30 Days");
 
     // Initialize heatmap data first
     this.setDefaultForecastData();
@@ -1049,12 +1082,20 @@ class GolfzonDashboard extends Component {
     };
 
     // Generate realistic heatmap data
-    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const daysOfWeek = [
+      _t("Sun"),
+      _t("Mon"),
+      _t("Tue"),
+      _t("Wed"),
+      _t("Thu"),
+      _t("Fri"),
+      _t("Sat"),
+    ];
     const timeSlots = [
-      { label: "Dawn (5-7 AM)", min: 5, max: 29 },
-      { label: "Morning (8am-12pm)", min: 8, max: 28 },
-      { label: "Afternoon (1-4 PM)", min: 10, max: 28 },
-      { label: "Night (5-7 PM)", min: 15, max: 44 },
+      { label: _t("Dawn (5-7 AM)"), min: 5, max: 29 },
+      { label: _t("Morning (8am-12pm)"), min: 8, max: 28 },
+      { label: _t("Afternoon (1-4 PM)"), min: 10, max: 28 },
+      { label: _t("Night (5-7 PM)"), min: 15, max: 44 },
     ];
 
     const heatmapData = {
@@ -1091,7 +1132,15 @@ class GolfzonDashboard extends Component {
 
   showReservationDetails(timePeriod, dayIndex, count, event) {
     event.stopPropagation();
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = [
+      _t("Sun"),
+      _t("Mon"),
+      _t("Tue"),
+      _t("Wed"),
+      _t("Thu"),
+      _t("Fri"),
+      _t("Sat"),
+    ];
 
     this.state.selectedSlot = {
       day: days[dayIndex],
@@ -1213,26 +1262,26 @@ class GolfzonDashboard extends Component {
 
     // Generate 80 reservation details
     const names = [
-      "John Smith",
-      "Sarah Johnson",
-      "Mike Wilson",
-      "Emily Davis",
-      "David Brown",
-      "Lisa Anderson",
-      "Tom Garcia",
-      "Anna Martinez",
-      "Chris Lee",
-      "Jessica Taylor",
-      "Robert Chen",
-      "Maria Rodriguez",
-      "Kevin Park",
-      "Amanda White",
-      "Daniel Kim",
-      "Rachel Green",
-      "James Wilson",
-      "Michelle Brown",
-      "Steven Clark",
-      "Jennifer Lopez",
+      _t("John Smith"),
+      _t("Sarah Johnson"),
+      _t("Mike Wilson"),
+      _t("Emily Davis"),
+      _t("David Brown"),
+      _t("Lisa Anderson"),
+      _t("Tom Garcia"),
+      _t("Anna Martinez"),
+      _t("Chris Lee"),
+      _t("Jessica Taylor"),
+      _t("Robert Chen"),
+      _t("Maria Rodriguez"),
+      _t("Kevin Park"),
+      _t("Amanda White"),
+      _t("Daniel Kim"),
+      _t("Rachel Green"),
+      _t("James Wilson"),
+      _t("Michelle Brown"),
+      _t("Steven Clark"),
+      _t("Jennifer Lopez"),
     ];
 
     this.state.reservationDetails = [];
@@ -1297,6 +1346,15 @@ class GolfzonDashboard extends Component {
     window.location.href = "/web/session/logout";
   }
 
+  switchLanguage(lang) {
+    try {
+      localStorage.setItem("dashboard_lang", lang);
+    } catch (e) {}
+    // Hit backend to persist lang in session/user, then redirect to dashboard
+    const target = `/golfzon/dashboard/set_lang?lang=${encodeURIComponent(lang)}`;
+    window.location.assign(target);
+  }
+
   // CONSOLIDATED CHART INITIALIZATION - ALL IN ONE PLACE
   initializeCharts() {
     if (window.Chart && window.ChartDataLabels) {
@@ -1344,7 +1402,7 @@ class GolfzonDashboard extends Component {
               ],
               datasets: [
                 {
-                  label: "Sales",
+                  label: _t("Sales"),
                   data: [
                     320, 450, 220, 150, 390, 600, 550, 400, 375, 500, 650, 700,
                     480, 520, 610, 580, 450, 400, 300, 350, 400, 480, 600,
@@ -1361,7 +1419,7 @@ class GolfzonDashboard extends Component {
                   categoryPercentage: 0.5,
                 },
                 {
-                  label: "Last Year's Sales (Same Period)",
+                  label: _t("Last Year's Sales (Same Period)"),
                   data: [
                     220, 300, 210, 200, 220, 480, 450, 350, 300, 450, 500, 550,
                     400, 450, 500, 480, 350, 300, 250, 300, 350, 400, 450,
@@ -1438,11 +1496,11 @@ class GolfzonDashboard extends Component {
                 "5.5",
                 "5.6",
                 "5.7",
-                "6.1(Today)",
+                _t("6.1(Today)"),
               ],
               datasets: [
                 {
-                  label: "2025 Visitors",
+                  label: _t("2025 Visitors"),
                   data: [200, 180, 250, 400, 600, 450, 320, 340, 360, 500],
                   borderColor: "#046DEC",
                   backgroundColor: "transparent",
@@ -1454,7 +1512,7 @@ class GolfzonDashboard extends Component {
                   pointBorderWidth: 2,
                 },
                 {
-                  label: "2024 Visitors",
+                  label: _t("2024 Visitors"),
                   data: [150, 130, 120, 140, 160, 180, 170, 150, 140, 130],
                   borderColor: "#86E5F5",
                   backgroundColor: "transparent",
@@ -1520,7 +1578,7 @@ class GolfzonDashboard extends Component {
                   displayColors: false,
                   callbacks: {
                     label: function (context) {
-                      return "Visitors: " + context.raw.toLocaleString();
+                      return _t("Visitors") + ": " + context.raw.toLocaleString();
                     },
                   },
                 },
@@ -1559,7 +1617,7 @@ class GolfzonDashboard extends Component {
             labels: ["60+ years", "50s", "40s", "30s", "20s", "Under 10"],
             datasets: [
               {
-                label: "Visitor Ratio",
+                label: _t("Visitor Ratio"),
                 data: [22, 27, 20, 20, 9, 2],
                 backgroundColor: [
                   "#4489DA",
@@ -1626,7 +1684,7 @@ class GolfzonDashboard extends Component {
         labels: ["6.1(Today)", "", "", "", "", "", "", "", "", "6.30"],
         datasets: [
           {
-            label: "Reservations",
+            label: _t("Reservations"),
             data: currentYearData,
             borderColor: "#2196f3",
             backgroundColor: "rgba(33, 150, 243, 0.1)",
@@ -1638,7 +1696,7 @@ class GolfzonDashboard extends Component {
             pointBackgroundColor: "#2196f3",
           },
           {
-            label: "Reservations (Same period last year)",
+            label: _t("Reservations (Same period last year)"),
             data: lastYearData,
             borderColor: "#81d4fa",
             backgroundColor: "transparent",
@@ -1694,27 +1752,27 @@ class GolfzonDashboard extends Component {
               title: function (context) {
                 const date = new Date();
                 const days = [
-                  "Sunday",
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
+                  _t("Day"),
+                  _t("Month"),
+                  _t("Fury"),
+                  _t("Number"),
+                  _t("Neck"),
+                  _t("Gold"),
+                  _t("Saturday"),
                 ];
                 const months = [
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                  "July",
-                  "August",
-                  "September",
-                  "October",
-                  "November",
-                  "December",
+                  _t("January"),
+                  _t("February"),
+                  _t("March"),
+                  _t("April"),
+                  _t("May"),
+                  _t("June"),
+                  _t("July"),
+                  _t("August"),
+                  _t("September"),
+                  _t("October"),
+                  _t("November"),
+                  _t("December"),
                 ];
                 return `${days[date.getDay()]}, ${
                   months[date.getMonth()]

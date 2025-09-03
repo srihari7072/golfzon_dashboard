@@ -7,6 +7,32 @@ from datetime import datetime, timedelta
 API_KEY = "cd5743655e1a5d90679cffd3f85fa4fd"  # OpenWeatherMap API Key
 
 class GolfzonDashboardController(http.Controller):
+    @http.route('/golfzon/dashboard/set_lang', type='http', auth='user')
+    def set_dashboard_lang(self, lang, **kw):
+        """Set the user's session language then redirect back to the dashboard action.
+
+        The webclient expects a route that persists the language. We update
+        both the session and the current user's lang to persist beyond session.
+        """
+        # Normalize language code
+        lang = (lang or '').strip()
+        if not lang:
+            lang = request.env.user.lang or request.env.context.get('lang') or 'en_US'
+
+        # Update session language
+        request.session.context = dict(request.session.context or {}, lang=lang)
+
+        # Persist on the user preference as well (no error if no rights)
+        try:
+            request.env.user.sudo().write({'lang': lang})
+        except Exception:
+            pass
+
+        # Redirect to the dashboard client action with hash
+        action = request.env['ir.actions.client'].sudo()._for_xml_id('golfzon_dashboard.action_golfzon_dashboard')
+        target = "/web#action=%s" % action.get('id')
+        return request.redirect(target)
+
     @http.route('/golfzon/dashboard', auth='user', website=False)
     def backend_dashboard(self, **kw):
         return request.env['ir.actions.client'].sudo()._for_xml_id('golfzon_dashboard.action_golfzon_dashboard')
@@ -256,8 +282,8 @@ class GolfzonDashboardController(http.Controller):
                 "monthly_revenue": "100,000,000", 
                 "current_trend": "+11%",
                 "monthly_trend": "+11%",
-                "current_label": _("Current Weekly Revenue"),
-                "monthly_label": _("Monthly Revenue"),
+                "current_label": _("Cumulative Sales This Year"),
+                "monthly_label": _("Current Monthly Sales"),
                 "trend_period": _("(Previous Period)"),
             },
             "avg_order_value": {
@@ -266,8 +292,8 @@ class GolfzonDashboardController(http.Controller):
                 "monthly_value": "200,000",
                 "current_trend": "+11%", 
                 "monthly_trend": "+13%",
-                "current_label": _("Current Weekly Average"),
-                "monthly_label": _("Monthly Average"),
+                "current_label": _("Cumulative Unit Price This Year"),
+                "monthly_label": _("Current Monthly Guest Price"),
                 "trend_period": _("(Previous Period)"),
             },
             "utilization_rate": {
@@ -276,8 +302,8 @@ class GolfzonDashboardController(http.Controller):
                 "monthly_capacity": "100,000,000",
                 "current_trend": "-5%",
                 "monthly_trend": "+20%",
-                "current_label": _("Current Weekly Capacity"),
-                "monthly_label": _("Monthly Capacity"),
+                "current_label": _("Cumulative Operation Rate This Year"),
+                "monthly_label": _("Current Month Operation Rate"),
                 "trend_period": _("(Previous Period)"),
             }
         }
