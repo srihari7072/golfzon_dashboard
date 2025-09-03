@@ -41,7 +41,7 @@ class GolfzonDashboard extends Component {
                           <span class="username" t-esc="state.userName"/>
                       </div>
                       <button class="logout-btn" t-on-click="logout" title="Logout">
-                          <img src="/golfzon_dashboard/static/src/img/logout-button.png" alt="Logout" class="logout-icon" />
+                          <img src="/golfzon_dashboard/static/src/img/logout-button.svg" alt="Logout" class="logout-icon" />
                       </button>
                   </div>
               </header>
@@ -61,7 +61,7 @@ class GolfzonDashboard extends Component {
                           <!-- Weather Section -->
                           <div class="info-section weather-section">
                               <div class="info-icon">
-                                <i class="bi bi-brightness-high-fill"></i>
+                                <img src="/golfzon_dashboard/static/src/img/weather-logo.svg" alt="Weather" class="weather-icon" />
                               </div>
                               <div class="info-content">
                                   <div class="info-label">WEATHER</div>
@@ -76,7 +76,7 @@ class GolfzonDashboard extends Component {
                           <!-- Total Reservations Section -->
                           <div class="info-section reservations-section">
                               <div class="info-icon">
-                                <i class="bi bi-calendar-week"></i>
+                                <img src="/golfzon_dashboard/static/src/img/reservation-logo.svg" alt="Reservations" class="reservations-icon" />
                               </div>
                               <div class="info-content">
                                   <div class="info-label">TOTAL RESERVATIONS</div>
@@ -89,7 +89,7 @@ class GolfzonDashboard extends Component {
                           <!-- Tee Time Bookings Section -->
                           <div class="info-section tee-time-section">
                               <div class="info-icon">
-                                <i class="bi bi-calendar-check"></i>
+                                <img src="/golfzon_dashboard/static/src/img/tee-time-logo.svg" alt="Tee Time" class="tee-time-icon" />
                               </div>
                               <div class="info-content">
                                   <div class="info-label">FULL TEE TIME</div>
@@ -439,7 +439,8 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="memberTypeChart"></canvas>
-                                              <div class="chart-center-title">Member Type</div>
+                                              <div class="chart-center-title">Member</div>
+                                              <div class="chart-center-title">Type</div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
@@ -471,7 +472,8 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="advanceBookingChart"></canvas>
-                                              <div class="chart-center-title">Advance Booking</div>
+                                              <div class="chart-center-title">Advance</div>
+                                              <div class="chart-center-title">Booking</div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
@@ -513,7 +515,8 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="regionalChart"></canvas>
-                                              <div class="chart-center-title">Regional Distribution</div>
+                                              <div class="chart-center-title">Regional</div>
+                                              <div class="chart-center-title">Distribution</div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
@@ -615,14 +618,56 @@ class GolfzonDashboard extends Component {
                                                 <div class="title-with-tooltip">
                                                     <h3>Visitor Ratio by Age Group</h3>
                                                 </div>
-                                        
                                             </div>
-                                   
                                         </div>
                                       <div class="o_dashboard_sales">
                                           <canvas t-ref="ageChart"/>
                                       </div>
                                   </div>
+
+                                  <div class="card-gender">
+                                              <div class="card-body">
+                                                <h3 class="mb-3">Gender Ratio</h3>
+                                                <div class="d-flex justify-content-center gap-5">
+                                                  
+                                                  <!-- Male -->
+                                                  
+                                                      <div class="figure">
+                                                        <div class="male-percentage" id="malePercent">62%</div>
+                                                        <div class="svg-wrapper">
+                                                          <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                                                            <!-- Grey silhouette -->  
+                                                            <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-25 90h50c30 0 55 25 55 55v70c0 10-8 18-18 18h-15v127h-40v-80h-10v80h-40V253H42c-10 0-18-8-18-18v-70c0-30 25-55 55-55z" fill="#eee"/>
+                                                            <!-- Blue fill -->
+                                                            <clipPath id="maleClip">
+                                                              <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-25 90h50c30 0 55 25 55 55v70c0 10-8 18-18 18h-15v127h-40v-80h-10v80h-40V253H42c-10 0-18-8-18-18v-70c0-30 25-55 55-55z"/>
+                                                            </clipPath>
+                                                            <rect id="maleFill" class="fill" x="0" y="400" width="200" height="0" clip-path="url(#maleClip)"/>
+                                                          </svg>
+                                                        </div>
+                                                        <div class="label">man</div>
+                                                      </div>
+
+                                                  <!-- Female -->
+                                                  <div class="figure">
+                                                      <div class="female-percentage" id="femalePercent">38%</div>
+                                                      <div class="svg-wrapper">
+                                                        <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                                                          <!-- Grey silhouette -->
+                                                          <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-40 110h80l40 120h-50v110H110v-70H90v70H70V250H20l40-120z" fill="#eee"/>
+                                                          <!-- Pink fill -->
+                                                          <clipPath id="femaleClip">
+                                                            <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-40 110h80l40 120h-50v110H110v-70H90v70H70V250H20l40-120z"/>
+                                                          </clipPath>
+                                                          <rect id="femaleFill" class="fill female" x="0" y="400" width="200" height="0" clip-path="url(#femaleClip)"/>
+                                                        </svg>
+                                                      </div>
+                                                      <div class="label">female</div>
+                                                    </div>
+
+                                                </div>
+                                              </div>
+                                            </div>
                               </div>
                           </div>
                       </div>
@@ -1790,6 +1835,22 @@ class GolfzonDashboard extends Component {
       );
       console.log("Regional pie chart initialized");
     }
+
+    function setGenderPercent(male, female) {
+      let maleFill = document.getElementById("maleFill");
+      let femaleFill = document.getElementById("femaleFill");
+
+      maleFill.setAttribute("y", 400 - (400 * male) / 100);
+      maleFill.setAttribute("height", (400 * male) / 100);
+      femaleFill.setAttribute("y", 400 - (400 * female) / 100);
+      femaleFill.setAttribute("height", (400 * female) / 100);
+
+      document.getElementById("malePercent").textContent = male + "%";
+      document.getElementById("femalePercent").textContent = female + "%";
+    }
+
+    // Example values
+    setGenderPercent(62, 38);
   }
 }
 
