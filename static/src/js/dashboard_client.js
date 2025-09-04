@@ -638,7 +638,7 @@ class GolfzonDashboard extends Component {
                                                             <rect id="maleFill" class="fill" x="0" y="400" width="200" height="0" clip-path="url(#maleClip)"/>
                                                           </svg>
                                                         </div>
-                                                        <div class="label"><t t-esc="_t('man')"/></div>
+                                                        <div class="label"><t t-esc="_t('Male')"/></div>
                                                       </div>
 
                                                   <!-- Female -->
@@ -655,7 +655,7 @@ class GolfzonDashboard extends Component {
                                                           <rect id="femaleFill" class="fill female" x="0" y="400" width="200" height="0" clip-path="url(#femaleClip)"/>
                                                         </svg>
                                                       </div>
-                                                      <div class="label"><t t-esc="_t('female')"/></div>
+                                                      <div class="label"><t t-esc="_t('Female')"/></div>
                                                     </div>
 
                                                 </div>

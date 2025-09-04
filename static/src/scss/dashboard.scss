@@ -183,7 +183,7 @@ $desktop: 1920px;
   @include mobile {
     width: 100%;
     left: -100%;
-
+    
     &.open {
       left: 0;
     }
@@ -193,7 +193,7 @@ $desktop: 1920px;
   @include tablet {
     width: 240px;
     left: -240px;
-
+    
     &.open {
       left: 0;
     }
@@ -1186,407 +1186,422 @@ $desktop: 1920px;
   }
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 14px 30px;
+// Reservation Forecast Section
+.reservation-forecast-section {
+  margin: 0 30px 30px;
 
   // Mobile responsive
   @include mobile {
-    @include flex(column, flex-start, flex-start);
-    margin: 0 8px 12px;
-    gap: 8px;
+    margin: 0 16px 40px;
   }
 
   // Tablet responsive
   @include tablet {
-    margin: 0 12px 13px;
+    margin: 0 20px 50px;
   }
 
-  .main-section-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: $text-primary;
-    margin: 0;
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 14px 30px;
 
     // Mobile responsive
     @include mobile {
-      font-size: 20px;
+      @include flex(column, flex-start, flex-start);
+      margin: 0 8px 12px;
+      gap: 8px;
     }
 
     // Tablet responsive
     @include tablet {
-      font-size: 22px;
+      margin: 0 12px 13px;
+    }
+
+    .main-section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 0;
+
+      // Mobile responsive
+      @include mobile {
+        font-size: 20px;
+      }
+
+      // Tablet responsive
+      @include tablet {
+        font-size: 22px;
+      }
+    }
+
+    .analysis-period-info {
+      font-size: 14px;
+      color: $text-secondary;
+      font-style: italic;
+
+      // Mobile responsive
+      @include mobile {
+        font-size: 12px;
+      }
+
+      // Tablet responsive
+      @include tablet {
+        font-size: 13px;
+      }
     }
   }
 
-  .analysis-period-info {
-    font-size: 14px;
-    color: $text-secondary;
-    font-style: italic;
+  .forecast-main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    min-height: 600px;
 
     // Mobile responsive
     @include mobile {
-      font-size: 12px;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      min-height: 0;
+      height: auto;
     }
 
     // Tablet responsive
     @include tablet {
-      font-size: 13px;
+      gap: 18px;
+      min-height: 500px;
+      height: auto;
     }
-  }
-}
 
-.forecast-main-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  min-height: 600px;
+    // Left Side
+    .forecast-left-side {
+      .line-chart-card {
+        background: $white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+        height: 100%;
+        @include flex(column, flex-start, stretch);
 
-  // Mobile responsive
-  @include mobile {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    min-height: 0;
-    height: auto;
-  }
+        .chart-header {
+          margin-bottom: 20px;
+          @include flex(row, space-between, flex-start);
 
-  // Tablet responsive
-  @include tablet {
-    gap: 18px;
-    min-height: 500px;
-    height: auto;
-  }
+          .chart-title-section {
+            .title-with-tooltip {
+              @include flex(row, flex-start, center);
+              gap: 8px;
+              margin-bottom: 8px;
 
-  // Left Side
-  .forecast-left-side {
-    .line-chart-card {
-      background: $white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      padding: 24px;
-      height: 100%;
-      @include flex(column, flex-start, stretch);
-
-      .chart-header {
-        margin-bottom: 20px;
-        @include flex(row, space-between, flex-start);
-
-        .chart-title-section {
-          .title-with-tooltip {
-            @include flex(row, flex-start, center);
-            gap: 8px;
-            margin-bottom: 8px;
-
-            h3 {
-              font-size: 18px;
-              font-weight: 600;
-              font-family: "Pretendard", sans-serif;
-              color: $text-primary;
-              margin: 0;
-            }
-
-            .tooltip-wrapper {
-              position: relative;
-
-              .help-icon {
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background: $primary-color;
-                color: $white;
-                font-size: 10px;
-                font-weight: bold;
-                @include flex(row, center, center);
-                cursor: help;
-
-                &:hover + .tooltip-content {
-                  display: block;
-                }
+              h3 {
+                font-size: 18px;
+                font-weight: 600;
+                font-family: "Pretendard", sans-serif;
+                color: $text-primary;
+                margin: 0;
               }
 
-              .tooltip-content {
-                display: none;
-                position: absolute;
-                bottom: 100%;
-                left: 50%;
-                transform: translateX(-50%);
-                background: $text-primary;
-                color: $white;
-                padding: 8px 12px;
-                border-radius: 4px;
-                font-size: 12px;
-                white-space: nowrap;
-                z-index: 1000;
+              .tooltip-wrapper {
+                position: relative;
 
-                &::after {
-                  content: "";
+                .help-icon {
+                  width: 16px;
+                  height: 16px;
+                  border-radius: 50%;
+                  background: $primary-color;
+                  color: $white;
+                  font-size: 10px;
+                  font-weight: bold;
+                  @include flex(row, center, center);
+                  cursor: help;
+
+                  &:hover + .tooltip-content {
+                    display: block;
+                  }
+                }
+
+                .tooltip-content {
+                  display: none;
                   position: absolute;
-                  top: 100%;
+                  bottom: 100%;
                   left: 50%;
                   transform: translateX(-50%);
-                  border: 4px solid transparent;
-                  border-top-color: $text-primary;
+                  background: $text-primary;
+                  color: $white;
+                  padding: 8px 12px;
+                  border-radius: 4px;
+                  font-size: 12px;
+                  white-space: nowrap;
+                  z-index: 1000;
+
+                  &::after {
+                    content: "";
+                    position: absolute;
+                    top: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border: 4px solid transparent;
+                    border-top-color: $text-primary;
+                  }
                 }
               }
             }
-          }
 
-          .chart-meta {
-            .period-text {
-              font-size: 12px;
-              color: $text-secondary;
-            }
-          }
-        }
-
-        .time-period-buttons {
-          @include flex(row, flex-start, center);
-          gap: 8px;
-
-          .period-btn {
-            padding: 8px 16px;
-            border: 1px solid $border-color;
-            border-radius: 4px;
-            background: $white;
-            font-size: 12px;
-            color: $text-secondary;
-            cursor: pointer;
-            transition: all 0.2s;
-
-            &.active,
-            &:hover {
-              background: $primary-color;
-              color: $white;
-              border-color: $primary-color;
-            }
-          }
-        }
-      }
-
-      .line-chart-container {
-        flex: 1;
-        height: 280px;
-        position: relative;
-        margin-bottom: 20px;
-
-        canvas {
-          width: 100% !important;
-          height: 100% !important;
-        }
-      }
-
-      .stats-cards-below {
-        @include flex(column, flex-start, stretch);
-        gap: 12px;
-
-        .stat-card {
-          background: #ffffff;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-          border-radius: 6px;
-          padding: 16px;
-          @include flex(row, space-between, center);
-
-          .stat-info {
-            @include flex(row, flex-start, center);
-            gap: 8px;
-
-            .stat-label {
-              font-size: 14px;
-              color: #060606;
-              font-weight: 500;
-            }
-          }
-
-          .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: $text-primary;
-          }
-
-          .stat-comparison {
-            @include flex(row, flex-end, center);
-            gap: 8px;
-
-            .comparison-label {
-              font-size: 14px;
-              background: rgba(76, 175, 80, 0.1);
-              color: #388e3c;
-            }
-
-            .comparison-value {
-              font-size: 12px;
-              font-weight: 600;
-
-              &.increase {
-                color: $success-color;
+            .chart-meta {
+              .period-text {
+                font-size: 12px;
+                color: $text-secondary;
               }
             }
           }
 
-          .stat-breakdown {
-            &.horizontal-parts {
+          .time-period-buttons {
+            @include flex(row, flex-start, center);
+            gap: 8px;
+
+            .period-btn {
+              padding: 8px 16px;
+              border: 1px solid $border-color;
+              border-radius: 4px;
+              background: $white;
+              font-size: 12px;
+              color: $text-secondary;
+              cursor: pointer;
+              transition: all 0.2s;
+
+              &.active,
+              &:hover {
+                background: $primary-color;
+                color: $white;
+                border-color: $primary-color;
+              }
+            }
+          }
+        }
+
+        .line-chart-container {
+          flex: 1;
+          height: 280px;
+          position: relative;
+          margin-bottom: 20px;
+
+          canvas {
+            width: 100% !important;
+            height: 100% !important;
+          }
+        }
+
+        .stats-cards-below {
+          @include flex(column, flex-start, stretch);
+          gap: 12px;
+
+          .stat-card {
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            padding: 16px;
+            @include flex(row, space-between, center);
+
+            .stat-info {
+              @include flex(row, flex-start, center);
+              gap: 8px;
+
+              .stat-label {
+                font-size: 14px;
+                color: #060606;
+                font-weight: 500;
+                margin-right: 20px;
+              }
+            }
+
+            .stat-value {
+              font-size: 20px;
+              font-weight: 700;
+              color: $text-primary;
+            }
+
+            .stat-comparison {
               @include flex(row, flex-end, center);
               gap: 8px;
 
-              span {
+              .comparison-label {
                 font-size: 14px;
-                color: #6f6f6f;
+                color: #555555;
+              }
+
+              .comparison-value {
+                font-size: 12px;
+                font-weight: 600;
+
+                &.increase {
+                  color: #388e3c;
+                }
+              }
+            }
+
+            .stat-breakdown {
+              &.horizontal-parts {
+                @include flex(row, flex-end, center);
+                gap: 8px;
+
+                span {
+                  font-size: 14px;
+                  color: #6f6f6f;
+                }
               }
             }
           }
         }
       }
     }
-  }
 
-  // Right Side
-  .forecast-right-side {
-    @include flex(column, flex-start, stretch);
-    gap: 20px;
+    // Right Side
+    .forecast-right-side {
+      @include flex(column, flex-start, stretch);
+      gap: 20px;
 
-    // Heatmap
-    .heatmap-card {
-      background: $white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      padding: 20px;
-      flex: 1;
+      // Heatmap
+      .heatmap-card {
+        background: $white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        flex: 1;
 
-      .heatmap-main-container {
-        @include flex(row, flex-start, stretch);
-        gap: 16px;
-        height: 100%;
+        .heatmap-main-container {
+          @include flex(row, flex-start, stretch);
+          gap: 16px;
+          height: 100%;
 
-        .heatmap-content {
-          flex: 1;
-          @include flex(column, flex-start, stretch);
-
-          .heatmap-header {
-            margin-bottom: 16px;
-
-            h3 {
-              font-size: 18px;
-              font-weight: 600;
-              color: $text-primary;
-              font-family: "Pretendard", sans-serif;
-              margin: 0;
-            }
-          }
-
-          .heatmap-container {
+          .heatmap-content {
             flex: 1;
+            @include flex(column, flex-start, stretch);
 
-            .heatmap-section {
-              @include flex(column, flex-start, stretch);
-              gap: 16px;
-            }
+            .heatmap-header {
+              margin-bottom: 16px;
 
-            // Heatmap Table - Fixed Layout
-            .heatmap-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 20px;
-
-              th,
-              td {
-                border: 1px solid $border-color;
-                padding: 8px 12px;
-                text-align: center;
-                vertical-align: middle;
-                font-size: 12px;
-              }
-
-              th {
-                color: #333333;
+              h3 {
+                font-size: 18px;
                 font-weight: 600;
-                font-size: 11px;
-              }
-
-              .row-label {
-                background: $background-light;
                 color: $text-primary;
-                font-weight: 600;
-                text-align: left !important;
-                font-size: 10px;
-                white-space: nowrap;
-                padding: 8px 12px;
-              }
-
-              .heatmap-cell {
-                cursor: pointer;
-                transition: all 0.2s;
-                font-weight: 600;
-                color: $white;
-                position: relative;
-
-                &:hover {
-                  transform: scale(1.1);
-                  z-index: 10;
-                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-                }
-
-                // Color coding based on values
-                &[data-value="0"],
-                &.bottom-20 {
-                  background: #90caf9;
-                  color: $text-primary;
-                }
-                &[data-value="12"],
-                &.bottom-20-40 {
-                  background: #42a5f5;
-                  color: $text-primary;
-                }
-                &[data-value="18"],
-                &.median-20 {
-                  background: #1976d2;
-                }
-                &[data-value="23"],
-                &.top-20-40 {
-                  background: #1565c0;
-                }
-                &.top-20 {
-                  background: #0d47a1;
-                }
+                font-family: "Pretendard", sans-serif;
+                margin: 0;
               }
             }
 
-            // Heatmap Legend - Horizontal Layout
-            .heatmap-legend {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              gap: 15px;
-              margin-top: 15px;
-              flex-wrap: wrap;
+            .heatmap-container {
+              flex: 1;
 
-              .legend-item {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 10px;
-                color: $text-secondary;
+              .heatmap-section {
+                @include flex(column, flex-start, stretch);
+                gap: 16px;
+              }
 
-                .legend-color {
-                  width: 12px;
-                  height: 12px;
-                  border-radius: 2px;
+              // Heatmap Table - Fixed Layout
+              .heatmap-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
 
-                  &.top-20 {
-                    background: #0d47a1;
+                th,
+                td {
+                  border: 1px solid $border-color;
+                  padding: 8px 12px;
+                  text-align: center;
+                  vertical-align: middle;
+                  font-size: 12px;
+                }
+
+                th {
+                  color: #333333;
+                  font-weight: 600;
+                  font-size: 11px;
+                }
+
+                .row-label {
+                  background: $background-light;
+                  color: $text-primary;
+                  font-weight: 600;
+                  text-align: left !important;
+                  font-size: 10px;
+                  white-space: nowrap;
+                  padding: 8px 12px;
+                }
+
+                .heatmap-cell {
+                  cursor: pointer;
+                  transition: all 0.2s;
+                  font-weight: 600;
+                  color: $white;
+                  position: relative;
+
+                  &:hover {
+                    transform: scale(1.1);
+                    z-index: 10;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
                   }
-                  &.top-20-40 {
-                    background: #1565c0;
+
+                  // Color coding based on values
+                  &[data-value="0"],
+                  &.bottom-20 {
+                    background: #90caf9;
+                    color: $text-primary;
                   }
+                  &[data-value="12"],
+                  &.bottom-20-40 {
+                    background: #42a5f5;
+                    color: $text-primary;
+                  }
+                  &[data-value="18"],
                   &.median-20 {
                     background: #1976d2;
                   }
-                  &.bottom-20-40 {
-                    background: #42a5f5;
+                  &[data-value="23"],
+                  &.top-20-40 {
+                    background: #1565c0;
                   }
-                  &.bottom-20 {
-                    background: #90caf9;
+                  &.top-20 {
+                    background: #0d47a1;
+                  }
+                }
+              }
+
+              // Heatmap Legend - Horizontal Layout
+              .heatmap-legend {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                margin-top: 15px;
+                flex-wrap: wrap;
+
+                .legend-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 10px;
+                  color: $text-secondary;
+
+                  .legend-color {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 2px;
+
+                    &.top-20 {
+                      background: #0d47a1;
+                    }
+                    &.top-20-40 {
+                      background: #1565c0;
+                    }
+                    &.median-20 {
+                      background: #1976d2;
+                    }
+                    &.bottom-20-40 {
+                      background: #42a5f5;
+                    }
+                    &.bottom-20 {
+                      background: #90caf9;
+                    }
                   }
                 }
               }
@@ -1594,151 +1609,151 @@ $desktop: 1920px;
           }
         }
       }
-    }
 
-    // Pie Charts Section
-    .pie-charts-card {
-      background: $white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      padding: 20px;
-      flex: 1;
+      // Pie Charts Section
+      .pie-charts-card {
+        background: $white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        flex: 1;
 
-      .pie-charts-header {
-        margin-bottom: 20px;
+        .pie-charts-header {
+          margin-bottom: 20px;
 
-        h3 {
-          font-size: 18px;
-          font-weight: 600;
-          color: #060606;
-          margin: 0;
-          text-align: left;
-          font-family: "Pretendard", sans-serif;
-        }
-      }
-
-      .pie-charts-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-
-        .pie-chart-grid-item {
-          display: grid;
-          grid-template-columns: 100px 1fr;
-          gap: 10px;
-          align-items: center;
-
-          .pie-chart-wrapper {
-            position: relative;
-            width: 90px;
-            height: 90px;
-
-            canvas {
-              width: 90px !important;
-              height: 90px !important;
-            }
-
-            .chart-center-title {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              pointer-events: none;
-              font-weight: 600;
-              font-size: 10px;
-              text-align: center;
-              color: #060606;
-              padding: 2px 4px;
-              border-radius: 3px;
-              white-space: nowrap;
-              font-family: "Pretendard", sans-serif;
-            }
+          h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #060606;
+            margin: 0;
+            text-align: left;
+            font-family: "Pretendard", sans-serif;
           }
+        }
 
-          .chart-content {
-            .chart-title {
-              font-size: 14px;
-              font-weight: 600;
-              color: $text-primary;
-              margin-bottom: 10px;
-              font-family: "Pretendard", sans-serif;
+        .pie-charts-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+
+          .pie-chart-grid-item {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 10px;
+            align-items: center;
+
+            .pie-chart-wrapper {
+              position: relative;
+              width: 90px;
+              height: 90px;
+
+              canvas {
+                width: 90px !important;
+                height: 90px !important;
+              }
+
+              .chart-center-title {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+                font-weight: 600;
+                font-size: 10px;
+                text-align: center;
+                color: #060606;
+                padding: 2px 4px;
+                border-radius: 3px;
+                white-space: nowrap;
+                font-family: "Pretendard", sans-serif;
+              }
             }
 
-            .chart-legend {
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
-
-              .legend-entry {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 6px;
-                font-size: 11px;
-                color: $text-secondary;
+            .chart-content {
+              .chart-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: $text-primary;
+                margin-bottom: 10px;
                 font-family: "Pretendard", sans-serif;
+              }
 
-                .dot {
-                  width: 8px;
-                  height: 8px;
-                  border-radius: 50%;
-                  flex-shrink: 0;
+              .chart-legend {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
 
-                  // Member Type Colors
-                  &.individual {
-                    background: #1958a4;
-                  }
-                  &.joint {
-                    background: #4489da;
-                  }
-                  &.general {
-                    background: #4c9cfd;
-                  }
-                  &.temporary {
-                    background: #3a96d4;
+                .legend-entry {
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 6px;
+                  font-size: 11px;
+                  color: $text-secondary;
+                  font-family: "Pretendard", sans-serif;
+
+                  .dot {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+
+                    // Member Type Colors
+                    &.individual {
+                      background: #1958a4;
+                    }
+                    &.joint {
+                      background: #4489da;
+                    }
+                    &.general {
+                      background: #4c9cfd;
+                    }
+                    &.temporary {
+                      background: #3a96d4;
+                    }
+
+                    // Advance Booking Colors
+                    &.d15 {
+                      background: #1958a4;
+                    }
+                    &.d14 {
+                      background: #4489da;
+                    }
+                    &.d7 {
+                      background: #4c9cfd;
+                    }
+                    &.d3 {
+                      background: #3a96da;
+                    }
+                    &.d1 {
+                      background: #5ab4f0;
+                    }
+                    &.d0 {
+                      background: #91d3ff;
+                    }
+
+                    // Regional Colors
+                    &.phone {
+                      background: #1958a4;
+                    }
+                    &.internet {
+                      background: #4489da;
+                    }
+                    &.agency1 {
+                      background: #4c9cfd;
+                    }
+                    &.agency2 {
+                      background: #3a96d4;
+                    }
+                    &.other {
+                      background: #5ab4f0;
+                    }
                   }
 
-                  // Advance Booking Colors
-                  &.d15 {
-                    background: #1958a4;
+                  .legend-value {
+                    font-weight: 600;
+                    color: #060606;
                   }
-                  &.d14 {
-                    background: #4489da;
-                  }
-                  &.d7 {
-                    background: #4c9cfd;
-                  }
-                  &.d3 {
-                    background: #3a96da;
-                  }
-                  &.d1 {
-                    background: #5ab4f0;
-                  }
-                  &.d0 {
-                    background: #91d3ff;
-                  }
-
-                  // Regional Colors
-                  &.phone {
-                    background: #1958a4;
-                  }
-                  &.internet {
-                    background: #4489da;
-                  }
-                  &.agency1 {
-                    background: #4c9cfd;
-                  }
-                  &.agency2 {
-                    background: #3a96d4;
-                  }
-                  &.other {
-                    background: #5ab4f0;
-                  }
-                }
-
-                .legend-value {
-                  font-weight: 600;
-                  color: #060606;
                 }
               }
             }
@@ -1767,29 +1782,29 @@ $desktop: 1920px;
   }
 }
 
-.visitor-section {
-  height: 100%;
-  display: flex;
-  gap: 30px;
-  justify-content: space-between;
-  // height: 400px;
+  .visitor-section {
+    height: 100%;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+    // height: 400px;
 
-  // Mobile responsive
-  @include mobile {
-    @include flex(column, flex-start, stretch);
-    gap: 16px;
-    height: auto;
-    overflow: visible;
-  }
+    // Mobile responsive
+    @include mobile {
+      @include flex(column, flex-start, stretch);
+      gap: 16px;
+      height: auto;
+      overflow: visible;
+    }
 
-  // Tablet responsive
-  @include tablet {
-    gap: 20px;
-    height: auto;
-    overflow: visible;
-  }
+    // Tablet responsive
+    @include tablet {
+      gap: 20px;
+      height: auto;
+      overflow: visible;
+    }
 
-  .chart-header {
+    .chart-header {
     margin-bottom: 20px;
 
     @include flex(row, space-between, flex-start);
@@ -2250,6 +2265,7 @@ $desktop: 1920px;
   }
 }
 
+
 .card-gender {
   border-radius: 8px;
   background-color: white;
@@ -2320,11 +2336,11 @@ $desktop: 1920px;
   }
 
   .fill {
-    fill: #2563eb;
+    fill: #4489da;
     transition: height 0.6s ease;
   }
   .fill.female {
-    fill: #db2777;
+    fill: #f39b9b;
   }
 
   .male-percentage {
@@ -2334,7 +2350,7 @@ $desktop: 1920px;
     text-align: center;
     font-size: 22px;
     font-weight: bold;
-    color: #2563eb;
+    color: #4489da;
 
     // Mobile responsive
     @include mobile {
@@ -2353,7 +2369,7 @@ $desktop: 1920px;
     text-align: center;
     font-size: 22px;
     font-weight: bold;
-    color: #db2777;
+    color: #f39b9b;
 
     // Mobile responsive
     @include mobile {
@@ -2431,11 +2447,11 @@ $desktop: 1920px;
 // Responsive text utilities
 @mixin responsive-text($mobile-size, $tablet-size, $desktop-size) {
   font-size: $desktop-size;
-
+  
   @include tablet {
     font-size: $tablet-size;
   }
-
+  
   @include mobile {
     font-size: $mobile-size;
   }
@@ -2444,11 +2460,11 @@ $desktop: 1920px;
 // Responsive spacing utilities
 @mixin responsive-spacing($mobile, $tablet, $desktop) {
   margin: $desktop;
-
+  
   @include tablet {
     margin: $tablet;
   }
-
+  
   @include mobile {
     margin: $mobile;
   }
@@ -2457,11 +2473,11 @@ $desktop: 1920px;
 // Responsive padding utilities
 @mixin responsive-padding($mobile, $tablet, $desktop) {
   padding: $desktop;
-
+  
   @include tablet {
     padding: $tablet;
   }
-
+  
   @include mobile {
     padding: $mobile;
   }
