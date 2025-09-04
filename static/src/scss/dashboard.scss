@@ -183,7 +183,7 @@ $desktop: 1920px;
   @include mobile {
     width: 100%;
     left: -100%;
-    
+
     &.open {
       left: 0;
     }
@@ -193,7 +193,7 @@ $desktop: 1920px;
   @include tablet {
     width: 240px;
     left: -240px;
-    
+
     &.open {
       left: 0;
     }
@@ -399,6 +399,15 @@ $desktop: 1920px;
       gap: 8px;
       border-right: 1px solid $border-color;
       padding-right: 16px;
+
+      a {
+        &.active {
+          background-color: $primary-color;
+          color: $white;
+          text-decoration: none;
+          font-weight: 600;
+        }
+      }
 
       // Mobile responsive
       @include mobile {
@@ -1782,29 +1791,29 @@ $desktop: 1920px;
   }
 }
 
-  .visitor-section {
-    height: 100%;
-    display: flex;
-    gap: 30px;
-    justify-content: space-between;
-    // height: 400px;
+.visitor-section {
+  height: 100%;
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  // height: 400px;
 
-    // Mobile responsive
-    @include mobile {
-      @include flex(column, flex-start, stretch);
-      gap: 16px;
-      height: auto;
-      overflow: visible;
-    }
+  // Mobile responsive
+  @include mobile {
+    @include flex(column, flex-start, stretch);
+    gap: 16px;
+    height: auto;
+    overflow: visible;
+  }
 
-    // Tablet responsive
-    @include tablet {
-      gap: 20px;
-      height: auto;
-      overflow: visible;
-    }
+  // Tablet responsive
+  @include tablet {
+    gap: 20px;
+    height: auto;
+    overflow: visible;
+  }
 
-    .chart-header {
+  .chart-header {
     margin-bottom: 20px;
 
     @include flex(row, space-between, flex-start);
@@ -2265,7 +2274,6 @@ $desktop: 1920px;
   }
 }
 
-
 .card-gender {
   border-radius: 8px;
   background-color: white;
@@ -2447,11 +2455,11 @@ $desktop: 1920px;
 // Responsive text utilities
 @mixin responsive-text($mobile-size, $tablet-size, $desktop-size) {
   font-size: $desktop-size;
-  
+
   @include tablet {
     font-size: $tablet-size;
   }
-  
+
   @include mobile {
     font-size: $mobile-size;
   }
@@ -2460,11 +2468,11 @@ $desktop: 1920px;
 // Responsive spacing utilities
 @mixin responsive-spacing($mobile, $tablet, $desktop) {
   margin: $desktop;
-  
+
   @include tablet {
     margin: $tablet;
   }
-  
+
   @include mobile {
     margin: $mobile;
   }
@@ -2473,11 +2481,11 @@ $desktop: 1920px;
 // Responsive padding utilities
 @mixin responsive-padding($mobile, $tablet, $desktop) {
   padding: $desktop;
-  
+
   @include tablet {
     padding: $tablet;
   }
-  
+
   @include mobile {
     padding: $mobile;
   }

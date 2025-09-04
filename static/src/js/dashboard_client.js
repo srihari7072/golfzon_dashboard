@@ -34,9 +34,9 @@ class GolfzonDashboard extends Component {
                   
                   <div class="header-right">
                       <div class="language-switcher">
-                          <a href="#" t-on-click="() => this.switchLanguage('en_US')" style="font-weight:bold;">ENG</a>
+                          <a href="#" t-att-class="state.currentLanguage === 'en_US' ? 'active' : ''" t-on-click="() => this.switchLanguage('en_US')" style="font-weight:bold;">ENG</a>
                           <span>|</span>
-                          <a href="#" t-on-click="() => this.switchLanguage('ko_KR')" style="font-weight:bold;">KOR</a>
+                          <a href="#" t-att-class="state.currentLanguage === 'ko_KR' ? 'active' : ''" t-on-click="() => this.switchLanguage('ko_KR')" style="font-weight:bold;">KOR</a>
                       </div>
                       <div class="user-info">
                           <span class="username" t-esc="state.userName"/>
@@ -757,6 +757,7 @@ class GolfzonDashboard extends Component {
 
     this.state = useState({
       activeMenuItem: "dashboard",
+      currentLanguage: "en_US",
       userName: "username",
       gender: {
         male: 60,
@@ -904,6 +905,13 @@ class GolfzonDashboard extends Component {
       day: "numeric",
     };
     this.state.currentDate = today.toLocaleDateString(this.getCurrentLocale(), options);
+
+    try {
+      const storedLang = localStorage.getItem("dashboard_lang");
+      if (storedLang && (storedLang === "ko_KR" || storedLang === "en_US")) {
+        this.state.currentLanguage = storedLang;
+      }
+    } catch (e) {}
 
     // Update analysis period and period labels on mount
     this.state.forecastData.analysis_period = this.generateAnalysisPeriod();
@@ -1342,6 +1350,7 @@ class GolfzonDashboard extends Component {
   }
 
   switchLanguage(lang) {
+    this.state.currentLanguage = lang;
     try {
       localStorage.setItem("dashboard_lang", lang);
     } catch (e) {}
