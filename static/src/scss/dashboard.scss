@@ -31,7 +31,7 @@ $desktop: 1920px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 14px 14px;
+  margin: 0 14px 30px;
 
   .main-section-title {
     font-size: 24px;
@@ -150,12 +150,14 @@ $desktop: 1920px;
     @include flex(column);
     height: auto;
     min-height: 100vh;
+    overflow: visible;
   }
 
   // Tablet responsive
   @include tablet {
     @include flex(row);
     height: 100vh;
+    overflow: hidden;
   }
 }
 
@@ -279,12 +281,14 @@ $desktop: 1920px;
     height: auto;
     min-height: 100vh;
     width: 100%;
+    overflow: visible;
   }
 
   // Tablet responsive
   @include tablet {
     height: 100vh;
     width: calc(100% - 240px);
+    overflow: hidden;
   }
 }
 
@@ -415,11 +419,18 @@ $desktop: 1920px;
         font-weight: 500;
         padding: 4px 8px;
         border-radius: 4px;
-        transition: background-color 0.2s;
+        transition: background-color 0.2s, color 0.2s;
 
         &:hover {
           text-decoration: underline;
-          background-color: white;
+          background-color: #cee1ff;
+        }
+
+        &.active {
+          background-color: $primary-color;
+          color: $white;
+          text-decoration: none;
+          font-weight: 600;
         }
 
         // Mobile responsive
@@ -433,6 +444,10 @@ $desktop: 1920px;
           padding: 3px 6px;
           font-size: 15px;
         }
+      }
+
+      span {
+        color: #060606;
       }
     }
 
@@ -516,8 +531,16 @@ $desktop: 1920px;
 
   // Mobile responsive
   @include mobile {
-    overflow-x: auto;
-    scroll-behavior: smooth;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  // Tablet responsive
+  @include tablet {
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 
@@ -1240,12 +1263,14 @@ $desktop: 1920px;
       grid-template-columns: 1fr;
       gap: 16px;
       min-height: 0;
+      height: auto;
     }
 
     // Tablet responsive
     @include tablet {
       gap: 18px;
       min-height: 500px;
+      height: auto;
     }
 
     // Left Side
@@ -1756,26 +1781,29 @@ $desktop: 1920px;
   }
 }
 
-.visitor-section {
-  height: 100%;
-  display: flex;
-  gap: 30px;
-  justify-content: space-between;
-  // height: 400px;
+  .visitor-section {
+    height: 100%;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+    // height: 400px;
 
-  // Mobile responsive
-  @include mobile {
-    @include flex(column, flex-start, stretch);
-    gap: 16px;
-    height: auto;
-  }
+    // Mobile responsive
+    @include mobile {
+      @include flex(column, flex-start, stretch);
+      gap: 16px;
+      height: auto;
+      overflow: visible;
+    }
 
-  // Tablet responsive
-  @include tablet {
-    gap: 20px;
-  }
+    // Tablet responsive
+    @include tablet {
+      gap: 20px;
+      height: auto;
+      overflow: visible;
+    }
 
-  .chart-header {
+    .chart-header {
     margin-bottom: 20px;
 
     @include flex(row, space-between, flex-start);
@@ -2383,6 +2411,15 @@ $desktop: 1920px;
 @mixin hide-on-mobile {
   @include mobile {
     display: none !important;
+  }
+}
+
+// Fix for mobile scrollbar issues
+@mixin mobile-no-scroll {
+  @include mobile {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
   }
 }
 
