@@ -517,7 +517,7 @@ $desktop: 1920px;
   // Mobile responsive
   @include mobile {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 }
 
@@ -1239,7 +1239,7 @@ $desktop: 1920px;
     @include mobile {
       grid-template-columns: 1fr;
       gap: 16px;
-      min-height: auto;
+      min-height: 0;
     }
 
     // Tablet responsive
