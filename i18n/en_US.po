@@ -181,13 +181,13 @@ msgstr "예약 패턴"
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Reservations"
-msgstr "예약"
+msgstr "Reservations"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Reservations (Same period last year)"
-msgstr "예약 (지난해 동기 대비)"
+msgstr "Reservations (Same period last year)"
 
 #. module: golfzon_dashboard
 #. odoo-python
