@@ -1534,7 +1534,13 @@ class GolfzonDashboard extends Component {
             x: {
               grid: { display: false },
               ticks: {
-                autoSkip: false,
+                callback: function(value, index, ticks) {
+                  // Show only first and last labels
+                  if (index === 0 || index === ticks.length - 1) {
+                    return this.getLabelForValue(value);
+                  }
+                  return '';
+                },
                 font: { size: 12 },
               },
             },
@@ -1620,7 +1626,13 @@ class GolfzonDashboard extends Component {
             scales: {
               x: {
                 ticks: {
-                  autoSkip: false,
+                  callback: function(value, index, ticks) {
+                    // Show only first and last labels
+                    if (index === 0 || index === ticks.length - 1) {
+                      return this.getLabelForValue(value);
+                    }
+                    return '';
+                  },
                   font: { size: 12 },
                 },
                 grid: { display: false },
@@ -1688,9 +1700,16 @@ class GolfzonDashboard extends Component {
               },
               x: {
                 ticks: {
-                  autoSkip: false,
+                  callback: function(value, index, ticks) {
+                    // Show only first and last labels
+                    if (index === 0 || index === ticks.length - 1) {
+                      return this.getLabelForValue(value);
+                    }
+                    return '';
+                  },
                   font: { size: 12 },
                 },
+                grid: { display: false },
               },
             },
             plugins: {
