@@ -55,17 +55,19 @@ class GolfzonDashboard extends Component {
                           <!-- Date Section -->
                           <div class="info-section date-section">
                               <div class="info-content">
-                                  <div class="info-value" t-esc="_t('Today:') + ' ' + state.currentDate"/>
+                                  <div class="info-label"><t t-esc="_t('TODAY:')"/></div>
+                                  <div class="info-value" t-esc="state.currentDate"/>
                               </div>
                           </div>
 
                           <!-- Weather Section -->
+                          <div class="multi-info-container">
                           <div class="info-section weather-section">
                               <div class="info-icon">
                                 <img src="/golfzon_dashboard/static/src/img/weather-logo.svg" alt="Weather" class="weather-icon" />
                               </div>
                               <div class="info-content">
-                                  <div class="info-label"><t t-esc="_t('WEATHER')"/></div>
+                                  <div class="info-label"><t t-esc="_t('WEATHER:')"/></div>
                                   <div class="info-value">
                                       <t t-esc="_t('Temperature') + ' ' + state.weather.temperature"/>°C, 
                                       <t t-esc="_t('Chance of precipitation') + ' ' + state.weather.chance"/>%, 
@@ -80,7 +82,7 @@ class GolfzonDashboard extends Component {
                                 <img src="/golfzon_dashboard/static/src/img/reservation-logo.svg" alt="Reservations" class="reservations-icon" />
                               </div>
                               <div class="info-content">
-                                  <div class="info-label"><t t-esc="_t('TOTAL RESERVATIONS')"/></div>
+                                  <div class="info-label"><t t-esc="_t('TOTAL RESERVATIONS:')"/></div>
                                   <div class="info-value">
                                       <t t-esc="state.reservations.current"/>/<t t-esc="state.reservations.total"/>
                                   </div>
@@ -93,13 +95,14 @@ class GolfzonDashboard extends Component {
                                 <img src="/golfzon_dashboard/static/src/img/tee-time-logo.svg" alt="Tee Time" class="tee-time-icon" />
                               </div>
                               <div class="info-content">
-                                  <div class="info-label"><t t-esc="_t('FULL TEE TIME')"/></div>
+                                  <div class="info-label"><t t-esc="_t('FULL TEE TIME:')"/></div>
                                   <div class="info-value">
                                       <t t-esc="_t('Part1')"/> <t t-esc="state.teeTime.part1.current"/>/<t t-esc="state.teeTime.part1.total"/>, 
                                       <t t-esc="_t('Part2')"/> <t t-esc="state.teeTime.part2.current"/>/<t t-esc="state.teeTime.part2.total"/>, 
                                       <t t-esc="_t('Part3')"/> <t t-esc="state.teeTime.part3.current"/>/<t t-esc="state.teeTime.part3.total"/>
                                   </div>
                               </div>
+                          </div>
                           </div>
 
                           <!-- Dropdown Button -->
@@ -562,7 +565,7 @@ class GolfzonDashboard extends Component {
                           <div class="visitor-section">
                               <div class="visitor-trend">
                                   <div class="chart-header">
-                                      <div class="chart-title-section">
+                                      <div class="chart-title-section d-flex">
                                             <div class="title-with-tooltip">
                                               <h3><t t-esc="_t('Visitor Trends')"/></h3>
                                             </div>
@@ -677,12 +680,12 @@ class GolfzonDashboard extends Component {
                                 
                                 <div class="sales-trends">
                                     <div class="chart-header">
-                                        <div class="chart-title-section">
+                                        <div class="chart-title-section d-flex">
                                                 <div class="title-with-tooltip">
                                                 <h3><t t-esc="_t('Sales Trends')"/></h3>
                                                 </div>
                                                 <div class="chart-meta">
-                                                <span class="period-text"><t t-esc="state.last30DaysTitle"/></span>
+                                                <span class="period-text"><t t-esc="state.simpleLast30DaysLabel"/></span>
                                                 </div>
                                         </div>
                                         <div class="time-period-buttons">
@@ -892,7 +895,9 @@ class GolfzonDashboard extends Component {
     const startDateStr = startDate.toLocaleDateString(locale, options);
     const endDateStr = endDate.toLocaleDateString(locale, options);
 
-    return `${_t("Analysis period:")} ${_t("The last 30 days")} (${startDateStr} - ${endDateStr})`;
+    return `${_t("Analysis period:")} ${_t(
+      "The last 30 days"
+    )} (${startDateStr} - ${endDateStr})`;
   }
 
   async onMounted() {
@@ -904,7 +909,10 @@ class GolfzonDashboard extends Component {
       month: "long",
       day: "numeric",
     };
-    this.state.currentDate = today.toLocaleDateString(this.getCurrentLocale(), options);
+    this.state.currentDate = today.toLocaleDateString(
+      this.getCurrentLocale(),
+      options
+    );
 
     try {
       const storedLang = localStorage.getItem("dashboard_lang");
@@ -922,7 +930,9 @@ class GolfzonDashboard extends Component {
     const locale = this.getCurrentLocale();
     const startStr = startDate.toLocaleDateString(locale, fmt);
     const endStr = endDate.toLocaleDateString(locale, fmt);
-    this.state.last30DaysLabel = `${_t("Last 30 Days")} (${startStr} - ${endStr})`;
+    this.state.last30DaysLabel = `${_t(
+      "Last 30 Days"
+    )} (${startStr} - ${endStr})`;
     this.state.simpleLast30DaysLabel = `(${_t("Last 30 Days")})`;
     this.state.last30DaysTitle = _t("Last 30 Days");
 
@@ -950,6 +960,55 @@ class GolfzonDashboard extends Component {
   // Add setActiveMenuItem method
   setActiveMenuItem(item) {
     this.state.activeMenuItem = item;
+  }
+
+  // --- ADD: Helper to generate date labels ---
+  getDateLabels(period) {
+    const today = new Date();
+    const days = period === "7days" ? 7 : 30;
+    const labels = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      let label = `${date.getMonth() + 1}.${date.getDate()}`;
+      if (i === 0) label += " (Today)";
+      labels.push(label);
+    }
+    return labels;
+  }
+
+  // --- ADD: Helpers to generate filtered data ---
+  getFilteredSalesData(period) {
+    const labels = this.getDateLabels(period);
+    const salesData = [];
+    const lastYearSalesData = [];
+    for (let i = 0; i < labels.length; i++) {
+      salesData.push(300 + Math.floor(Math.random() * 400));
+      lastYearSalesData.push(200 + Math.floor(Math.random() * 300));
+    }
+    return { labels, salesData, lastYearSalesData };
+  }
+
+  getFilteredVisitorData(period) {
+    const labels = this.getDateLabels(period);
+    const visitorData = [];
+    const lastYearVisitorData = [];
+    for (let i = 0; i < labels.length; i++) {
+      visitorData.push(200 + Math.floor(Math.random() * 400));
+      lastYearVisitorData.push(100 + Math.floor(Math.random() * 200));
+    }
+    return { labels, visitorData, lastYearVisitorData };
+  }
+
+  getFilteredReservationData(period) {
+    const labels = this.getDateLabels(period);
+    const currentYearData = [];
+    const lastYearData = [];
+    for (let i = 0; i < labels.length; i++) {
+      currentYearData.push(40 + Math.floor(Math.random() * 60));
+      lastYearData.push(30 + Math.floor(Math.random() * 50));
+    }
+    return { labels, currentYearData, lastYearData };
   }
 
   async fetchDashboardData() {
@@ -1120,7 +1179,7 @@ class GolfzonDashboard extends Component {
 
   setPeriod(period) {
     this.state.selectedPeriod = period;
-    this.updateLineChart();
+    this.updateAllCharts();
   }
 
   getHeatmapCellClass(value) {
@@ -1164,13 +1223,10 @@ class GolfzonDashboard extends Component {
     this.state.showReservationDetails = false;
   }
 
-  updateLineChart() {
-    // Clear existing chart
-    if (this.lineChartInstance) {
-      this.lineChartInstance.destroy();
-    }
-    // Reinitialize with new data
-    this.initializeLineChart();
+  updateAllCharts() {
+    this.updateSalesChart();
+    this.updateVisitorChart();
+    this.updateLineChart();
   }
 
   async detectUserLocation() {
@@ -1355,7 +1411,9 @@ class GolfzonDashboard extends Component {
       localStorage.setItem("dashboard_lang", lang);
     } catch (e) {}
     // Hit backend to persist lang in session/user, then redirect to dashboard
-    const target = `/golfzon/dashboard/set_lang?lang=${encodeURIComponent(lang)}`;
+    const target = `/golfzon/dashboard/set_lang?lang=${encodeURIComponent(
+      lang
+    )}`;
     window.location.assign(target);
   }
 
@@ -1364,442 +1422,308 @@ class GolfzonDashboard extends Component {
     if (window.Chart && window.ChartDataLabels) {
       Chart.register(window.ChartDataLabels);
     }
+    this.updateAllCharts();
 
-    try {
-      console.log("Initializing all charts...");
-
-      // 1. LINE CHART (Reservation Trends)
-      this.initializeLineChart();
-
-      // 4. SALES CHART
-      if (this.canvasRef.el) {
-        if (this.salesChartInstance) this.salesChartInstance.destroy();
-        this.salesChartInstance = new Chart(
-          this.canvasRef.el.getContext("2d"),
-          {
-            type: "bar",
-            data: {
-              labels: [
-                "5.2",
-                "5.22",
-                "5.25",
-                "5.28",
-                "5.3",
-                "5.32",
-                "5.35",
-                "5.38",
-                "5.4",
-                "5.42",
-                "5.45",
-                "5.48",
-                "5.5",
-                "5.52",
-                "5.55",
-                "5.58",
-                "5.6",
-                "5.62",
-                "5.65",
-                "5.68",
-                "5.7",
-                "5.75",
-                "6.1",
+    if (this.ageRef.el) {
+      if (this.ageChartInstance) this.ageChartInstance.destroy();
+      this.ageChartInstance = new Chart(this.ageRef.el.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: ["60+ years", "50s", "40s", "30s", "20s", "Under 10"],
+          datasets: [
+            {
+              label: _t("Visitor Ratio"),
+              data: [22, 27, 20, 20, 9, 2],
+              backgroundColor: [
+                "#4489DA",
+                "#1958A4",
+                "#4C9CFD",
+                "#4C9CFD",
+                "#3A96D4",
+                "#5AB4F0",
               ],
-              datasets: [
-                {
-                  label: _t("Sales"),
-                  data: [
-                    320, 450, 220, 150, 390, 600, 550, 400, 375, 500, 650, 700,
-                    480, 520, 610, 580, 450, 400, 300, 350, 400, 480, 600,
-                  ],
-                  backgroundColor: "rgba(4, 109, 236, 1)",
-                  borderRadius: {
-                    topLeft: 12,
-                    topRight: 12,
-                    bottomLeft: 0,
-                    bottomRight: 0,
-                  },
-                  borderSkipped: "bottom",
-                  barPercentage: 0.65,
-                  categoryPercentage: 0.5,
-                },
-                {
-                  label: _t("Last Year's Sales (Same Period)"),
-                  data: [
-                    220, 300, 210, 200, 220, 480, 450, 350, 300, 450, 500, 550,
-                    400, 450, 500, 480, 350, 300, 250, 300, 350, 400, 450,
-                  ],
-                  backgroundColor: "rgba(134, 229, 245, 1)",
-                  borderRadius: {
-                    topLeft: 12,
-                    topRight: 12,
-                    bottomLeft: 0,
-                    bottomRight: 0,
-                  },
-                  borderSkipped: "bottom",
-                  barPercentage: 0.65,
-                  categoryPercentage: 0.5,
-                },
-              ],
+              borderRadius: 15,
+              barThickness: 25,
             },
-            options: {
-              responsive: true,
-              plugins: {
-                tooltip: { enabled: false },
-                legend: {
-                  display: true,
-                  position: "bottom",
-                  labels: {
-                    usePointStyle: true,
-                    pointStyle: "circle",
-                    boxWidth: 4,
-                    boxHeight: 4,
-                    padding: 15,
-                  },
-                },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 30,
+              ticks: { callback: (value) => value + "%" },
+            },
+            y: { ticks: { font: { size: 14 } } },
+          },
+        },
+      });
+      console.log("Age chart initialized");
+    }
+
+    // PIE CHARTS (Inline implementation)
+    this.initializePieCharts();
+  }
+
+  // SALES CHART
+  updateSalesChart() {
+    const { labels, salesData, lastYearSalesData } = this.getFilteredSalesData(
+      this.state.selectedPeriod
+    );
+    if (this.salesChartInstance) this.salesChartInstance.destroy();
+    if (this.canvasRef.el) {
+      this.salesChartInstance = new Chart(this.canvasRef.el.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: _t("Sales"),
+              data: salesData,
+              backgroundColor: "rgba(4, 109, 236, 1)",
+              borderRadius: {
+                topLeft: 12,
+                topRight: 12,
+                bottomLeft: 0,
+                bottomRight: 0,
               },
-              scales: {
-                x: {
-                  grid: { display: false },
-                  ticks: {
-                    callback: function (val, index, ticks) {
-                      if (index === 0 || index === ticks.length - 1) {
-                        return this.getLabelForValue(val);
-                      }
-                      return "";
-                    },
-                  },
-                },
-                y: {
-                  grid: { display: true, drawBorder: false, color: "#EFEFEF" },
-                  beginAtZero: true,
-                  max: 700,
-                  ticks: { stepSize: 100 },
-                },
+              borderSkipped: "bottom",
+              barPercentage: 0.65,
+              categoryPercentage: 0.5,
+            },
+            {
+              label: _t("Last Year's Sales (Same Period)"),
+              data: lastYearSalesData,
+              backgroundColor: "rgba(134, 229, 245, 1)",
+              borderRadius: {
+                topLeft: 12,
+                topRight: 12,
+                bottomLeft: 0,
+                bottomRight: 0,
+              },
+              borderSkipped: "bottom",
+              barPercentage: 0.65,
+              categoryPercentage: 0.5,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: { enabled: true },
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                pointStyle: "circle",
+                boxWidth: 4,
+                boxHeight: 4,
+                padding: 15,
               },
             },
-          }
-        );
-        console.log("Sales chart initialized");
-      }
-
-      // 5. VISITOR CHART
-      if (this.visitorRef.el) {
-        if (this.visitorChartInstance) this.visitorChartInstance.destroy();
-        this.visitorChartInstance = new Chart(
-          this.visitorRef.el.getContext("2d"),
-          {
-            type: "line",
-            data: {
-              labels: [
-                "5.2",
-                "5.25",
-                "5.3",
-                "5.35",
-                "5.4",
-                "5.45",
-                "5.5",
-                "5.6",
-                "5.7",
-                _t("6.1(Today)"),
-              ],
-              datasets: [
-                {
-                  label: _t("2025 Visitors"),
-                  data: [200, 180, 250, 400, 600, 450, 320, 340, 360, 500],
-                  borderColor: "#046DEC",
-                  backgroundColor: "transparent",
-                  borderWidth: 2,
-                  tension: 0.4,
-                  pointRadius: 0,
-                  pointBackgroundColor: "white",
-                  pointBorderColor: "#046DEC",
-                  pointBorderWidth: 2,
-                },
-                {
-                  label: _t("2024 Visitors"),
-                  data: [150, 130, 120, 140, 160, 180, 170, 150, 140, 130],
-                  borderColor: "#86E5F5",
-                  backgroundColor: "transparent",
-                  borderWidth: 2,
-                  tension: 0.4,
-                  pointRadius: 0,
-                  pointBackgroundColor: "white",
-                  pointBorderColor: "#86E5F5",
-                  pointBorderWidth: 2,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              interaction: { mode: "nearest", intersect: false },
-              onClick: (event, activeEls, chart) => {
-                const points = chart.getElementsAtEventForMode(
-                  event,
-                  "nearest",
-                  { intersect: false },
-                  true
-                );
-                if (points.length) {
-                  const datasetIndex = points[0].datasetIndex;
-                  const index = points[0].index;
-                  const dataset = chart.data.datasets[datasetIndex];
-                  dataset.pointRadius = dataset.data.map(() => 0);
-                  dataset.pointRadius[index] = 7;
-                  chart.update();
-                }
-              },
-              plugins: {
-                legend: {
-                  display: true,
-                  position: "bottom",
-                  labels: {
-                    usePointStyle: true,
-                    pointStyle: "circle",
-                    boxWidth: 4,
-                    boxHeight: 4,
-                    padding: 16,
-                    generateLabels: (chart) => {
-                      const labels =
-                        Chart.defaults.plugins.legend.labels.generateLabels(
-                          chart
-                        );
-                      labels.forEach((l) => {
-                        l.pointStyle = "circle";
-                        l.fillStyle =
-                          chart.data.datasets[l.datasetIndex].borderColor;
-                        l.strokeStyle =
-                          chart.data.datasets[l.datasetIndex].borderColor;
-                      });
-                      return labels;
-                    },
-                  },
-                },
-                tooltip: {
-                  enabled: true,
-                  position: "nearest",
-                  yAlign: "bottom",
-                  displayColors: false,
-                  callbacks: {
-                    label: function (context) {
-                      return _t("Visitors") + ": " + context.raw.toLocaleString();
-                    },
-                  },
-                },
-              },
-              scales: {
-                x: {
-                  ticks: {
-                    callback: function (value, index, ticks) {
-                      if (index === 0 || index === ticks.length - 1) {
-                        return this.getLabelForValue(value);
-                      }
-                      return "";
-                    },
-                  },
-                  grid: { display: false },
-                },
-                y: {
-                  min: 0,
-                  max: 700,
-                  ticks: { stepSize: 100 },
-                  grid: { color: "#e0e0e0" },
-                },
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                autoSkip: false,
+                font: { size: 12 },
               },
             },
-          }
-        );
-        console.log("Visitor chart initialized");
-      }
+            y: {
+              grid: { display: true, drawBorder: false, color: "#EFEFEF" },
+              beginAtZero: true,
+              max: 700,
+              ticks: { stepSize: 100 },
+            },
+          },
+        },
+      });
+    }
+  }
 
-      // 6. AGE CHART
-      if (this.ageRef.el) {
-        if (this.ageChartInstance) this.ageChartInstance.destroy();
-        this.ageChartInstance = new Chart(this.ageRef.el.getContext("2d"), {
-          type: "bar",
+  // VISITOR CHART
+  updateVisitorChart() {
+    const { labels, visitorData, lastYearVisitorData } =
+      this.getFilteredVisitorData(this.state.selectedPeriod);
+    if (this.visitorChartInstance) this.visitorChartInstance.destroy();
+    if (this.visitorRef.el) {
+      this.visitorChartInstance = new Chart(
+        this.visitorRef.el.getContext("2d"),
+        {
+          type: "line",
           data: {
-            labels: ["60+ years", "50s", "40s", "30s", "20s", "Under 10"],
+            labels: labels,
             datasets: [
               {
-                label: _t("Visitor Ratio"),
-                data: [22, 27, 20, 20, 9, 2],
-                backgroundColor: [
-                  "#4489DA",
-                  "#1958A4",
-                  "#4C9CFD",
-                  "#4C9CFD",
-                  "#3A96D4",
-                  "#5AB4F0",
-                ],
-                borderRadius: 15,
-                barThickness: 25,
+                label: _t("2025 Visitors"),
+                data: visitorData,
+                borderColor: "#046DEC",
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 0,
+                pointBackgroundColor: "white",
+                pointBorderColor: "#046DEC",
+                pointBorderWidth: 2,
+              },
+              {
+                label: _t("2024 Visitors"),
+                data: lastYearVisitorData,
+                borderColor: "#86E5F5",
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 0,
+                pointBackgroundColor: "white",
+                pointBorderColor: "#86E5F5",
+                pointBorderWidth: 2,
               },
             ],
           },
           options: {
-            indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
+            interaction: { mode: "nearest", intersect: false },
             plugins: {
-              legend: { display: false },
-              tooltip: { enabled: true },
+              legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                  usePointStyle: true,
+                  pointStyle: "circle",
+                  boxWidth: 4,
+                  boxHeight: 4,
+                  padding: 16,
+                },
+              },
+              tooltip: {
+                enabled: true,
+                position: "nearest",
+                yAlign: "bottom",
+                displayColors: false,
+                callbacks: {
+                  label: function (context) {
+                    return _t("Visitors") + ": " + context.raw.toLocaleString();
+                  },
+                },
+              },
             },
             scales: {
               x: {
-                beginAtZero: true,
-                max: 30,
-                ticks: { callback: (value) => value + "%" },
+                ticks: {
+                  autoSkip: false,
+                  font: { size: 12 },
+                },
+                grid: { display: false },
               },
-              y: { ticks: { font: { size: 14 } } },
+              y: {
+                min: 0,
+                max: 700,
+                ticks: { stepSize: 100 },
+                grid: { color: "#e0e0e0" },
+              },
             },
           },
-        });
-        console.log("Age chart initialized");
-      }
-
-      // 7. PIE CHARTS (Inline implementation)
-      this.initializePieCharts();
-
-      console.log("All charts initialized successfully");
-    } catch (chartError) {
-      console.error("Error initializing charts:", chartError);
+        }
+      );
     }
   }
 
   // LINE CHART METHOD - Updated with dot legends
-  initializeLineChart() {
-    if (!this.reservationTrendChart.el) {
-      console.warn("Reservation trend chart element not found");
-      return;
+  updateLineChart() {
+    const { labels, currentYearData, lastYearData } =
+      this.getFilteredReservationData(this.state.selectedPeriod);
+    if (this.lineChartInstance) this.lineChartInstance.destroy();
+    if (this.reservationTrendChart.el) {
+      this.lineChartInstance = new Chart(
+        this.reservationTrendChart.el.getContext("2d"),
+        {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: _t("Reservations"),
+                data: currentYearData,
+                borderColor: "#2196f3",
+                backgroundColor: "rgba(33, 150, 243, 0.1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 8,
+                pointBackgroundColor: "#2196f3",
+              },
+              {
+                label: _t("Reservations (Same period last year)"),
+                data: lastYearData,
+                borderColor: "#81d4fa",
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 8,
+                pointBackgroundColor: "#81d4fa",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "nearest", intersect: false },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 120,
+                ticks: { stepSize: 20 },
+              },
+              x: {
+                ticks: {
+                  autoSkip: false,
+                  font: { size: 12 },
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                  usePointStyle: true,
+                  pointStyle: "circle",
+                  padding: 20,
+                },
+              },
+              tooltip: {
+                enabled: true,
+                mode: "nearest",
+                intersect: false,
+                callbacks: {
+                  label: function (context) {
+                    return `Reservations: ${context.parsed.y}`;
+                  },
+                },
+                titleFont: { size: 12, weight: "bold" },
+                bodyFont: { size: 11 },
+                padding: 12,
+                backgroundColor: "rgba(0,0,0,0.8)",
+                borderColor: "#2196f3",
+                borderWidth: 1,
+              },
+            },
+          },
+        }
+      );
     }
-
-    const ctx = this.reservationTrendChart.el.getContext("2d");
-
-    if (this.lineChartInstance) {
-      this.lineChartInstance.destroy();
-    }
-
-    const currentYearData = [40, 50, 45, 60, 55, 70, 65, 80, 75, 90];
-    const lastYearData = [35, 42, 38, 48, 45, 58, 52, 65, 60, 70];
-
-    this.lineChartInstance = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: ["6.1(Today)", "", "", "", "", "", "", "", "", "6.30"],
-        datasets: [
-          {
-            label: _t("Reservations"),
-            data: currentYearData,
-            borderColor: "#2196f3",
-            backgroundColor: "rgba(33, 150, 243, 0.1)",
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            pointHoverRadius: 8,
-            pointBackgroundColor: "#2196f3",
-          },
-          {
-            label: _t("Reservations (Same period last year)"),
-            data: lastYearData,
-            borderColor: "#81d4fa",
-            backgroundColor: "transparent",
-            borderWidth: 2,
-            tension: 0.4,
-            pointRadius: 4,
-            pointHoverRadius: 8,
-            pointBackgroundColor: "#81d4fa",
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: "nearest", intersect: false },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 120,
-            ticks: {
-              stepSize: 20,
-              callback: function (value) {
-                return value;
-              },
-            },
-          },
-          x: {
-            ticks: {
-              callback: function (value, index, ticks) {
-                if (index === 0 || index === ticks.length - 1) {
-                  return this.getLabelForValue(value);
-                }
-                return "";
-              },
-            },
-          },
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: "bottom",
-            labels: {
-              usePointStyle: true,
-              pointStyle: "circle",
-              padding: 20,
-            },
-          },
-          tooltip: {
-            enabled: true,
-            mode: "nearest",
-            intersect: false,
-            callbacks: {
-              title: function (context) {
-                const date = new Date();
-                const days = [
-                  _t("Day"),
-                  _t("Month"),
-                  _t("Fury"),
-                  _t("Number"),
-                  _t("Neck"),
-                  _t("Gold"),
-                  _t("Saturday"),
-                ];
-                const months = [
-                  _t("January"),
-                  _t("February"),
-                  _t("March"),
-                  _t("April"),
-                  _t("May"),
-                  _t("June"),
-                  _t("July"),
-                  _t("August"),
-                  _t("September"),
-                  _t("October"),
-                  _t("November"),
-                  _t("December"),
-                ];
-                return `${days[date.getDay()]}, ${
-                  months[date.getMonth()]
-                } ${date.getDate()}, ${date.getFullYear()}`;
-              },
-              label: function (context) {
-                return `Reservations: ${context.parsed.y}`;
-              },
-              afterLabel: function (context) {
-                return ["Weather: Rain, 00mm", "Temperature: 18°-28°C"];
-              },
-            },
-            titleFont: { size: 12, weight: "bold" },
-            bodyFont: { size: 11 },
-            padding: 12,
-            backgroundColor: "rgba(0,0,0,0.8)",
-            borderColor: "#2196f3",
-            borderWidth: 1,
-          },
-        },
-      },
-    });
-    console.log("Line chart initialized");
   }
 
   // PIE CHARTS METHOD

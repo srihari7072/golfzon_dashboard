@@ -31,7 +31,7 @@ $desktop: 1920px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 14px 30px;
+  margin: 0 8px 14px;
 
   .main-section-title {
     font-size: 24px;
@@ -557,7 +557,7 @@ $desktop: 1920px;
 .golf-info-card {
   @include card;
   margin: 30px 30px 60px 30px;
-  padding: 16px;
+  padding: 25px 50px;
   position: relative;
   overflow: hidden;
   border: 1px solid #dee2e6;
@@ -576,21 +576,29 @@ $desktop: 1920px;
 
   .golf-info-main {
     @include flex(row, space-between, center);
-    gap: 12px;
+    // gap: 12px;
     flex-wrap: nowrap;
 
     // Mobile responsive
     @include mobile {
       @include flex(column, flex-start, stretch);
-      gap: 8px;
+      // gap: 8px;
       flex-wrap: wrap;
     }
 
     // Tablet responsive
     @include tablet {
-      gap: 10px;
+      // gap: 10px;
     }
 
+    .multi-info-container {
+      @include flex(row, flex-start, center);
+      gap: 60px;
+      margin-right: 33px;
+    }
+    .date-section {
+      margin-right: 93px;
+    }
     .info-section {
       @include flex(row, flex-start, center);
       gap: 8px;
@@ -684,13 +692,14 @@ $desktop: 1920px;
 
     .side-by-side-container {
       @include flex(row, flex-start, stretch);
+      padding: 12px;
       gap: 12px;
       height: 250px;
 
       .weather-half {
         flex: 1;
         @include flex(column, flex-start, stretch);
-        max-width: 50%;
+        max-width: 41%;
         height: 100%;
 
         .weather-section-header {
@@ -713,6 +722,7 @@ $desktop: 1920px;
           padding: 6px;
           overflow: hidden;
           height: 100%;
+          // width: 500px;
 
           .horizontal-weather-scroll {
             @include flex(row, flex-start, stretch);
@@ -748,11 +758,12 @@ $desktop: 1920px;
               border-right: 1px solid rgba(227, 232, 242, 0.3);
               padding: 4px 6px;
               text-align: center;
-              font-size: 9px;
+              font-size: 12px;
               min-width: 60px;
               flex-shrink: 0;
               transition: background-color 0.2s;
               height: 100%;
+              font-family: "Pretendard", sans-serif;
 
               &:last-child {
                 border-right: none;
@@ -766,12 +777,12 @@ $desktop: 1920px;
                 font-weight: 600;
                 color: #8b8b8b;
                 margin-bottom: 2px;
-                font-size: 10px;
+                // font-size: 10px;
                 white-space: nowrap;
               }
 
               .weather-icon {
-                font-size: 14px;
+                font-size: 25px;
                 margin: 2px 0;
               }
 
@@ -779,20 +790,20 @@ $desktop: 1920px;
                 font-weight: 700;
                 color: #131314;
                 margin-bottom: 2px;
-                font-size: 11px;
+                // font-size: 11px;
                 white-space: nowrap;
               }
 
               .precipitation-chance {
                 color: #8b8b8b;
-                font-size: 8px;
+                // font-size: 8px;
                 margin-bottom: 1px;
                 white-space: nowrap;
               }
 
               .precipitation-amount {
                 color: #8b8b8b;
-                font-size: 8px;
+                // font-size: 8px;
                 font-weight: 500;
                 white-space: nowrap;
               }
@@ -804,7 +815,7 @@ $desktop: 1920px;
       .tables-half {
         flex: 1;
         @include flex(column, flex-start, stretch);
-        max-width: 50%;
+        max-width: 59%;
         height: 100%;
 
         .tables-section-header {
@@ -822,7 +833,7 @@ $desktop: 1920px;
           flex: 1;
           @include flex(column, flex-start, stretch);
           height: 100%;
-
+          // width: 960px;
           .combined-tables-scroll {
             flex: 1;
             @include flex(row, flex-start, flex-start);
@@ -879,7 +890,7 @@ $desktop: 1920px;
                 .reservation-table {
                   width: 100%;
                   border-collapse: collapse;
-                  font-size: 9px;
+                  font-size: 10px;
                   min-height: 300px;
 
                   thead {
@@ -894,7 +905,7 @@ $desktop: 1920px;
                       padding: 8px 4px;
                       text-align: center;
                       font-weight: 600;
-                      font-size: 8px;
+                      font-size: 10px;
                       border-right: 1px solid #e0e0e0;
                       white-space: nowrap;
                       line-height: 1.2;
@@ -925,7 +936,7 @@ $desktop: 1920px;
                         padding: 8px 4px;
                         text-align: center;
                         border-right: 1px solid #e0e0e0;
-                        font-size: 8px;
+                        font-size: 10px;
                         white-space: nowrap;
                         line-height: 1.4;
                         min-height: 32px;
@@ -1197,7 +1208,7 @@ $desktop: 1920px;
 
 // Reservation Forecast Section
 .reservation-forecast-section {
-  margin: 0 30px 30px;
+  margin: 0 30px 60px;
 
   // Mobile responsive
   @include mobile {
@@ -1213,7 +1224,7 @@ $desktop: 1920px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 14px 30px;
+    margin: 0 8px 14px;
 
     // Mobile responsive
     @include mobile {
