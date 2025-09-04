@@ -344,24 +344,21 @@ class GolfzonDashboard extends Component {
                                       <div class="stat-card horizontal">
                                           <div class="stat-info">
                                               <span class="stat-label"><t t-esc="_t('Total number of reservations')"/></span>
-                                              <div class="tooltip-wrapper">
-                                                  <span class="help-icon">?</span>
-                                              </div>
+                                              <div class="stat-value">2,926</div>
                                           </div>
-                                          <div class="stat-value">2,926</div>
                                           <div class="stat-comparison">
                                               <span class="comparison-label"><t t-esc="_t('compared to same period last year')"/></span>
-                                              <span class="comparison-value increase">↑ 10%</span>
+                                              <div class="comparison-value increase">
+                                                <span class="trend-icon">▲</span>
+                                                <span>10%</span>
+                                              </div>
                                           </div>
                                       </div>
                                       <div class="stat-card horizontal">
                                           <div class="stat-info">
                                               <span class="stat-label"><t t-esc="_t('Total Operation rate')"/></span>
-                                              <div class="tooltip-wrapper">
-                                                  <span class="help-icon">?</span>
-                                              </div>
+                                              <div class="stat-value">78.5%</div>
                                           </div>
-                                          <div class="stat-value">78.5%</div>
                                           <div class="stat-breakdown horizontal-parts">
                                               <span><t t-esc="_t('Part 1')"/> 82.4%</span>
                                               <span><t t-esc="_t('Part 2')"/> 76.2%</span>
@@ -556,14 +553,12 @@ class GolfzonDashboard extends Component {
                 
                       <!-- Visitor status Section -->
                       <div class="visitor-status">
-                        <div class="reservation-forecast-section">
-                                <div class="section-header">
-                                    <h2 class="main-section-title"><t t-esc="_t('Visitor Status')"/></h2>
-                                        <div class="analysis-period-info">
-                                            <span t-esc="state.forecastData.analysis_period"/>
-                                    </div>
+                            <div class="section-header">
+                                <h2 class="main-section-title"><t t-esc="_t('Visitor Status')"/></h2>
+                                    <div class="analysis-period-info">
+                                        <span t-esc="state.forecastData.analysis_period"/>
                                 </div>
-                        </div>
+                            </div>
                           <div class="visitor-section">
                               <div class="visitor-trend">
                                   <div class="chart-header">
