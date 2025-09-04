@@ -674,7 +674,7 @@ class GolfzonDashboard extends Component {
                       
                             <div class="sales-trends-section">
                                 <div class="section-header">
-                                    <h2 class="main-section-title"><t t-esc="_t('Reservation Status')"/></h2>
+                                    <h2 class="main-section-title"><t t-esc="_t('Sales Status')"/></h2>
                                         <div class="analysis-period-info">
                                             <span t-esc="state.forecastData.analysis_period"/>
                                         </div>
