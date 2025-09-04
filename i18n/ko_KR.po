@@ -608,8 +608,8 @@ msgstr "예약 회원 구성 현황"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Member Type"
-msgstr "회원 유형"
+msgid "Reservation Proportion by Type"
+msgstr "유형별 예약 비율"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -638,14 +638,14 @@ msgstr "임시 조직"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Advance Booking"
-msgstr "사전 예약"
+msgid "Reservation Proportion by Time"
+msgstr "시간별 예약 비율"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Regional Distribution"
-msgstr "지역 분포"
+msgid "Reservation Proportion by Channel"
+msgstr "채널별 예약 비율"
 
 #. module: golfzon_dashboard
 #. odoo-javascript

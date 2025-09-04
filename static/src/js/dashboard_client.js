@@ -437,7 +437,7 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="memberTypeChart"></canvas>
-                                              <div class="chart-center-title"><t t-esc="_t('Member Type')"/></div>
+                                              <div class="chart-center-title"><t t-esc="_t('Reservation Proportion by Type')"/></div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
@@ -469,7 +469,7 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="advanceBookingChart"></canvas>
-                                              <div class="chart-center-title"><t t-esc="_t('Advance Booking')"/></div>
+                                              <div class="chart-center-title"><t t-esc="_t('Reservation Proportion by Time')"/></div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
@@ -511,7 +511,7 @@ class GolfzonDashboard extends Component {
                                       <div class="pie-chart-grid-item">
                                           <div class="pie-chart-wrapper">
                                               <canvas t-ref="regionalChart"></canvas>
-                                              <div class="chart-center-title"><t t-esc="_t('Regional Distribution')"/></div>
+                                              <div class="chart-center-title"><t t-esc="_t('Reservation Proportion by Channel')"/></div>
                                           </div>
                                           <div class="chart-content">
                                               <div class="chart-legend">
