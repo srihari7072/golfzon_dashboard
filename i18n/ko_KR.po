@@ -1,0 +1,816 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* golfzon_dashboard
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-03 12:43+0000\n"
+"PO-Revision-Date: 2025-09-03 12:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "(Previous Period)"
+msgstr "(이전 기간)"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cumulative Sales This Year"
+msgstr "올해 누적 매출"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Monthly Sales"
+msgstr "현재 월 매출"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cumulative Unit Price This Year"
+msgstr "올해 누적 객단가"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Monthly Guest Price"
+msgstr "현재 월 객단가"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cumulative Operation Rate This Year"
+msgstr "올해 누적 가동률"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Month Operation Rate"
+msgstr "현재 월 가동률"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "1 hour ago"
+msgstr "1시간 전"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "1 hour ago - 2 New Leads"
+msgstr "1시간 전 - 신규 리드 2건"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "13 mins ago"
+msgstr "13분 전"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "13 mins ago - New Reservation"
+msgstr "13분 전 - 신규 예약"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "2 New Leads"
+msgstr "2개의 새로운 리드"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "2024 Visitors"
+msgstr "2024년 방문객"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "2025 Visitors"
+msgstr "2025년 방문객"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "3 SMS Campaigns"
+msgstr "3개의 SMS 캠페인"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Average Order Value Performance"
+msgstr "평균 주문 금액 성과"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Campaign Engagement"
+msgstr "캠페인 참여도"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cloud CC Core Performance Indicators"
+msgstr "클라우드 CC 핵심 성과 지표"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "(전년 대비)"
+msgstr "(year-over-year)"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "올해 누적 가동률"
+msgstr "Cumulative Operation Rate This Year"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "현재 월 운영률"
+msgstr "Current Month Operation Rate"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Weekly Average"
+msgstr "현재 주간 평균"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Weekly Capacity"
+msgstr "현재 주간 처리량"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Weekly Revenue"
+msgstr "현재 주간 수익"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Customer Growth"
+msgstr "고객 증가"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Last Year's Sales (Same Period)"
+msgstr "지난해 매출 (동일 기간)"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Monthly Average"
+msgstr "월 평균"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Monthly Capacity"
+msgstr "월간 용량"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Monthly Revenue"
+msgstr "월간 매출"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "New Leads"
+msgstr "새로운 리드"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "New Reservation"
+msgstr "새 예약"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Reservation Patterns"
+msgstr "예약 패턴"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservations"
+msgstr "예약"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservations (Same period last year)"
+msgstr "예약 (지난해 동기 대비)"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Revenue"
+msgstr "매출"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Revenue Trends"
+msgstr "매출 동향"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sales"
+msgstr "판매"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Sales Performance Indicators"
+msgstr "영업 성과 지표"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Today"
+msgstr "오늘"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Today - 3 SMS Campaigns"
+msgstr "오늘 - 3건의 SMS 캠페인"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Today's Reservations"
+msgstr "오늘 예약"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Utilization Rate Performance"
+msgstr "이용률 성과"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitor Ratio"
+msgstr "방문자 비율"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitors"
+msgstr "방문객"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "campaign"
+msgstr "캠페인"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "leads"
+msgstr "선도"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "reservation"
+msgstr "예약"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_root
+msgid "골프존"
+msgstr "Golfzon"
+
+#. module: golfzon_dashboard
+#: model:ir.actions.client,name:golfzon_dashboard.action_golfzon_dashboard
+msgid "골프존 대시보드"
+msgstr "Golfzon Dashboard"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "골프존 대시보드 알림"
+msgstr "Golfzon Dashboard Notification"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "다음은 오늘의 대시보드 요약입니다:"
+msgstr "Here is today's dashboard summary:"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "대시보드"
+msgstr "Dashboard"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "대시보드 보기"
+msgstr "Dashboard View"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dummy_record
+msgid "대시보드용 더미 데이터 (컨트롤러에서 사용됨)."
+msgstr "Dummy data for the dashboard (used in the controller)."
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "매출:"
+msgstr "Sales:"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "새로운 리드:"
+msgstr "New Lead:"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "오늘 예약:"
+msgstr "Today's Appointment:"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "전체 대시보드에 액세스하세요:"
+msgstr "Access the full dashboard:"
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "친애하는"
+msgstr "Dear"
+
+# Dashboard localized date/period strings
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Analysis period:"
+msgstr "분석 기간:"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "The last 30 days"
+msgstr "최근 30일"
+
+# The following entries support UI strings in dashboard_client.js
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Dashboard"
+msgstr "대시보드"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Member"
+msgstr "회원"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Member Group"
+msgstr "회원 그룹"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "CRM Campaign"
+msgstr "CRM 캠페인"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Today:"
+msgstr "오늘:"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "WEATHER"
+msgstr "날씨"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Temperature"
+msgstr "기온"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Chance of precipitation"
+msgstr "강수 확률"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Precipitation"
+msgstr "강수량"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "TOTAL RESERVATIONS"
+msgstr "총 예약"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "FULL TEE TIME"
+msgstr "풀 티타임"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Part1"
+msgstr "파트1"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Part2"
+msgstr "파트2"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Part3"
+msgstr "파트3"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Weather & Round Details"
+msgstr "날씨 및 라운드 상세"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Person"
+msgstr "예약자"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "ID"
+msgstr "ID"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Date"
+msgstr "예약 일자"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Tee Time"
+msgstr "티타임"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Rounds"
+msgstr "라운드"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Status"
+msgstr "예약 현황"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Trend by Period"
+msgstr "기간별 예약 추세"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "30 days after the inquiry date"
+msgstr "조회일 기준 30일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Last 7 Days"
+msgstr "최근 7일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Last 30 Days"
+msgstr "최근 30일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total number of reservations"
+msgstr "총 예약 건수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "compared to same period last year"
+msgstr "전년 동기간 대비"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total Operation rate"
+msgstr "총 가동률"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Part 1"
+msgstr "파트 1"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Part 2"
+msgstr "파트 2"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Part 3"
+msgstr "파트 3"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Trends"
+msgstr "예약 추이"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Loading heatmap data..."
+msgstr "히트맵 데이터를 불러오는 중..."
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Top 20%"
+msgstr "상위 20%"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Top 20-40%"
+msgstr "상위 20-40%"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Median 20%"
+msgstr "중위 20%"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Bottom 20-40%"
+msgstr "하위 20-40%"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Bottom 20%"
+msgstr "하위 20%"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation member composition status"
+msgstr "예약 회원 구성 현황"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Proportion by Type"
+msgstr "유형별 예약 비율"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Individual"
+msgstr "개인"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Joint Organization"
+msgstr "공동 조직"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "General Organization"
+msgstr "일반 조직"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Temporary Organization"
+msgstr "임시 조직"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Proportion by Time"
+msgstr "시간별 예약 비율"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservation Proportion by Channel"
+msgstr "채널별 예약 비율"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Phone"
+msgstr "전화"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Internet"
+msgstr "인터넷"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Agency"
+msgstr "대행"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Other"
+msgstr "기타"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitor Status"
+msgstr "방문자 현황"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitor Trends"
+msgstr "방문자 추이"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "(Last 30 Days)"
+msgstr "(최근 30일)"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total visitors"
+msgstr "총 방문자"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Compared to last year"
+msgstr "전년 대비"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total visitors by section"
+msgstr "구간별 총 방문자"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitor Ratio by Age Group"
+msgstr "연령대별 방문자 비율"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Gender Ratio"
+msgstr "성비"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "man"
+msgstr "남성"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "female"
+msgstr "여성"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sales Trends"
+msgstr "매출 추이"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total Sales"
+msgstr "총 매출"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Average transaction value"
+msgstr "평균 거래 금액"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sun"
+msgstr "일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Mon"
+msgstr "월"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Tue"
+msgstr "화"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Wed"
+msgstr "수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Thu"
+msgstr "목"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Fri"
+msgstr "금"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sat"
+msgstr "토"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Dawn (5-7 AM)"
+msgstr "새벽 (5-7 AM)"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Morning (8am-12pm)"
+msgstr "오전 (8am-12pm)"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Afternoon (1-4 PM)"
+msgstr "오후 (1-4 PM)"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Night (5-7 PM)"
+msgstr "저녁 (5-7 PM)"

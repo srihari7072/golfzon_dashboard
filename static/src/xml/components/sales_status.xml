@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.SectionHeader">
+        <div class="section-header">
+            <h2 class="main-section-title" t-esc="sectionTitle"/>
+            <div class="analysis-period-info">
+                <span t-esc="analysisPeriod"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.SalesStatus">
+        <div class="sales-trends-section">
+            <t t-call="golfzon_dashboard.SectionHeader">
+                <t t-set="sectionTitle" t-value="_t('Sales Status')"/>
+                <t t-set="analysisPeriod" t-value="state.forecastData.analysis_period"/>
+            </t>
+            
+            <div class="sales-trends">
+                <t t-call="golfzon_dashboard.ChartHeader">
+                    <div>
+                        <t t-set="chartTitle" t-value="_t('Sales Trends')"/>
+                        <div class="tooltip-wrapper">
+                            <span class="help-icon">
+                                <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                            </span>
+                            <div class="tooltip-content">
+                                <t t-esc="_t('30 days prior to the inquiry date')"/>
+                            </div>
+                        </div>
+                    </div>
+                    <t t-set="periodText" t-value="state.simpleLast30DaysLabel"/>
+                    <t t-set="showPeriodButtons" t-value="true"/>
+                </t>
+                
+                <div class="sales-trend-graph">
+                    <t t-call="golfzon_dashboard.ChartCanvas">
+                        <t t-set="canvasRef" t-value="'salesChart'"/>
+                    </t>
+                </div>
+                
+                <div class="sales-trend-card-container">
+                    <div class="sales-trend-card">
+                        <div class="sales-numbers">
+                            <span class="trend-card-title">
+                                <t t-esc="_t('Total Sales')"/>
+                                <span class="tooltip-wrapper">
+                                    <span class="help-icon">
+                                        <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                    </span>
+                                    <div class="tooltip-content">
+                                        <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                    </div>
+                                </span>
+                            </span>
+                            <span class="trend-card-title">1,000,000</span>
+                        </div>
+                        <div class="trend-wrapper sales-numbers">
+                            <span class="trend-card-title">
+                                <t t-esc="_t('Compared to last year')"/>
+                            </span>
+                            <div class="trend-indicator trend-up">
+                                <span class="trend-icon">▲</span>
+                                <span t-esc="state.performanceData.sales_performance.monthly_trend"/>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="sales-trend-card">
+                        <div class="sales-numbers">
+                            <span class="trend-card-title">
+                                <t t-esc="_t('Average transaction value')"/>
+                                <span class="tooltip-wrapper">
+                                    <span class="help-icon">
+                                        <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                    </span>
+                                    <div class="tooltip-content">
+                                        <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                    </div>
+                                </span>
+                            </span>
+                            <span class="trend-card-title">190,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

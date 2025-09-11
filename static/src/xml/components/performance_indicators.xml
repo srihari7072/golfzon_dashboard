@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.PerformanceIndicators">
+        <div class="performance-indicators-section">
+            <h2 class="main-section-title" t-esc="state.performanceData.main_title"/>
+            
+            <div class="performance-cards-container">
+                <!-- Sales Performance Card -->
+                <t t-call="golfzon_dashboard.PerformanceCard">
+                    <t t-set="cardData" t-value="state.performanceData.sales_performance"/>
+                    <t t-set="cardClass" t-value="'sales-card'"/>
+                </t>
+
+                <!-- Average Order Value Card -->
+                <t t-call="golfzon_dashboard.PerformanceCard">
+                    <t t-set="cardData" t-value="state.performanceData.avg_order_value"/>
+                    <t t-set="cardClass" t-value="'order-value-card'"/>
+                </t>
+
+                <!-- Utilization Rate Card -->
+                <t t-call="golfzon_dashboard.PerformanceCard">
+                    <t t-set="cardData" t-value="state.performanceData.utilization_rate"/>
+                    <t t-set="cardClass" t-value="'utilization-card'"/>
+                    <t t-set="hasTrendDown" t-value="true"/>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.PerformanceCard">
+        <div t-att-class="'performance-card ' + cardClass">
+            <div class="card-header">
+                <h3 class="card-title" t-esc="cardData.title"/>
+            </div>
+            <div class="card-content">
+                <div class="metrics-row">
+                    <div class="metric-column">
+                        <div class="metric-label" t-esc="cardData.current_label"/>
+                        <div class="metric-value" t-esc="cardData.current_revenue || cardData.current_weekly_value || cardData.current_weekly_capacity"/>
+                        <div class="trend-wrapper">
+                            <div t-att-class="'trend-indicator ' + (hasTrendDown ? 'trend-down' : 'trend-up')">
+                                <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
+                                <span t-esc="cardData.current_trend"/>
+                            </div>
+                            <div class="trend-period" t-esc="cardData.trend_period"/>
+                        </div>
+                    </div>
+                    <div class="metric-column">
+                        <div class="metric-label" t-esc="cardData.monthly_label"/>
+                        <div class="metric-value" t-esc="cardData.monthly_revenue || cardData.monthly_value || cardData.monthly_capacity"/>
+                        <div class="trend-wrapper">
+                            <div class="trend-indicator trend-up">
+                                <span class="trend-icon">▲</span>
+                                <span t-esc="cardData.monthly_trend"/>
+                            </div>
+                            <div class="trend-period" t-esc="cardData.trend_period"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.Navigation">
+        <div t-ref="menuDrawer" class="menu-drawer">
+            <div class="drawer-header">
+                <img src="/golfzon_dashboard/static/src/img/golfzon-logo.png" alt="Golfzon Logo" class="drawer-logo"/>
+                <span class="drawer-title">GOLFZON</span>
+            </div>
+            <nav class="drawer-nav">
+                <a class="drawer-item" t-att-class="state.activeMenuItem === 'dashboard' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('dashboard')">
+                    <t t-esc="_t('Dashboard')"/>
+                </a>
+                <a class="drawer-item" t-att-class="state.activeMenuItem === 'member' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('member')">
+                    <t t-esc="_t('Member')"/>
+                </a>
+                <a class="drawer-item" t-att-class="state.activeMenuItem === 'membergroup' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('membergroup')">
+                    <t t-esc="_t('Member Group')"/>
+                </a>
+                <a class="drawer-item" t-att-class="state.activeMenuItem === 'crmcampaign' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('crmcampaign')">
+                    <t t-esc="_t('CRM Campaign')"/>
+                </a>
+            </nav>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.Header">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="menu-btn" t-on-click="toggleDrawer">
+                    <span class="menu-icon">&#9776;</span>
+                </button>
+                <img src="/golfzon_dashboard/static/src/img/golfzon-logo.png" alt="Golfzon Logo" class="header-logo"/>
+            </div>
+            
+            <div class="header-right">
+                <div class="language-switcher">
+                    <a href="#" t-att-class="state.currentLanguage === 'en_US' ? 'active' : ''" t-on-click="() => this.switchLanguage('en_US')" style="font-weight:bold;">ENG</a>
+                    <span>|</span>
+                    <a href="#" t-att-class="state.currentLanguage === 'ko_KR' ? 'active' : ''" t-on-click="() => this.switchLanguage('ko_KR')" style="font-weight:bold;">KOR</a>
+                </div>
+                <div class="user-info">
+                    <span class="username" t-esc="state.userName"/>
+                </div>
+                <button class="logout-btn" t-on-click="logout" title="Logout">
+                    <img src="/golfzon_dashboard/static/src/img/logout-button.svg" alt="Logout" class="logout-icon"/>
+                </button>
+            </div>
+        </header>
+    </t>
+</templates>

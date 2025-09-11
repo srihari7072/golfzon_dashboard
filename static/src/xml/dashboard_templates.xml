@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.Dashboard">
+        <div class="o_golfzon_dashboard">
+            <!-- Navigation Components -->
+            <t t-call="golfzon_dashboard.Navigation"/>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Header -->
+                <t t-call="golfzon_dashboard.Header"/>
+                
+                <!-- Scrollable Content Container -->
+                <div class="scrollable-content">
+                    <!-- Weather & Golf Info Section -->
+                    <t t-call="golfzon_dashboard.WeatherWidget"/>
+                    
+                    <!-- Performance Indicators Section -->
+                    <t t-call="golfzon_dashboard.PerformanceIndicators"/>
+                    
+                    <!-- 🆕 UPDATED: Enhanced Reservation Forecast Section -->
+                    <t t-call="golfzon_dashboard.ReservationForecast"/>
+                    
+                    <!-- Visitor Status Section -->
+                    <t t-call="golfzon_dashboard.VisitorStatus"/>
+                    
+                    <!-- Sales Status Section -->
+                    <t t-call="golfzon_dashboard.SalesStatus"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Assets Template -->
+    <template id="dashboard_assets" name="Golfzon Dashboard Assets">
+        <link rel="stylesheet" href="/golfzon_dashboard/static/src/css/dashboard.scss"/>
+        <script src="/golfzon_dashboard/static/lib/chartjs/Chart.min.js"/>
+    </template>
+
+    <!-- Email Template for Notifications -->
+    <template id="dashboard_notification_email">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2c3e50;"><t t-translate="Golfzon Dashboard Notification">Golfzon Dashboard Notification</t></h2>
+            <p><t t-translate="Dear">Dear</t> <t t-esc="user_name"/>,</p>
+            <p><t t-translate="Here's your daily dashboard summary:">Here's your daily dashboard summary:</t></p>
+            <ul>
+                <li><t t-translate="Today's Reservations:">Today's Reservations:</t> <strong><t t-esc="reservations"/></strong></li>
+                <li><t t-translate="Revenue:">Revenue:</t> <strong>$<t t-esc="revenue"/></strong></li>
+                <li><t t-translate="New Leads:">New Leads:</t> <strong><t t-esc="leads"/></strong></li>
+            </ul>
+            <p><t t-translate="Access your full dashboard:">Access your full dashboard:</t> <a href="/golfzon/dashboard"><t t-translate="View Dashboard">View Dashboard</t></a></p>
+        </div>
+    </template>
+</odoo>

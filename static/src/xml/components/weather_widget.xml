@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.WeatherWidget">
+        <div class="golf-info-card">
+            <div class="golf-info-main">
+                <!-- Date Section -->
+                <t t-call="golfzon_dashboard.DateSection"/>
+
+                <!-- Weather and Info Container -->
+                <div class="multi-info-container">
+                    <t t-call="golfzon_dashboard.WeatherSection"/>
+                    <t t-call="golfzon_dashboard.ReservationInfo"/>
+                    <t t-call="golfzon_dashboard.TeeTimeInfo"/>
+                </div>
+
+                <!-- Dropdown Button -->
+                <t t-call="golfzon_dashboard.WeatherDropdownButton"/>
+            </div>
+            
+            <!-- Weather Details Panel -->
+            <t t-call="golfzon_dashboard.WeatherDetailsPanel"/>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.DateSection">
+        <div class="info-section date-section">
+            <div class="info-content">
+                <div class="info-label">
+                    <t t-esc="_t('TODAY:')"/>
+                </div>
+                <div class="info-value" t-esc="state.currentDate"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.WeatherSection">
+        <div class="info-section weather-section">
+            <div class="info-icon">
+                <img src="/golfzon_dashboard/static/src/img/weather-logo.svg" alt="Weather" class="weather-icon"/>
+            </div>
+            <div class="info-content">
+                <div class="info-label">
+                    <t t-esc="_t('WEATHER:')"/>
+                </div>
+                <div class="info-value">
+                    <t t-esc="_t('Temperature') + ' ' + state.weather.temperature"/>°C, 
+                    <t t-esc="_t('Chance of precipitation') + ' ' + state.weather.chance"/>%, 
+                    <t t-esc="_t('Precipitation') + ' ' + state.weather.precipitation"/>mm
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.ReservationInfo">
+        <div class="info-section reservations-section">
+            <div class="info-icon">
+                <img src="/golfzon_dashboard/static/src/img/reservation-logo.svg" alt="Reservations" class="reservations-icon"/>
+            </div>
+            <div class="info-content">
+                <div class="info-label">
+                    <t t-esc="_t('TOTAL RESERVATIONS:')"/>
+                </div>
+                <div class="info-value">
+                    <t t-esc="state.reservations.current"/>/<t t-esc="state.reservations.total"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.TeeTimeInfo">
+        <div class="info-section tee-time-section">
+            <div class="info-icon">
+                <img src="/golfzon_dashboard/static/src/img/tee-time-logo.svg" alt="Tee Time" class="tee-time-icon"/>
+            </div>
+            <div class="info-content">
+                <div class="info-label">
+                    <t t-esc="_t('FULL TEE TIME:')"/>
+                </div>
+                <div class="info-value">
+                    <t t-esc="_t('Part1')"/> <t t-esc="state.teeTime.part1.current"/>/<t t-esc="state.teeTime.part1.total"/>, 
+                    <t t-esc="_t('Part2')"/> <t t-esc="state.teeTime.part2.current"/>/<t t-esc="state.teeTime.part2.total"/>, 
+                    <t t-esc="_t('Part3')"/> <t t-esc="state.teeTime.part3.current"/>/<t t-esc="state.teeTime.part3.total"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.WeatherDropdownButton">
+        <div class="info-section dropdown-section">
+            <button class="weather-details-btn" t-on-click="toggleWeatherDetails">
+                <span>
+                    <t t-esc="_t('Weather &amp; Round Details')"/>
+                </span>
+                <span class="dropdown-arrow" t-att-class="state.showWeatherDetails ? 'open' : ''">
+                    <img src="/golfzon_dashboard/static/src/img/dropdown-arrow.svg" alt="Dropdown Arrow"/>
+                </span>
+            </button>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.WeatherDetailsPanel">
+        <div class="weather-details-panel" t-att-class="state.showWeatherDetails ? 'open' : ''">
+            <div class="side-by-side-container">
+                <!-- Left Half - Horizontal Weather -->
+                <t t-call="golfzon_dashboard.HourlyWeather"/>
+                <!-- Right Half - Reservation Tables -->
+                <t t-call="golfzon_dashboard.ReservationTables"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.HourlyWeather">
+        <div class="weather-half">
+            <div class="horizontal-weather-container">
+                <div class="horizontal-weather-scroll">
+                    <t t-foreach="state.hourlyWeather" t-as="hour" t-key="hour.time">
+                        <div class="weather-time-slot">
+                            <div class="time-label" t-esc="hour.time"/>
+                            <div class="weather-icon" t-esc="hour.icon"/>
+                            <div class="temperature" t-esc="hour.temperature + '°C'"/>
+                            <div class="precipitation-chance" t-esc="hour.chance + '%'"/>
+                            <div class="precipitation-amount" t-esc="hour.precipitation + 'mm'"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.ReservationTables">
+        <div class="tables-half">
+            <div class="combined-tables-container">
+                <div class="combined-tables-scroll">
+                    <!-- First Table -->
+                    <div class="table-column">
+                        <div class="round-table-wrapper">
+                            <t t-call="golfzon_dashboard.ReservationTable">
+                                <t t-set="reservations" t-value="state.reservationDetails.slice(0, 40)"/>
+                            </t>
+                        </div>
+                    </div>
+                    <!-- Second Table -->
+                    <div class="table-column">
+                        <div class="round-table-wrapper">
+                            <t t-call="golfzon_dashboard.ReservationTable">
+                                <t t-set="reservations" t-value="state.reservationDetails.slice(40, 80)"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.ReservationTable">
+        <table class="reservation-table">
+            <thead>
+                <tr>
+                    <th><t t-esc="_t('Reservation Person')"/></th>
+                    <th><t t-esc="_t('ID')"/></th>
+                    <th><t t-esc="_t('Reservation Date')"/></th>
+                    <th><t t-esc="_t('Tee Time')"/></th>
+                    <th><t t-esc="_t('Rounds')"/></th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="reservations" t-as="reservation" t-key="reservation.id">
+                    <tr>
+                        <td t-esc="reservation.person"/>
+                        <td t-esc="reservation.id"/>
+                        <td t-esc="reservation.date"/>
+                        <td t-esc="reservation.teeTime"/>
+                        <td t-esc="reservation.rounds"/>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+    </t>
+</templates>

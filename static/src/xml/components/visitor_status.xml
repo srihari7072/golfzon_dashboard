@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.ChartHeader">
+        <div class="chart-header">
+            <div class="chart-title-section">
+                <div class="title-with-tooltip">
+                    <h3 t-esc="chartTitle"/>
+                    <div class="tooltip-wrapper">
+                        <span class="help-icon">
+                            <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                        </span>
+                        <div class="tooltip-content">
+                            <t t-esc="_t('30 days prior to the inquiry date')"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-period-buttons" t-if="showPeriodButtons">
+                <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">
+                    <t t-esc="_t('Last 7 Days')"/>
+                </button>
+                <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">
+                    <t t-esc="_t('Last 30 Days')"/>
+                </button>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.VisitorStatus">
+        <div class="visitor-status">
+            <t t-call="golfzon_dashboard.SectionHeader">
+                <t t-set="sectionTitle" t-value="_t('Visitor Status')"/>
+                <t t-set="analysisPeriod" t-value="state.forecastData.analysis_period"/>
+            </t>
+            
+            <div class="visitor-section">
+                <t t-call="golfzon_dashboard.VisitorTrend"/>
+                <t t-call="golfzon_dashboard.VisitorInfo"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.VisitorTrend">
+        <div class="visitor-trend">
+            <t t-call="golfzon_dashboard.ChartHeader">
+                <t t-set="chartTitle" t-value="_t('Visitor Trends')"/>
+                <t t-set="periodText" t-value="state.simpleLast30DaysLabel"/>
+                <t t-set="showPeriodButtons" t-value="true"/>
+            </t>
+            
+            <div class="visitor-trend-graph">
+                <t t-call="golfzon_dashboard.ChartCanvas">
+                    <t t-set="canvasRef" t-value="'visitorChart'"/>
+                </t>
+            </div>
+            
+            <div class="visitor-trend-card-container">
+                <div class="visitor-trend-card">
+                    <div class="visitor-numbers">
+                        <span class="trend-card-title">
+                            <t t-esc="_t('Total visitors')"/>
+                            <span class="tooltip-wrapper">
+                                <span class="help-icon">
+                                    <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                </span>
+                                <div class="tooltip-content">
+                                    <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                </div>
+                            </span>
+                        </span>
+                        <span class="trend-card-title">9,416</span>
+                    </div>
+                    <div class="trend-wrapper sales-numbers">
+                        <span class="trend-card-title">
+                            <t t-esc="_t('Compared to last year')"/>
+                        </span>
+                        <span class="trend-indicator trend-up">
+                            <span class="trend-icon">▲</span>
+                            <span t-esc="state.performanceData.sales_performance.monthly_trend"/>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="visitor-trend-card">
+                    <div class="visitor-numbers">
+                        <span class="trend-card-title">
+                            <t t-esc="_t('Total visitors by section')"/>
+                            <span class="tooltip-wrapper">
+                                <span class="help-icon">
+                                    <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                </span>
+                                <div class="tooltip-content">
+                                    <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                </div>
+                            </span>
+                        </span>
+                        <div class="trend-card-title">
+                            <span><t t-esc="_t('Part 1')"/> 4,500</span>
+                            <span><t t-esc="_t('Part 2')"/> 4,300</span>
+                            <span><t t-esc="_t('Part 3')"/> 616</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.VisitorInfo">
+        <div class="visitor-info">
+            <div class="age-trend-graph">
+                <t t-call="golfzon_dashboard.ChartHeader">
+                    <t t-set="chartTitle" t-value="_t('Visitor Ratio by Age Group')"/>
+                </t>
+                <t t-call="golfzon_dashboard.ChartCanvas">
+                    <t t-set="canvasRef" t-value="'ageChart'"/>
+                </t>
+            </div>
+
+            <t t-call="golfzon_dashboard.GenderRatioCard"/>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.GenderRatioCard">
+        <div class="card-gender">
+            <div class="card-body">
+                <h3 class="mb-3">
+                    <t t-esc="_t('Gender Ratio')"/>
+                </h3>
+                <div class="d-flex justify-content-center gap-5">
+                    <!-- Male -->
+                    <div class="figure">
+                        <div class="male-percentage" id="malePercent">62%</div>
+                        <div class="svg-wrapper">
+                            <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                                <!-- Grey silhouette -->  
+                                <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-25 90h50c30 0 55 25 55 55v70c0 10-8 18-18 18h-15v127h-40v-80h-10v80h-40V253H42c-10 0-18-8-18-18v-70c0-30 25-55 55-55z" fill="#eee"/>
+                                <!-- Blue fill -->
+                                <clipPath id="maleClip">
+                                    <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-25 90h50c30 0 55 25 55 55v70c0 10-8 18-18 18h-15v127h-40v-80h-10v80h-40V253H42c-10 0-18-8-18-18v-70c0-30 25-55 55-55z"/>
+                                </clipPath>
+                                <rect id="maleFill" class="fill" x="0" y="400" width="200" height="0" clip-path="url(#maleClip)"/>
+                            </svg>
+                        </div>
+                        <div class="label">
+                            <t t-esc="_t('Male')"/>
+                        </div>
+                    </div>
+
+                    <!-- Female -->
+                    <div class="figure">
+                        <div class="female-percentage" id="femalePercent">38%</div>
+                        <div class="svg-wrapper">
+                            <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                                <!-- Grey silhouette -->
+                                <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-40 110h80l40 120h-50v110H110v-70H90v70H70V250H20l40-120z" fill="#eee"/>
+                                <!-- Pink fill -->
+                                <clipPath id="femaleClip">
+                                    <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-40 110h80l40 120h-50v110H110v-70H90v70H70V250H20l40-120z"/>
+                                </clipPath>
+                                <rect id="femaleFill" class="fill female" x="0" y="400" width="200" height="0" clip-path="url(#femaleClip)"/>
+                            </svg>
+                        </div>
+                        <div class="label">
+                            <t t-esc="_t('Female')"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

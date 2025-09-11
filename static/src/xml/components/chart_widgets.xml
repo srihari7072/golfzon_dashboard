@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.ChartCanvas">
+        <div class="o_dashboard_sales">
+            <canvas t-ref="salesChart" t-if="canvasRef === 'salesChart'"/>
+            <canvas t-ref="visitorChart" t-if="canvasRef === 'visitorChart'"/>
+            <canvas t-ref="ageChart" t-if="canvasRef === 'ageChart'"/>
+            <canvas t-ref="reservationTrendChart" t-if="canvasRef === 'reservationTrendChart'"/>
+            <canvas t-ref="memberTypeChart" t-if="canvasRef === 'memberTypeChart'"/>
+            <canvas t-ref="advanceBookingChart" t-if="canvasRef === 'advanceBookingChart'"/>
+            <canvas t-ref="regionalChart" t-if="canvasRef === 'regionalChart'"/>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.ReservationForecast">
+        <div class="reservation-forecast-section">
+            <t t-call="golfzon_dashboard.SectionHeader">
+                <t t-set="sectionTitle" t-value="_t('Reservation Status')"/>
+                <t t-set="analysisPeriod" t-value="state.forecastData.analysis_period"/>
+            </t>
+            
+            <div class="forecast-main-layout">
+                <!-- Left Side - Line Graph -->
+                <t t-call="golfzon_dashboard.ReservationTrendChart"/>
+                
+                <!-- Right Side - Fixed Layout Heatmap -->
+                <t t-call="golfzon_dashboard.FixedHeatmapLayout"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="golfzon_dashboard.ReservationTrendChart">
+        <div class="forecast-left-side">
+            <div class="line-chart-card">
+                <!-- 🔧 FIXED: Use direct markup instead of template call -->
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="title-with-tooltip">
+                            <h3><t t-esc="_t('Reservation Trend by Period')"/></h3>
+                            <div class="tooltip-wrapper">
+                                <span class="help-icon">
+                                    <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                </span>
+                                <div class="tooltip-content">
+                                    <t t-esc="_t('30 days after the inquiry date')"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="time-period-buttons">
+                        <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">
+                            <t t-esc="_t('Last 7 Days')"/>
+                        </button>
+                        <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">
+                            <t t-esc="_t('Last 30 Days')"/>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="line-chart-container">
+                    <canvas t-ref="reservationTrendChart"/>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-cards-below">
+                    <div class="stat-card horizontal">
+                        <div class="stat-info">
+                            <span class="stat-label">
+                                <t t-esc="_t('Total number of reservations')"/>
+                                <span class="tooltip-wrapper">
+                                    <span class="help-icon">
+                                        <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                    </span>
+                                    <div class="tooltip-content">
+                                        <t t-esc="_t('30 days after the inquiry date')"/>
+                                    </div>
+                                </span>
+                            </span>
+                            <div class="stat-value">2,926</div>
+                        </div>
+                        <div class="stat-comparison">
+                            <span class="comparison-label"><t t-esc="_t('compared to same period last year')"/></span>
+                            <div class="comparison-value increase">
+                                <span class="trend-icon">▲</span>
+                                <span>10%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card horizontal">
+                        <div class="stat-info">
+                            <span class="stat-label">
+                                <t t-esc="_t('Total Operation rate')"/>
+                                <div class="tooltip-wrapper">
+                                    <span class="help-icon">
+                                        <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                    </span>
+                                    <div class="tooltip-content">
+                                        <t t-esc="_t('30 days after the inquiry date')"/>
+                                    </div>
+                                </div>
+                            </span>
+                            <div class="stat-value">78.5%</div>
+                        </div>
+                        <div class="stat-breakdown horizontal-parts">
+                            <span><t t-esc="_t('Part 1')"/> 82.4%</span>
+                            <span><t t-esc="_t('Part 2')"/> 76.2%</span>
+                            <span><t t-esc="_t('Part 3')"/> 75.3%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- 🆕 FIXED: No-shift layout with always-visible sidebar -->
+    <t t-name="golfzon_dashboard.FixedHeatmapLayout">
+        <div class="forecast-right-side">
+            <!-- Fixed Container with Heatmap and Sidebar -->
+            <div class="fixed-heatmap-layout">
+                <!-- Heatmap Section -->
+                <div class="heatmap-section">
+                    <div class="heatmap-header">
+                        <h3><t t-esc="_t('Reservation Trends')"/></h3>
+                    </div>
+                    
+                    <!-- Days Header -->
+                    <div class="heatmap-days-header">
+                        <div class="time-label-spacer"></div>
+                        <t t-foreach="state.heatmapData.headers" t-as="day" t-key="day">
+                            <div class="day-header" t-esc="day"/>
+                        </t>
+                    </div>
+                    
+                    <!-- Heatmap Grid -->
+                    <div class="heatmap-grid-container">
+                        <t t-foreach="state.heatmapData.rows" t-as="timeRow" t-key="timeRow_index">
+                            <div class="heatmap-row">
+                                <div class="time-row-label" t-esc="timeRow.label"/>
+                                <div class="heatmap-boxes-row">
+                                    <t t-foreach="timeRow.data" t-as="value" t-key="value_index">
+                                        <div class="heatmap-box"
+                                             t-att-class="this.getHeatmapCellClass(value)"
+                                             t-att-data-day-index="value_index"
+                                             t-att-data-time-index="timeRow_index"
+                                             t-att-data-value="value"
+                                             t-on-click="(ev) => this.selectHeatmapBox({
+                                                 dayIndex: value_index,
+                                                 timeIndex: timeRow_index,
+                                                 value: value,
+                                                 day: state.heatmapData.headers[value_index],
+                                                 timeSlot: timeRow.label
+                                             }, ev)">
+                                            <span class="box-value" t-esc="value"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    
+                    <!-- Legend -->
+                    <div class="heatmap-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot top-20"></div>
+                            <span><t t-esc="_t('Top 20%')"/></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot top-20-40"></div>
+                            <span><t t-esc="_t('Top 20-40%')"/></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot median-20"></div>
+                            <span><t t-esc="_t('Median 20%')"/></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot bottom-20-40"></div>
+                            <span><t t-esc="_t('Bottom 20-40%')"/></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot bottom-20"></div>
+                            <span><t t-esc="_t('Bottom 20%')"/></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 🆕 FIXED: Always-visible sidebar (no close button) -->
+                <div class="fixed-sidebar">
+                    <!-- 🆕 Conditional Alert Messages -->
+                    <div class="alert-message highest" t-if="state.selectedHeatmapBox.isHighest">
+                        <span class="alert-badge">⑤</span>
+                        <span class="alert-text">
+                            <t t-esc="_t('This is the time with the most reservations.')"/>
+                        </span>
+                    </div>
+                    
+                    <div class="alert-message lowest" t-if="state.selectedHeatmapBox.isLowest">
+                        <span class="alert-badge">ⓘ</span>
+                        <span class="alert-text">
+                            <t t-esc="_t('This is the time with the least reservations.')"/>
+                        </span>
+                    </div>
+                    
+                    <!-- Sidebar Header -->
+                    <div class="sidebar-header">
+                        <h2 class="sidebar-title">
+                            <span class="day-text" t-esc="state.selectedHeatmapBox.displayDay"/>
+                            <span class="time-text" t-esc="state.selectedHeatmapBox.displayTime"/>
+                        </h2>
+                        <p class="sidebar-subtitle">
+                            <t t-esc="_t('Number of reservation teams by time slot')"/>
+                        </p>
+                    </div>
+                    
+                    <!-- Hourly Breakdown -->
+                    <div class="hourly-breakdown">
+                        <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot.hour">
+                            <div class="hour-row">
+                                <span class="hour-time" t-esc="hourSlot.hour"/>
+                                <span class="hour-teams" t-esc="hourSlot.teams"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Half - Pie Charts -->
+            <t t-call="golfzon_dashboard.PieChartsCard"/>
+        </div>
+    </t>
+
+    <!-- Pie Charts Section -->
+    <t t-name="golfzon_dashboard.PieChartsCard">
+        <div class="pie-charts-card">
+            <div class="pie-charts-header">
+                <h3><t t-esc="_t('Reservation member composition status')"/></h3>
+            </div>
+            
+            <div class="pie-charts-grid">
+                <!-- Member Type Chart -->
+                <div class="pie-chart-grid-item">
+                    <div class="pie-chart-wrapper">
+                        <canvas t-ref="memberTypeChart"/>
+                        <div class="chart-center-title">
+                            <t t-esc="_t('Reservation Proportion by Type')"/>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <div class="chart-legend">
+                            <div class="legend-entry">
+                                <span class="dot individual"></span>
+                                <span><t t-esc="_t('Individual')"/></span>
+                                <span class="legend-value">76%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot joint"></span>
+                                <span><t t-esc="_t('Joint Organization')"/></span>
+                                <span class="legend-value">13%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot general"></span>
+                                <span><t t-esc="_t('General Organization')"/></span>
+                                <span class="legend-value">2%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot temporary"></span>
+                                <span><t t-esc="_t('Temporary Organization')"/></span>
+                                <span class="legend-value">8%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advance Booking Chart -->
+                <div class="pie-chart-grid-item">
+                    <div class="pie-chart-wrapper">
+                        <canvas t-ref="advanceBookingChart"/>
+                        <div class="chart-center-title">
+                            <t t-esc="_t('Reservation Proportion by Time')"/>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <div class="chart-legend">
+                            <div class="legend-entry">
+                                <span class="dot d15"></span>
+                                <span>D-15+</span>
+                                <span class="legend-value">43%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot d14"></span>
+                                <span>D-14</span>
+                                <span class="legend-value">17%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot d7"></span>
+                                <span>D-7</span>
+                                <span class="legend-value">26%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot d3"></span>
+                                <span>D-3</span>
+                                <span class="legend-value">7%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot d1"></span>
+                                <span>D-1</span>
+                                <span class="legend-value">6%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot d0"></span>
+                                <span>D-0</span>
+                                <span class="legend-value">1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regional Distribution Chart -->
+                <div class="pie-chart-grid-item">
+                    <div class="pie-chart-wrapper">
+                        <canvas t-ref="regionalChart"/>
+                        <div class="chart-center-title">
+                            <t t-esc="_t('Reservation Proportion by Channel')"/>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <div class="chart-legend">
+                            <div class="legend-entry">
+                                <span class="dot phone"></span>
+                                <span><t t-esc="_t('Phone')"/></span>
+                                <span class="legend-value">48%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot internet"></span>
+                                <span><t t-esc="_t('Internet')"/></span>
+                                <span class="legend-value">19%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot agency1"></span>
+                                <span><t t-esc="_t('Agency')"/></span>
+                                <span class="legend-value">8%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot agency2"></span>
+                                <span><t t-esc="_t('Agency')"/></span>
+                                <span class="legend-value">7%</span>
+                            </div>
+                            <div class="legend-entry">
+                                <span class="dot other"></span>
+                                <span><t t-esc="_t('Other')"/></span>
+                                <span class="legend-value">18%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

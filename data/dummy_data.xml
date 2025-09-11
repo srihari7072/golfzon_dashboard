@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="dummy_record" model="ir.ui.view">
+        <field name="name">Dummy Data Placeholder</field>
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <div>Dummy data for dashboard (used in controller).</div>
+        </field>
+    </record>
+</odoo>
