@@ -3,7 +3,7 @@ $primary-color: #1e88e5;
 $secondary-color: #1565c0;
 $accent-color: #0d47a1;
 $text-primary: #060606;
-$text-secondary: #8b8b8b;
+$text-secondary: #78909c;
 $text-light: #b0bec5;
 $background-light: #f5f7fa;
 $border-color: #e3e8f2;
@@ -39,7 +39,7 @@ body {
   width: 100%;
 }
 
-.o_navbar{
+.o_navbar {
   display: none;
 }
 
@@ -508,8 +508,8 @@ body {
       }
 
       .logout-icon {
-        width: 24px;
-        height: 24px;
+        width: 25px;
+        height: 25px;
 
         @include mobile {
           width: 20px;
@@ -547,7 +547,7 @@ body {
 .golf-info-card {
   @include card;
   margin: 30px 30px 60px 30px;
-  padding: 23px 50px;
+  padding: 25px 50px;
   position: relative;
   overflow: hidden;
   border: 1px solid #dee2e6;
@@ -574,15 +574,15 @@ body {
     .multi-info-container {
       @include flex(row, flex-start, center);
       gap: 60px;
-      // margin-right: 33px;
+      margin-right: 33px;
     }
     .date-section {
-      // margin-right: 93px;
+      margin-right: 93px;
     }
     .info-section {
       @include flex(row, flex-start, center);
       gap: 8px;
-      max-width: 450px;
+      min-width: 160px;
       flex: 1;
 
       &.dropdown-section {
@@ -593,8 +593,8 @@ body {
 
       .info-icon {
         font-size: 20px;
-        width: 36px;
-        height: 36px;
+        width: 28px;
+        height: 28px;
         @include flex(row, center, center);
         border-radius: 50%;
         flex-shrink: 0;
@@ -603,38 +603,32 @@ body {
       }
 
       .info-content {
-        @include flex(row, flex-start, center);
+        @include flex(column, flex-start, flex-start);
         gap: 2px;
 
         .info-label {
+          font-size: 11px;
+          color: #060606;
+          font-weight: 500;
           text-transform: uppercase;
           letter-spacing: 0.3px;
-          font-family: Pretendard;
-          font-weight: 600;
-          font-style: SemiBold;
-          font-size: 18px;
-          letter-spacing: 0%;
-          color: #131314;
-          line-height: 125%;
         }
 
         .info-value {
+          font-size: 13px;
           color: #555555;
           font-weight: 600;
-          font-family: Pretendard;
-          font-style: SemiBold;
-          font-size: 16px;
-          letter-spacing: 0%;
-          text-align: center;
+          line-height: 1.2;
         }
       }
 
       .weather-details-btn {
         background: #f5f4f3;
+        color: #f5f4f3;
         border: none;
         padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 14px;
+        border-radius: 4px;
+        font-size: 12px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s;
@@ -766,7 +760,7 @@ body {
               }
 
               .weather-icon {
-                font-size: 24px;
+                font-size: 25px;
                 margin: 2px 0;
               }
 
@@ -1086,32 +1080,23 @@ body {
         background: $white;
 
         .metrics-row {
-          @include flex(row, space-between, stretch);
-          gap: 20px;
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+          justify-content: space-between;
+          align-items: stretch;
 
           .metric-column {
+            background: #fff;
+            border: 1px solid #e3e8f2;
+            border-radius: 12px;
+            padding: 10px 10px;
+            margin: 0 8px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            flex: 1;
-            text-align: left;
-            position: relative;
-
-            &:first-child::after {
-              content: "";
-              position: absolute;
-              right: -10px;
-              top: 0;
-              bottom: 0;
-              width: 1px;
-              background: linear-gradient(
-                to bottom,
-                transparent 0%,
-                #e0e0e0 20%,
-                #e0e0e0 80%,
-                transparent 100%
-              );
-            }
+            justify-content: center;
+            align-items: flex-start;
+            min-width: 0;
 
             .metric-label {
               font-size: 12px;
@@ -1125,7 +1110,7 @@ body {
             }
 
             .metric-value {
-              font-size: 18px;
+              font-size: 22px;
               font-weight: 700;
               color: #060606;
               margin-bottom: 8px;
@@ -1143,11 +1128,11 @@ body {
                 gap: 3px;
                 font-size: 11px;
                 font-weight: 700;
-                padding: 4px 8px;
-                border-radius: 4px;
+                padding: 4px 10px;
+                border-radius: 6px;
 
                 .trend-icon {
-                  font-size: 12px;
+                  font-size: 14px;
                 }
 
                 &.trend-up {
@@ -1162,7 +1147,7 @@ body {
               }
 
               .trend-period {
-                font-size: 11px;
+                font-size: 12px;
                 color: #a5a5a5;
                 font-weight: 500;
                 margin-left: 2px;
@@ -1170,9 +1155,6 @@ body {
               }
             }
           }
-        }
-        &::after {
-          content: none;
         }
       }
     }
@@ -1208,7 +1190,7 @@ body {
     }
 
     .main-section-title {
-      font-size: 30px;
+      font-size: 24px;
       font-weight: 700;
       color: $text-primary;
       margin: 0;
@@ -1229,6 +1211,7 @@ body {
       letter-spacing: 0%;
       font-size: 16px;
       color: $text-secondary;
+      font-style: italic;
 
       @include mobile {
         font-size: 12px;
@@ -1265,12 +1248,11 @@ body {
         background: $white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        padding: 30px;
+        padding: 24px;
         height: 100%;
         @include flex(column, flex-start, stretch);
 
         .chart-header {
-          margin-bottom: 20px;
           @include flex(row, space-between, flex-start);
 
           .chart-title-section {
@@ -1280,8 +1262,6 @@ body {
               margin-bottom: 8px;
 
               h3 {
-                font-family: Pretendard;
-                font-weight: 600;
                 font-family: Pretendard;
                 font-weight: 700;
                 font-style: Bold;
@@ -1380,7 +1360,7 @@ body {
           position: relative;
           margin-bottom: 20px;
 
-          .o_dashboard_sales{
+          .o_dashboard_sales {
             width: 100% !important;
             height: 100% !important;
           }
@@ -2164,8 +2144,8 @@ body {
 
       // Stat value
       .trend-card-title:last-child {
-        font-size: 20pxpx;
-        font-weight: 700;
+        font-size: 18px;
+        font-weight: 500;
         color: #060606;
       }
     }
@@ -2208,7 +2188,6 @@ body {
 
   // Chart header styling
   .chart-header {
-    margin-bottom: 20px;
     @include flex(row, space-between, flex-start);
 
     .chart-title-section {
@@ -2220,7 +2199,7 @@ body {
         margin-bottom: 8px;
 
         h3 {
-          font-size: 20px;
+          font-size: 22px;
           font-weight: 700;
           color: $text-primary;
           font-family: "Pretendard", sans-serif;
@@ -2352,7 +2331,7 @@ body {
       background: #fff !important;
       padding: 30px 30px 20px 30px;
       width: 100%;
-      height: 400px;
+      height: 350px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
@@ -2612,29 +2591,25 @@ body {
       white-space: nowrap;
     }
 
-    &__chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
+    .trend-indicator {
+      font-size: 1.1rem;
       font-weight: 600;
-      white-space: nowrap;
+      color: $success-color;
+      background: #e6f9ed;
+      border-radius: 6px;
+      padding: 4px 12px;
+      margin-left: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
 
-      &--up {
-        color: #22c55e;
-        background: #dcfce7;
+      &.trend-up {
+        color: $success-color;
+        background: #e6f9ed;
       }
-
-      .chip-icon {
-        font-size: 10px;
-        line-height: 1;
-      }
-
-      .chip-text {
-        font-weight: 600;
-        line-height: 1;
+      &.trend-down {
+        color: $danger-color;
+        background: #fdeaea;
       }
     }
 
@@ -2739,11 +2714,10 @@ body {
   padding-right: 30px;
   padding-top: 30px;
   padding-bottom: 35px;
-  margin-top: 30px;
-  height: 400px;
+  margin-top: 15px;
+  height: 350px;
 
   .chart-header {
-    margin-bottom: 20px;
     @include flex(row, space-between, flex-start);
 
     .chart-title-section {
@@ -3020,4 +2994,3 @@ body {
     }
   }
 }
-
