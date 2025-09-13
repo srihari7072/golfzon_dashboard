@@ -112,10 +112,10 @@ class GolfzonDashboard extends Component {
         _t("Sat"),
       ],
       rows: [
-        { label: _t("Dawn (5-7 AM)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        { label: _t("Morning (8am-12pm)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        { label: _t("Afternoon (13:00-16:00)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        { label: _t("Night (5-7 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        { label: _t("Dawn (5 AM -7 AM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        { label: _t("Morning (8 AM - 12 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        { label: _t("Afternoon (1 PM - 4 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        { label: _t("Night (5 PM - 7 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
       ],
     };
   }
@@ -437,20 +437,20 @@ class GolfzonDashboard extends Component {
 
   formatTimeDisplay(timeSlot) {
     const timeMap = {
-      "Dawn (5-7 AM)": "morning",
-      "Morning (8am-12pm)": "morning",
-      "Afternoon (13:00-16:00)": "afternoon",
-      "Night (5-7 PM)": "evening",
+      "Dawn (5 AM - 7 AM)": "morning",
+      "Morning (8 AM - 12 PM)": "morning",
+      "Afternoon (1 PM - 4 PM)": "afternoon",
+      "Night (5 PM - 7 PM)": "evening",
     };
     return timeMap[timeSlot] || "morning";
   }
 
   generateHourlyBreakdown(timeSlot, totalValue) {
     const timeRanges = {
-      "Dawn (5-7 AM)": [5, 6, 7],
-      "Morning (8am-12pm)": [8, 9, 10, 11, 12],
-      "Afternoon (13:00-16:00)": [13, 14, 15, 16],
-      "Night (5-7 PM)": [17, 18, 19],
+      "Dawn (5 AM -7 AM)": [5, 6, 7],
+      "Morning (8 AM -12 PM)": [8, 9, 10, 11, 12],
+      "Afternoon (1 PM - 4 PM)": [13, 14, 15, 16],
+      "Night (5 PM - 7 PM)": [17, 18, 19],
     };
 
     const hours = timeRanges[timeSlot] || [8, 9, 10, 11, 12];
@@ -517,10 +517,10 @@ class GolfzonDashboard extends Component {
     const heatmapData = {
       headers: daysOfWeek,
       rows: [
-        { label: _t("Dawn (5-7 AM)"), data: [23, 10, 12, 10, 16, 13, 1] },
-        { label: _t("Morning (8am-12pm)"), data: [12, 5, 5, 6, 5, 8, 2] },
-        { label: _t("Afternoon (13:00-16:00)"), data: [18, 13, 5, 3, 5, 6, 3] },
-        { label: _t("Night (5-7 PM)"), data: [0, 18, 10, 15, 22, 28, 10] },
+        { label: _t("Dawn (5 AM -7 AM)"), data: [23, 10, 12, 10, 16, 13, 1] },
+        { label: _t("Morning (8 AM -12 PM)"), data: [12, 5, 5, 6, 5, 8, 2] },
+        { label: _t("Afternoon (1 PM -4 PM)"), data: [18, 13, 5, 3, 5, 6, 3] },
+        { label: _t("Night (5 PM -7 PM)"), data: [0, 18, 10, 15, 22, 28, 10] },
       ],
     };
 
@@ -536,3 +536,4 @@ class GolfzonDashboard extends Component {
 
 registry.category("actions").add("golfzon.dashboard", GolfzonDashboard);
 export default GolfzonDashboard;
+
