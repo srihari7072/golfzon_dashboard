@@ -27,3 +27,4 @@ export class LocalizationUtils {
     window.location.assign(target);
   }
 }
+
