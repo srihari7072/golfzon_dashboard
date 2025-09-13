@@ -10,76 +10,98 @@
     </t>
 
     <t t-name="golfzon_dashboard.SalesStatus">
-        <div class="sales-trends-section">
+        <div class="sales-trends-section sales-trends-v2">
             <t t-call="golfzon_dashboard.SectionHeader">
                 <t t-set="sectionTitle" t-value="_t('Sales Status')"/>
                 <t t-set="analysisPeriod" t-value="state.forecastData.analysis_period"/>
             </t>
-            
-            <div class="sales-trends">
-                <t t-call="golfzon_dashboard.ChartHeader">
-                    <div>
-                        <t t-set="chartTitle" t-value="_t('Sales Trends')"/>
-                        <div class="tooltip-wrapper">
+
+            <div class="sales-trends-v2__panel">
+                <!-- Chart header with period toggle (kept functional) -->
+                <div class="sales-trends-v2__header">
+                    <div class="sales-trends-v2__title">
+                        <h3><t t-esc="_t('Sales Trends')"/></h3>
+                        <span class="tooltip-wrapper">
                             <span class="help-icon">
                                 <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                             </span>
                             <div class="tooltip-content">
-                                <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                <t t-esc="_t('7 or 30 days prior to the inquiry date')"/>
                             </div>
-                        </div>
+                        </span>
                     </div>
-                    <t t-set="periodText" t-value="state.simpleLast30DaysLabel"/>
-                    <t t-set="showPeriodButtons" t-value="true"/>
-                </t>
-                
-                <div class="sales-trend-graph">
-                    <t t-call="golfzon_dashboard.ChartCanvas">
-                        <t t-set="canvasRef" t-value="'salesChart'"/>
-                    </t>
+                    <div class="sales-trends-v2__period">
+                        <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">
+                            <t t-esc="_t('Last 7 Days')"/>
+                        </button>
+                        <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">
+                            <t t-esc="_t('Last 30 Days')"/>
+                        </button>
+                    </div>
                 </div>
-                
-                <div class="sales-trend-card-container">
-                    <div class="sales-trend-card">
-                        <div class="sales-numbers">
-                            <span class="trend-card-title">
-                                <t t-esc="_t('Total Sales')"/>
-                                <span class="tooltip-wrapper">
-                                    <span class="help-icon">
-                                        <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+
+                <!-- Chart area -->
+                <div class="sales-trends-v2__chart">
+                    <div class="o_dashboard_sales">
+                        <canvas t-ref="salesChart"/>
+                    </div>
+                </div>
+
+                <!-- Legend sits inside Chart.js (kept), metric cards below -->
+                <div class="sales-trends-v2__cards">
+                    <!-- First Card: Total Sales -->
+                    <div class="metric-card metric-card--total">
+                        <div class="metric-card__content">
+                            <div class="metric-card__left">
+                                <div class="metric-card__header">
+                                    <span class="metric-card__label"><t t-esc="_t('Total Sales')"/></span>
+                                    <span class="tooltip-wrapper">
+                                        <span class="help-icon">
+                                            <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                        </span>
+                                        <div class="tooltip-content">
+                                            <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                        </div>
                                     </span>
-                                    <div class="tooltip-content">
-                                        <t t-esc="_t('30 days prior to the inquiry date')"/>
-                                    </div>
-                                </span>
-                            </span>
-                            <span class="trend-card-title">1,000,000</span>
-                        </div>
-                        <div class="trend-wrapper sales-numbers">
-                            <span class="trend-card-title">
-                                <t t-esc="_t('Compared to last year')"/>
-                            </span>
-                            <div class="trend-indicator trend-up">
-                                <span class="trend-icon">▲</span>
-                                <span t-esc="state.performanceData.sales_performance.monthly_trend"/>
+                                    <div class="metric-card__value">1,000,000,000</div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card__right">
+                                <div class="metric-card__meta">
+                                    <span class="metric-card__caption"><t t-esc="_t('Compared to the same period last year')"/></span>
+                                    <span class="metric-card__chip metric-card__chip--up">
+                                        <span class="chip-icon">▲</span>
+                                        <span class="chip-text">3%</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                
-                    <div class="sales-trend-card">
-                        <div class="sales-numbers">
-                            <span class="trend-card-title">
-                                <t t-esc="_t('Average transaction value')"/>
-                                <span class="tooltip-wrapper">
-                                    <span class="help-icon">
-                                        <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+
+                    <!-- Second Card: Average Transaction Value -->
+                    <div class="metric-card metric-card--total">
+                        <div class="metric-card__content">
+                            <div class="metric-card__left">
+                                <div class="metric-card__header">
+                                    <span class="metric-card__label"><t t-esc="_t('Average unit price')"/></span>
+                                    <span class="tooltip-wrapper">
+                                        <span class="help-icon">
+                                            <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
+                                        </span>
+                                        <div class="tooltip-content">
+                                            <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                        </div>
                                     </span>
-                                    <div class="tooltip-content">
-                                        <t t-esc="_t('30 days prior to the inquiry date')"/>
-                                    </div>
-                                </span>
-                            </span>
-                            <span class="trend-card-title">190,000</span>
+                                    <div class="metric-card__value">190,000</div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card__right">
+                                <div class="metric-card__meta">
+                                    <!-- Empty meta section for consistent spacing -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,3 +109,4 @@
         </div>
     </t>
 </templates>
+
