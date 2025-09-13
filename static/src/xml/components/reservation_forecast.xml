@@ -68,10 +68,10 @@
                         </div>
                         <div class="stat-comparison">
                             <span class="comparison-label"><t t-esc="_t('compared to same period last year')"/></span>
-                            <div class="comparison-value increase">
+                            <span class="trend-indicator trend-up">
                                 <span class="trend-icon">▲</span>
-                                <span>10%</span>
-                            </div>
+                                <span>+10%</span>
+                            </span>
                         </div>
                     </div>
                     <div class="stat-card horizontal">
@@ -344,4 +344,3 @@
         </div>
     </t>
 </templates>
-
