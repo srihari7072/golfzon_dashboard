@@ -1463,13 +1463,26 @@ body {
                 font-size: 14px;
                 color: #555555;
               }
+              .trend-indicator {
+                @include flex(row, center, center);
+                gap: 3px;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 4px 10px;
+                border-radius: 6px;
 
-              .comparison-value {
-                font-size: 12px;
-                font-weight: 600;
+                .trend-icon {
+                  font-size: 14px;
+                }
 
-                &.increase {
+                &.trend-up {
+                  background: rgba(76, 175, 80, 0.1);
                   color: #388e3c;
+                }
+
+                &.trend-down {
+                  background: rgba(244, 67, 54, 0.1);
+                  color: #d32f2f;
                 }
               }
             }
@@ -2735,122 +2748,122 @@ body {
   }
 }
 
+@include mobile {
+  padding: 16px;
+  margin-top: 16px;
+  height: auto;
+  min-height: 300px;
+}
+
+@include tablet {
+  padding: 20px;
+  margin-top: 20px;
+  height: 320px;
+}
+
+.figure {
+  position: relative;
+  width: 100px;
+  height: 140px;
+  text-align: center;
+
   @include mobile {
-    padding: 16px;
-    margin-top: 16px;
-    height: auto;
-    min-height: 300px;
+    width: 80px;
+    height: 120px;
   }
 
   @include tablet {
-    padding: 20px;
-    margin-top: 20px;
-    height: 320px;
+    width: 90px;
+    height: 130px;
+  }
+}
+
+.svg-wrapper {
+  position: relative;
+  width: 100%;
+  height: 260px;
+
+  @include mobile {
+    height: 200px;
   }
 
-  .figure {
-    position: relative;
-    width: 100px;
-    height: 140px;
-    text-align: center;
+  @include tablet {
+    height: 240px;
+  }
+}
 
-    @include mobile {
-      width: 80px;
-      height: 120px;
-    }
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 
-    @include tablet {
-      width: 90px;
-      height: 130px;
-    }
+.fill {
+  fill: #4489da;
+  transition: height 0.6s ease;
+}
+.fill.female {
+  fill: #f39b9b;
+}
+
+.male-percentage {
+  position: absolute;
+  top: -10px;
+  width: 100%;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #4489da;
+
+  @include mobile {
+    font-size: 18px;
   }
 
-  .svg-wrapper {
-    position: relative;
-    width: 100%;
-    height: 260px;
+  @include tablet {
+    font-size: 20px;
+  }
+}
 
-    @include mobile {
-      height: 200px;
-    }
+.female-percentage {
+  position: absolute;
+  top: -10px;
+  width: 100%;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #f39b9b;
 
-    @include tablet {
-      height: 240px;
-    }
+  @include mobile {
+    font-size: 18px;
   }
 
-  svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  @include tablet {
+    font-size: 20px;
+  }
+}
+
+.label {
+  font-size: 14px;
+  color: #555;
+
+  @include mobile {
+    font-size: 12px;
   }
 
-  .fill {
-    fill: #4489da;
-    transition: height 0.6s ease;
+  @include tablet {
+    font-size: 13px;
   }
-  .fill.female {
-    fill: #f39b9b;
-  }
+}
 
-  .male-percentage {
-    position: absolute;
-    top: -10px;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4489da;
-
-    @include mobile {
-      font-size: 18px;
-    }
-
-    @include tablet {
-      font-size: 20px;
-    }
-  }
-
-  .female-percentage {
-    position: absolute;
-    top: -10px;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: #f39b9b;
-
-    @include mobile {
-      font-size: 18px;
-    }
-
-    @include tablet {
-      font-size: 20px;
-    }
-  }
-
-  .label {
-    font-size: 14px;
-    color: #555;
-
-    @include mobile {
-      font-size: 12px;
-    }
-
-    @include tablet {
-      font-size: 13px;
-    }
-  }
-
-  body {
-    background: #f7f7fb;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+body {
+  background: #f7f7fb;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 // Heatmap Detail Modal Styles
