@@ -279,8 +279,9 @@ export class ChartService {
               label: _t("2025 Visitors"),
               data: visitorData,
               borderColor: "#046DEC",
-              backgroundColor: "transparent",
+              backgroundColor: "rgba(33, 150, 243, 0.1)",
               borderWidth: 2,
+              fill: true,
               tension: 0.4,
               pointRadius: 0,
               pointStyle: "circle", // Ensure point style is applied to data points
@@ -381,7 +382,7 @@ export class ChartService {
               grid: { display: false },
             },
             y: {
-              min: 0,
+              beginAtZero: true,
               max: 700,
               ticks: { stepSize: 100 },
               grid: { color: "#e0e0e0" },
@@ -429,7 +430,6 @@ export class ChartService {
               borderColor: "#046DEC",
               backgroundColor: "rgba(33, 150, 243, 0.1)",
               borderWidth: 2,
-              fill: true,
               tension: 0.4,
               pointRadius: 4,
               pointStyle: "circle", // Ensure point style is applied to data points
@@ -451,7 +451,11 @@ export class ChartService {
           maintainAspectRatio: false,
           interaction: { mode: "nearest", intersect: false },
           scales: {
-            y: { beginAtZero: true, max: 120, ticks: { stepSize: 20 } },
+            y: { beginAtZero: true, 
+              max: 120, 
+              ticks: { stepSize: 20 },
+              grid: { color: "#e0e0e0" },
+            },
             x: {
               ticks: {
                 callback: function (value, index, ticks) {
