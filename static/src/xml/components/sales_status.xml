@@ -70,9 +70,9 @@
                             <div class="metric-card__right">
                                 <div class="metric-card__meta">
                                     <span class="metric-card__caption"><t t-esc="_t('Compared to the same period last year')"/></span>
-                                    <span class="metric-card__chip metric-card__chip--up">
-                                        <span class="chip-icon">▲</span>
-                                        <span class="chip-text">3%</span>
+                                    <span class="trend-indicator trend-up">
+                                        <span class="trend-icon">▲</span>
+                                        <span>+11%</span>
                                     </span>
                                 </div>
                             </div>
@@ -109,4 +109,3 @@
         </div>
     </t>
 </templates>
-
