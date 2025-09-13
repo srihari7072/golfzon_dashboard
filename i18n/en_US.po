@@ -1,0 +1,377 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* golfzon_dashboard
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-03 12:45+0000\n"
+"PO-Revision-Date: 2025-09-03 12:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Previous Period"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "1 hour ago"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "1 hour ago - 2 New Leads"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "13 mins ago"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "13 mins ago - New Reservation"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "2 New Leads"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "2024 Visitors"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "2025 Visitors"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "3 SMS Campaigns"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Average Order Value Performance"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cumulative Unit Price This Year"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Monthly Guest Price"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Campaign Engagement"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cloud CC Core Performance Indicators"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Weekly Average"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Monthly Sales"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "year-over-year"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Weekly Capacity"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Weekly Revenue"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Customer Growth"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Last Year's Sales (Same Period)"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Monthly Average"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Monthly Capacity"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Monthly Revenue"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "New Leads"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "New Reservation"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Reservation Patterns"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservations"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservations (Same period last year)"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Revenue"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Revenue Trends"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sales"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Sales Performance Indicators"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cumulative Sales This Year"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Today"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Today - 3 SMS Campaigns"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Today's Reservations"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Utilization Rate Performance"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Cumulative Operation Rate This Year"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "Current Month Operation Rate"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitor Ratio"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Visitors"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "campaign"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "leads"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-python
+#: code:addons/golfzon_dashboard/controllers/main.py:0
+msgid "reservation"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_root
+msgid "Golfzon"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model:ir.actions.client,name:golfzon_dashboard.action_golfzon_dashboard
+msgid "Golfzon Dashboard"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Golfzon Dashboard Notification"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Here is today's dashboard summary"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Dashboard"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Dashboard View"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dummy_record
+msgid "Dummy data for the dashboard (used in the controller)"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Sales"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "New Lead"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Today's Appointment"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Access the full dashboard"
+msgstr ""
+
+#. module: golfzon_dashboard
+#: model_terms:ir.ui.view,arch_db:golfzon_dashboard.dashboard_notification_email
+msgid "Dear"
+msgstr ""
+
+# Ensure dashboard UI strings have correct English msgstr
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sales"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Last Year's Sales (Same Period)"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Analysis period"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "The last 30 days"
+msgstr ""
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Last 30 Days"
+msgstr ""
