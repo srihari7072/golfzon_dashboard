@@ -8,47 +8,78 @@ export class ChartService {
 
     // Initialize Chart.js
     if (window.Chart && window.ChartDataLabels) {
-      Chart.register(window.ChartDataLabels);
+      window.Chart.register(window.ChartDataLabels);
     }
   }
 
   destroyChart(chartId) {
     if (this.chartInstances.has(chartId)) {
-      this.chartInstances.get(chartId).destroy();
+      try {
+        this.chartInstances.get(chartId).destroy();
+      } catch (e) {
+        console.warn("Chart destroy error:", e);
+      }
       this.chartInstances.delete(chartId);
     }
   }
 
   destroyAllCharts() {
-    this.chartInstances.forEach((chart) => chart.destroy());
+    this.chartInstances.forEach((c) => {
+      try {
+        c.destroy();
+      } catch (_) {}
+    });
     this.chartInstances.clear();
   }
 
-  // Helper method to validate canvas
-  validateCanvas(canvasEl, chartName) {
-    if (!canvasEl) {
-      console.error(`Canvas element is null for ${chartName}`);
+  _validateCanvas(canvasEl, chartName) {
+    if (!canvasEl || !canvasEl.getContext) {
+      console.error(`Invalid canvas for ${chartName}`);
       return false;
     }
-
-    if (!canvasEl.getContext) {
-      console.error(`Element is not a canvas for ${chartName}`);
-      return false;
-    }
-
-    if (canvasEl.clientWidth === 0 || canvasEl.clientHeight === 0) {
-      console.warn(
-        `Canvas has zero dimensions for ${chartName}:`,
-        canvasEl.clientWidth,
-        "x",
-        canvasEl.clientHeight
-      );
-      // Set minimum dimensions
-      canvasEl.style.minWidth = "400px";
-      canvasEl.style.minHeight = "300px";
-    }
-
     return true;
+  }
+
+  _getStoredLocale() {
+    try {
+      const stored = localStorage.getItem("dashboard_lang");
+      if (stored === "ko_KR") return "ko-KR";
+    } catch (_) {}
+    return "en-US";
+  }
+
+  _formatFullDate(d) {
+    if (!(d instanceof Date)) return "";
+    try {
+      const locale = this._getStoredLocale();
+      return d.toLocaleDateString(locale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long",
+      });
+    } catch (_) {
+      return "";
+    }
+  }
+
+  // Helper function to get weather data for a specific date
+  _getWeatherData(date) {
+    // Sample weather data - replace with actual API call if needed
+    const weatherOptions = [
+      { condition: "Rain, 30mm", temp: "18°C / 25°C" },
+      { condition: "Sunny", temp: "22°C / 28°C" },
+      { condition: "Cloudy", temp: "16°C / 23°C" },
+      { condition: "Clear", temp: "20°C / 26°C" },
+    ];
+    // Use date to generate consistent weather (in real app, this would be an API call)
+    const weatherIndex = date.getDate() % weatherOptions.length;
+    return weatherOptions[weatherIndex];
+  }
+
+  // Helper function to format sales amount
+  _formatSalesAmount(value) {
+    return `${(value * 10000).toLocaleString()} won`;
   }
 
   getDateLabels(period) {
@@ -65,112 +96,176 @@ export class ChartService {
     return labels;
   }
 
-  generateRandomData(length, min, max) {
+  _generateRandomData(n, min, max) {
     return Array.from(
-      { length },
+      { length: n },
       () => Math.floor(Math.random() * (max - min + 1)) + min
     );
   }
 
   createSalesChart(canvasEl, period) {
-    if (!this.validateCanvas(canvasEl, "Sales Chart")) return;
+    if (!this._validateCanvas(canvasEl, "Sales Trends")) return;
 
     const labels = this.getDateLabels(period);
-    const salesData = this.generateRandomData(labels.length, 300, 700);
-    const lastYearData = this.generateRandomData(labels.length, 200, 500);
+    const days = period === "7days" ? 7 : 30;
+
+    // Build an indexed Date[] perfectly aligned with labels
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - (days - 1));
+    const dateIndex = Array.from({ length: days }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d;
+    });
+
+    const current = this._generateRandomData(labels.length, 200, 700);
+    const lastYear = this._generateRandomData(labels.length, 150, 550);
 
     this.destroyChart("sales");
+
+    const COLOR_PRIMARY = "#046DEC";
+    const COLOR_SECONDARY = "#86E5F5";
+    const GRID_COLOR = "#EEF3FA";
+    const AXIS_COLOR = "#6f6f6f";
 
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "bar",
         data: {
-          labels: labels,
+          labels,
           datasets: [
             {
               label: _t("Sales"),
-              data: salesData,
-              backgroundColor: "rgba(4, 109, 236, 1)",
-              borderRadius: {
-                topLeft: 12,
-                topRight: 12,
-                bottomLeft: 0,
-                bottomRight: 0,
-              },
-              borderSkipped: "bottom",
-              barPercentage: 0.65,
-              categoryPercentage: 0.5,
+              data: current,
+              backgroundColor: COLOR_PRIMARY,
+              borderWidth: 0,
+              barPercentage: 0.55,
+              categoryPercentage: 0.6,
             },
             {
               label: _t("Last Year's Sales (Same Period)"),
-              data: lastYearData,
-              backgroundColor: "rgba(134, 229, 245, 1)",
-              borderRadius: {
-                topLeft: 12,
-                topRight: 12,
-                bottomLeft: 0,
-                bottomRight: 0,
-              },
-              borderSkipped: "bottom",
-              barPercentage: 0.65,
-              categoryPercentage: 0.5,
+              data: lastYear,
+              backgroundColor: COLOR_SECONDARY,
+              borderWidth: 0,
+              barPercentage: 0.55,
+              categoryPercentage: 0.6,
             },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            tooltip: { enabled: true },
-            legend: {
-              display: true,
-              position: "bottom",
-              labels: {
-                usePointStyle: true,
-                pointStyle: "circle",
-                boxWidth: 4,
-                boxHeight: 4,
-                padding: 15,
-              },
-            },
-          },
+          layout: { padding: { left: 8, right: 8, top: 8, bottom: 8 } },
+          interaction: { mode: "nearest", intersect: true },
           scales: {
             x: {
-              grid: { display: false },
+              grid: { display: true, color: GRID_COLOR, drawBorder: false },
               ticks: {
+                color: AXIS_COLOR,
+                font: { size: 12 },
                 callback: function (value, index, ticks) {
                   if (index === 0 || index === ticks.length - 1) {
                     return this.getLabelForValue(value);
                   }
                   return "";
                 },
-                font: { size: 12 },
               },
             },
             y: {
-              grid: { display: true, drawBorder: false, color: "#EFEFEF" },
               beginAtZero: true,
-              max: 700,
-              ticks: { stepSize: 100 },
+              suggestedMax: 700,
+              ticks: { stepSize: 100, color: AXIS_COLOR, font: { size: 12 } },
+              grid: { color: GRID_COLOR, drawBorder: false },
             },
           },
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                pointStyle: "circle",
+                boxWidth: 6,
+                boxHeight: 6,
+                padding: 16,
+                font: { size: 12, weight: "600" },
+                color: "#1e1e1e",
+              },
+            },
+            tooltip: {
+              enabled: true,
+              displayColors: false,
+              backgroundColor: "#3C3F44",
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              padding: 12,
+              cornerRadius: 8,
+              caretSize: 6,
+              titleFont: { size: 14, weight: "600" },
+              bodyFont: { size: 13 },
+              callbacks: {
+                title: (items) => {
+                  if (!items || !items[0]) return "";
+                  const idx = items[0].dataIndex;
+                  const d = dateIndex[idx];
+                  return this._formatFullDate(d) || labels[idx] || "";
+                },
+                label: (ctx) => {
+                  const isCurrentYear = ctx.datasetIndex === 0;
+                  const value = ctx.raw ?? 0;
+                  const formattedValue = this._formatSalesAmount(value);
+
+                  if (isCurrentYear) {
+                    // For current year: simple format
+                    return `Sales: ${formattedValue}`;
+                  } else {
+                    // For last year: add weather and temperature
+                    const idx = ctx.dataIndex;
+                    const date = dateIndex[idx];
+                    const weather = this._getWeatherData(date);
+                    return [
+                      `Sales: ${formattedValue}`,
+                      `Weather: ${weather.condition}`,
+                      `Temperature: ${weather.temp}`,
+                    ];
+                  }
+                },
+                afterLabel: (ctx) => {
+                  // Return empty string to avoid extra spacing
+                  return "";
+                },
+              },
+            },
+          },
+          animation: { duration: 300, easing: "easeOutQuart" },
         },
       });
 
       this.chartInstances.set("sales", chart);
-      console.log("Sales chart created successfully");
       return chart;
-    } catch (error) {
-      console.error("Error creating sales chart:", error);
+    } catch (e) {
+      console.error("Error creating Sales Trends chart:", e);
     }
   }
 
   createVisitorChart(canvasEl, period) {
-    if (!this.validateCanvas(canvasEl, "Visitor Chart")) return;
+    if (!this._validateCanvas(canvasEl, "Visitor Chart")) return;
 
     const labels = this.getDateLabels(period);
-    const visitorData = this.generateRandomData(labels.length, 200, 600);
-    const lastYearData = this.generateRandomData(labels.length, 100, 400);
+    const days = period === "7days" ? 7 : 30;
+
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - (days - 1));
+    const dateIndex = Array.from({ length: days }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d;
+    });
+
+    const visitorData = this._generateRandomData(labels.length, 200, 600);
+    const lastYearData = this._generateRandomData(labels.length, 100, 400);
 
     this.destroyChart("visitor");
 
@@ -178,7 +273,7 @@ export class ChartService {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels,
+          labels,
           datasets: [
             {
               label: _t("2025 Visitors"),
@@ -188,9 +283,7 @@ export class ChartService {
               borderWidth: 2,
               tension: 0.4,
               pointRadius: 0,
-              pointBackgroundColor: "white",
-              pointBorderColor: "#046DEC",
-              pointBorderWidth: 2,
+              pointStyle: "circle", // Ensure point style is applied to data points
             },
             {
               label: _t("2024 Visitors"),
@@ -200,9 +293,7 @@ export class ChartService {
               borderWidth: 2,
               tension: 0.4,
               pointRadius: 0,
-              pointBackgroundColor: "white",
-              pointBorderColor: "#86E5F5",
-              pointBorderWidth: 2,
+              pointStyle: "circle", // Ensure point style is applied to data points
             },
           ],
         },
@@ -217,19 +308,61 @@ export class ChartService {
               labels: {
                 usePointStyle: true,
                 pointStyle: "circle",
-                boxWidth: 4,
-                boxHeight: 4,
+                boxWidth: 6,
+                boxHeight: 6,
                 padding: 16,
+                font: { size: 12, weight: "600" },
+                color: "#1e1e1e",
+                generateLabels: function (chart) {
+                  const data = chart.data;
+                  if (data.datasets.length) {
+                    return data.datasets.map((dataset, i) => ({
+                      text: dataset.label,
+                      fillStyle: dataset.borderColor,
+                      strokeStyle: dataset.borderColor,
+                      lineWidth: 1,
+                      pointStyle: "circle",
+                      hidden: !chart.isDatasetVisible(i),
+                      datasetIndex: i,
+                    }));
+                  }
+                  return [];
+                },
               },
             },
             tooltip: {
               enabled: true,
-              position: "nearest",
-              yAlign: "bottom",
               displayColors: false,
+              backgroundColor: "#3C3F44",
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              padding: 12,
+              cornerRadius: 8,
+              caretSize: 6,
+              titleFont: { size: 14, weight: "600" },
+              bodyFont: { size: 13 },
               callbacks: {
-                label: function (context) {
-                  return _t("Visitors") + ": " + context.raw.toLocaleString();
+                title: (items) => {
+                  if (!items || !items[0]) return "";
+                  const idx = items[0].dataIndex;
+                  const d = dateIndex[idx];
+                  return this._formatFullDate(d) || labels[idx] || "";
+                },
+                label: (ctx) => {
+                  const value = ctx.raw ?? 0;
+                  const isCurrentYear = ctx.datasetIndex === 0;
+                  if (isCurrentYear) {
+                    return `Visitors: ${value.toLocaleString()}`;
+                  } else {
+                    const idx = ctx.dataIndex;
+                    const date = dateIndex[idx];
+                    const weather = this._getWeatherData(date);
+                    return [
+                      `Visitors: ${value.toLocaleString()}`,
+                      `Weather: ${weather.condition}`,
+                      `Temperature: ${weather.temp}`,
+                    ];
+                  }
                 },
               },
             },
@@ -258,19 +391,29 @@ export class ChartService {
       });
 
       this.chartInstances.set("visitor", chart);
-      console.log("Visitor chart created successfully");
       return chart;
-    } catch (error) {
-      console.error("Error creating visitor chart:", error);
+    } catch (e) {
+      console.error("Error creating Visitor chart:", e);
     }
   }
 
   createReservationChart(canvasEl, period) {
-    if (!this.validateCanvas(canvasEl, "Reservation Chart")) return;
+    if (!this._validateCanvas(canvasEl, "Reservation Chart")) return;
 
     const labels = this.getDateLabels(period);
-    const currentYearData = this.generateRandomData(labels.length, 40, 100);
-    const lastYearData = this.generateRandomData(labels.length, 30, 80);
+    const days = period === "7days" ? 7 : 30;
+
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - (days - 1));
+    const dateIndex = Array.from({ length: days }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d;
+    });
+
+    const currentYearData = this._generateRandomData(labels.length, 40, 100);
+    const lastYearData = this._generateRandomData(labels.length, 30, 80);
 
     this.destroyChart("reservation");
 
@@ -278,30 +421,28 @@ export class ChartService {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
         data: {
-          labels: labels,
+          labels,
           datasets: [
             {
               label: _t("Reservations"),
               data: currentYearData,
-              borderColor: "#2196f3",
+              borderColor: "#046DEC",
               backgroundColor: "rgba(33, 150, 243, 0.1)",
               borderWidth: 2,
               fill: true,
               tension: 0.4,
               pointRadius: 4,
-              pointHoverRadius: 8,
-              pointBackgroundColor: "#2196f3",
+              pointStyle: "circle", // Ensure point style is applied to data points
             },
             {
               label: _t("Reservations (Same period last year)"),
               data: lastYearData,
-              borderColor: "#81d4fa",
+              borderColor: "#86E5F5",
               backgroundColor: "transparent",
               borderWidth: 2,
               tension: 0.4,
               pointRadius: 4,
-              pointHoverRadius: 8,
-              pointBackgroundColor: "#81d4fa",
+              pointStyle: "circle", // Ensure point style is applied to data points
             },
           ],
         },
@@ -310,11 +451,7 @@ export class ChartService {
           maintainAspectRatio: false,
           interaction: { mode: "nearest", intersect: false },
           scales: {
-            y: {
-              beginAtZero: true,
-              max: 120,
-              ticks: { stepSize: 20 },
-            },
+            y: { beginAtZero: true, max: 120, ticks: { stepSize: 20 } },
             x: {
               ticks: {
                 callback: function (value, index, ticks) {
@@ -335,49 +472,85 @@ export class ChartService {
               labels: {
                 usePointStyle: true,
                 pointStyle: "circle",
-                padding: 20,
+                boxWidth: 6,
+                boxHeight: 6,
+                padding: 16,
+                font: { size: 12, weight: "600" },
+                color: "#1e1e1e",
+                generateLabels: function (chart) {
+                  const data = chart.data;
+                  if (data.datasets.length) {
+                    return data.datasets.map((dataset, i) => ({
+                      text: dataset.label,
+                      fillStyle: dataset.borderColor,
+                      strokeStyle: dataset.borderColor,
+                      lineWidth: 1,
+                      pointStyle: "circle",
+                      hidden: !chart.isDatasetVisible(i),
+                      datasetIndex: i,
+                    }));
+                  }
+                  return [];
+                },
               },
             },
             tooltip: {
               enabled: true,
-              mode: "nearest",
-              intersect: false,
+              displayColors: false,
+              backgroundColor: "#3C3F44",
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              padding: 12,
+              cornerRadius: 8,
+              caretSize: 6,
+              titleFont: { size: 14, weight: "600" },
+              bodyFont: { size: 13 },
               callbacks: {
-                label: function (context) {
-                  return `Reservations: ${context.parsed.y}`;
+                title: (items) => {
+                  if (!items || !items[0]) return "";
+                  const idx = items[0].dataIndex;
+                  const d = dateIndex[idx];
+                  return this._formatFullDate(d) || labels[idx] || "";
+                },
+                label: (ctx) => {
+                  const value = ctx.parsed.y;
+                  const isCurrentYear = ctx.datasetIndex === 0;
+                  if (isCurrentYear) {
+                    return `Reservations: ${value}`;
+                  } else {
+                    const idx = ctx.dataIndex;
+                    const date = dateIndex[idx];
+                    const weather = this._getWeatherData(date);
+                    return [
+                      `Reservations: ${value}`,
+                      `Weather: ${weather.condition}`,
+                      `Temperature: ${weather.temp}`,
+                    ];
+                  }
                 },
               },
-              titleFont: { size: 12, weight: "bold" },
-              bodyFont: { size: 11 },
-              padding: 12,
-              backgroundColor: "rgba(0,0,0,0.8)",
-              borderColor: "#2196f3",
-              borderWidth: 1,
             },
           },
         },
       });
 
       this.chartInstances.set("reservation", chart);
-      console.log("Reservation chart created successfully");
       return chart;
-    } catch (error) {
-      console.error("Error creating reservation chart:", error);
+    } catch (e) {
+      console.error("Error creating reservation chart:", e);
     }
   }
 
   createAgeChart(canvasEl) {
-    if (!this.validateCanvas(canvasEl, "Age Chart")) return;
+    if (!this._validateCanvas(canvasEl, "Age Chart")) return;
 
     this.destroyChart("age");
 
     try {
-      // Values in percent; MAX controls the "full bar" length.
-      const MAX = 30;
+      const MAX = 60;
       const labels = ["60+ years", "50s", "40s", "30s", "20s", "Under 10"];
       const values = [22, 27, 20, 20, 9, 2];
 
-      // Plugin draws a rounded, full-length background track behind each bar.
       const barTrackPlugin = {
         id: "barTrack",
         beforeDatasetsDraw(chart) {
@@ -386,17 +559,8 @@ export class ChartService {
           const meta = chart.getDatasetMeta(0);
           if (!meta || !meta.data) return;
 
-          const trackColor =
-            (chart.options.plugins &&
-              chart.options.plugins.barTrack &&
-              chart.options.plugins.barTrack.color) ||
-            "#EEF3FA";
-          const radius =
-            (chart.options.plugins &&
-              chart.options.plugins.barTrack &&
-              chart.options.plugins.barTrack.radius) ||
-            12;
-
+          const trackColor = "#EEF3FA";
+          const radius = 12;
           const x0 = x.getPixelForValue(0);
           const xMax = x.getPixelForValue(MAX);
 
@@ -404,12 +568,9 @@ export class ChartService {
           ctx.fillStyle = trackColor;
 
           meta.data.forEach((bar) => {
-            // bar.y is the center; bar.height is the rendered height
             const h = bar.height;
             const top = bar.y - h / 2;
             const width = xMax - x0;
-
-            // rounded rectangle path
             const r = Math.min(radius, h / 2, width / 2);
             ctx.beginPath();
             ctx.moveTo(x0 + r, top);
@@ -438,12 +599,12 @@ export class ChartService {
               label: _t("Visitor Ratio"),
               data: values,
               backgroundColor: [
-                "#4489DA", // 60+
-                "#1958A4", // 50s
-                "#4C9CFD", // 40s
-                "#4C9CFD", // 30s
-                "#3A96D4", // 20s
-                "#5AB4F0", // under 10
+                "#4489DA",
+                "#1958A4",
+                "#4C9CFD",
+                "#4C9CFD",
+                "#3A96D4",
+                "#5AB4F0",
               ],
               borderRadius: 15,
               barThickness: 25,
@@ -451,34 +612,38 @@ export class ChartService {
           ],
         },
         options: {
-          indexAxis: "y", // horizontal bars
+          indexAxis: "y",
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
-            tooltip: { enabled: true },
-            // options for the custom track plugin
-            barTrack: {
-              color: "#EEF3FA",
-              radius: 12,
+            tooltip: {
+              enabled: true,
+              backgroundColor: "#3C3F44",
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              cornerRadius: 8,
+              padding: 12,
+              displayColors: false,
+              callbacks: {
+                title: () => "",
+                label: (ctx) => `${ctx.label}: ${ctx.parsed.x}%`,
+              },
             },
+            barTrack: { color: "#EEF3FA", radius: 12 },
           },
-          // Remove gridlines, borders, ticks from x-axis; keep only y labels
           scales: {
             x: {
               min: 0,
               max: MAX,
-              ticks: { display: false }, // no % labels
-              grid: { display: false }, // no gridlines
-              border: { display: false }, // no axis/baseline
+              ticks: { display: false },
+              grid: { display: false },
+              border: { display: false },
             },
             y: {
-              ticks: {
-                color: "#6f6f6f", // keep age labels
-                font: { size: 14, weight: "600" },
-              },
-              grid: { display: false }, // remove boxes/lines
-              border: { display: false }, // remove axis line
+              ticks: { color: "#6f6f6f", font: { size: 14, weight: "600" } },
+              grid: { display: false },
+              border: { display: false },
             },
           },
         },
@@ -486,15 +651,14 @@ export class ChartService {
       });
 
       this.chartInstances.set("age", chart);
-      console.log("Age chart created successfully");
       return chart;
-    } catch (error) {
-      console.error("Error creating age chart:", error);
+    } catch (e) {
+      console.error("Error creating age chart:", e);
     }
   }
 
   createPieChart(canvasEl, chartId, data, colors) {
-    if (!this.validateCanvas(canvasEl, `Pie Chart ${chartId}`)) return;
+    if (!this._validateCanvas(canvasEl, `Pie Chart ${chartId}`)) return;
 
     this.destroyChart(chartId);
 
@@ -503,26 +667,31 @@ export class ChartService {
         type: "doughnut",
         data: {
           datasets: [
-            {
-              data: data,
-              backgroundColor: colors,
-              borderWidth: 0,
-              cutout: "60%",
-            },
+            { data, backgroundColor: colors, borderWidth: 0, cutout: "60%" },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              enabled: true,
+              backgroundColor: "#3C3F44",
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              cornerRadius: 8,
+              padding: 12,
+              displayColors: false,
+            },
+          },
         },
       });
 
       this.chartInstances.set(chartId, chart);
-      console.log(`Pie chart created successfully: ${chartId}`);
       return chart;
-    } catch (error) {
-      console.error(`Error creating pie chart ${chartId}:`, error);
+    } catch (e) {
+      console.error(`Error creating pie chart ${chartId}:`, e);
     }
   }
 
@@ -541,13 +710,10 @@ export class ChartService {
         const femalePercent = document.getElementById("femalePercent");
         if (malePercent) malePercent.textContent = male + "%";
         if (femalePercent) femalePercent.textContent = female + "%";
-
-        console.log("Gender animation initialized");
       } else {
         console.warn("Gender animation elements not found");
       }
     }
-
     setTimeout(() => setGenderPercent(62, 38), 100);
   }
 }
