@@ -2,25 +2,33 @@
 <templates xml:space="preserve">
     <t t-name="golfzon_dashboard.PerformanceIndicators">
         <div class="performance-indicators-section">
-            <h2 class="main-section-title" t-esc="state.performanceData.main_title"/>
-            
+            <h2 class="main-section-title">Cloud CC Core Performance Indicators</h2>
             <div class="performance-cards-container">
                 <!-- Sales Performance Card -->
                 <t t-call="golfzon_dashboard.PerformanceCard">
-                    <t t-set="cardData" t-value="state.performanceData.sales_performance"/>
                     <t t-set="cardClass" t-value="'sales-card'"/>
+                    <t t-set="currentValue" t-value="state.performanceData.sales_performance.current_revenue"/>
+                    <t t-set="monthlyValue" t-value="state.performanceData.sales_performance.monthly_revenue"/>
+                    <t t-set="currentTrend" t-value="state.performanceData.sales_performance.current_trend"/>
+                    <t t-set="monthlyTrend" t-value="state.performanceData.sales_performance.monthly_trend"/>
+                    <t t-set="hasTrendDown" t-value="false"/>
                 </t>
-
                 <!-- Average Order Value Card -->
                 <t t-call="golfzon_dashboard.PerformanceCard">
-                    <t t-set="cardData" t-value="state.performanceData.avg_order_value"/>
                     <t t-set="cardClass" t-value="'order-value-card'"/>
+                    <t t-set="currentValue" t-value="state.performanceData.avg_order_value.current_weekly_value"/>
+                    <t t-set="monthlyValue" t-value="state.performanceData.avg_order_value.monthly_value"/>
+                    <t t-set="currentTrend" t-value="state.performanceData.avg_order_value.current_trend"/>
+                    <t t-set="monthlyTrend" t-value="state.performanceData.avg_order_value.monthly_trend"/>
+                    <t t-set="hasTrendDown" t-value="false"/>
                 </t>
-
                 <!-- Utilization Rate Card -->
                 <t t-call="golfzon_dashboard.PerformanceCard">
-                    <t t-set="cardData" t-value="state.performanceData.utilization_rate"/>
                     <t t-set="cardClass" t-value="'utilization-card'"/>
+                    <t t-set="currentValue" t-value="state.performanceData.utilization_rate.current_weekly_capacity"/>
+                    <t t-set="monthlyValue" t-value="state.performanceData.utilization_rate.monthly_capacity"/>
+                    <t t-set="currentTrend" t-value="state.performanceData.utilization_rate.current_trend"/>
+                    <t t-set="monthlyTrend" t-value="state.performanceData.utilization_rate.monthly_trend"/>
                     <t t-set="hasTrendDown" t-value="true"/>
                 </t>
             </div>
@@ -30,30 +38,42 @@
     <t t-name="golfzon_dashboard.PerformanceCard">
         <div t-att-class="'performance-card ' + cardClass">
             <div class="card-header">
-                <h3 class="card-title" t-esc="cardData.title"/>
+                <h3 class="card-title">
+                    <t t-if="cardClass === 'sales-card'">Sales Performance Indicators</t>
+                    <t t-if="cardClass === 'order-value-card'">Average Order Value Performance</t>
+                    <t t-if="cardClass === 'utilization-card'">Utilization Rate Performance</t>
+                </h3>
             </div>
             <div class="card-content">
                 <div class="metrics-row">
                     <div class="metric-column">
-                        <div class="metric-label" t-esc="cardData.current_label"/>
-                        <div class="metric-value" t-esc="cardData.current_revenue || cardData.current_weekly_value || cardData.current_weekly_capacity"/>
+                        <div class="metric-label">
+                            <t t-if="cardClass === 'sales-card'">Cumulative Sales This Year</t>
+                            <t t-if="cardClass === 'order-value-card'">Cumulative Unit Price This Year</t>
+                            <t t-if="cardClass === 'utilization-card'">Cumulative Operation Rate This Year</t>
+                        </div>
+                        <div class="metric-value" t-esc="currentValue"/>
                         <div class="trend-wrapper">
                             <div t-att-class="'trend-indicator ' + (hasTrendDown ? 'trend-down' : 'trend-up')">
                                 <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
-                                <span t-esc="cardData.current_trend"/>
+                                <span t-esc="currentTrend"/>
                             </div>
-                            <div class="trend-period" t-esc="cardData.trend_period"/>
+                            <div class="trend-period">(year-over-year)</div>
                         </div>
                     </div>
                     <div class="metric-column">
-                        <div class="metric-label" t-esc="cardData.monthly_label"/>
-                        <div class="metric-value" t-esc="cardData.monthly_revenue || cardData.monthly_value || cardData.monthly_capacity"/>
+                        <div class="metric-label">
+                            <t t-if="cardClass === 'sales-card'">Current Monthly Sales</t>
+                            <t t-if="cardClass === 'order-value-card'">Current Monthly Guest Price</t>
+                            <t t-if="cardClass === 'utilization-card'">Current Month Operation Rate</t>
+                        </div>
+                        <div class="metric-value" t-esc="monthlyValue"/>
                         <div class="trend-wrapper">
                             <div class="trend-indicator trend-up">
                                 <span class="trend-icon">▲</span>
-                                <span t-esc="cardData.monthly_trend"/>
+                                <span t-esc="monthlyTrend"/>
                             </div>
-                            <div class="trend-period" t-esc="cardData.trend_period"/>
+                            <div class="trend-period">(year-over-year)</div>
                         </div>
                     </div>
                 </div>
@@ -61,3 +81,4 @@
         </div>
     </t>
 </templates>
+
