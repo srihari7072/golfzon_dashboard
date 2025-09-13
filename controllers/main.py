@@ -275,35 +275,22 @@ class GolfzonDashboardController(http.Controller):
     def get_performance_indicators(self):
         """Get performance indicators data"""
         return {
-            "main_title": _("Cloud CC Core Performance Indicators"),
             "sales_performance": {
-                "title": _("Sales Performance Indicators"),
                 "current_revenue": "120,000,000,000",
                 "monthly_revenue": "100,000,000", 
                 "current_trend": "+11%",
                 "monthly_trend": "+11%",
-                "current_label": _("Cumulative Sales This Year"),
-                "monthly_label": _("Current Monthly Sales"),
-                "trend_period": _("(Previous Period)"),
             },
             "avg_order_value": {
-                "title": _("Average Order Value Performance"),
                 "current_weekly_value": "200,000",
                 "monthly_value": "200,000",
                 "current_trend": "+11%", 
                 "monthly_trend": "+13%",
-                "current_label": _("Cumulative Unit Price This Year"),
-                "monthly_label": _("Current Monthly Guest Price"),
-                "trend_period": _("(Previous Period)"),
             },
             "utilization_rate": {
-                "title": _("Utilization Rate Performance"),
                 "current_weekly_capacity": "120,000,000,000",
                 "monthly_capacity": "100,000,000",
                 "current_trend": "-5%",
                 "monthly_trend": "+20%",
-                "current_label": _("Cumulative Operation Rate This Year"),
-                "monthly_label": _("Current Month Operation Rate"),
-                "trend_period": _("(Previous Period)"),
             }
         }
