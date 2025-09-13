@@ -1,0 +1,551 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* golfzon_dashboard
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-12 13:44+0000\n"
+"PO-Revision-Date: 2025-09-12 13:44+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "GOLFZON"
+msgstr "골프존"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Dashboard"
+msgstr "대시보드"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Member"
+msgstr "회원"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Member Group"
+msgstr "회원 그룹"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "CRM Campaign"
+msgstr "CRM 캠페인"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "TODAY"
+msgstr "오늘"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "WEATHER"
+msgstr "날씨"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "TOTAL RESERVATIONS"
+msgstr "총 예약 수"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "FULL TEE TIME"
+msgstr "전체 티타임"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Temperature"
+msgstr "온도"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Chance of precipitation"
+msgstr "강수 확률"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Precipitation"
+msgstr "강수량"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Part 1"
+msgstr "1부"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Part 2"
+msgstr "2부"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Part 3"
+msgstr "3부"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Weather & Round Details"
+msgstr "날씨 및 라운드 정보"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Person"
+msgstr "예약자"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "ID"
+msgstr "아이디"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Date"
+msgstr "예약 날짜"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Tee Time"
+msgstr "티 타임"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Rounds"
+msgstr "라운드"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Cloud CC Core Performance Indicators"
+msgstr "클라우드 CC 핵심 성과 지표"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Sales Performance Indicators"
+msgstr "판매 성과 지표"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Cumulative Sales This Year"
+msgstr "올해 누적 판매"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Current Monthly Sales"
+msgstr "현재 월별 판매"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Average Order Value Performance"
+msgstr "평균 주문 가치 성과"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Cumulative Unit Price This Year"
+msgstr "올해의 누적 단가"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Current Monthly Guest Price"
+msgstr "현재 월별 게스트 가격"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Utilization Rate Performance"
+msgstr "활용률 성과"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Cumulative Operation Rate This Year"
+msgstr "올해의 누적 운영 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Current Month Operation Rate"
+msgstr "현재 월 운영 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "year-over-year"
+msgstr "전년 대비"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Status"
+msgstr "예약 상태"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Analysis period: The last 30 days"
+msgstr "분석 기간: 지난 30일"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Trend by Period"
+msgstr "기간별 예약 추세"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Trend by Period"
+msgstr "기간별 예약 추세"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Last 7 Days"
+msgstr "지난 7일"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Last 30 Days"
+msgstr "지난 30일"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservations"
+msgstr "예약"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Total number of reservations"
+msgstr "총 예약 수"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "compared to same period last year"
+msgstr "작년 동일 기간에 비해"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Total Operation rate"
+msgstr "총 운영 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Trends"
+msgstr "예약 추세"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Dawn (5 AM -7 AM)"
+msgstr "새벽 (오전 5시 - 오전 7시)"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Morning (8 AM -12 PM)"
+msgstr "오전 (오전 8시 - 12시)"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Afternoon (1 PM -4 PM)"
+msgstr "오후 (오후 1시 - 4시)"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Night (5 PM -7 PM)"
+msgstr "밤 (오후 5시 - 오후 7시)"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "work"
+msgstr "일"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Month"
+msgstr "월"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "anger"
+msgstr "화"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "number"
+msgstr "수"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Mok"
+msgstr "목"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Gold"
+msgstr "금"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Tote"
+msgstr "토"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "TOP"
+msgstr "탑"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Median"
+msgstr "중앙값"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Bottom"
+msgstr "바닥"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Number of reservation teams by time slot"
+msgstr "시간대별 예약 팀 수"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "This is the time with the most reservations"
+msgstr "이때가 가장 많은 예약이 있는 시간입니다"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "This is the time with the least reservations"
+msgstr "이것은 예약이 가장 적은 시간입니다"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "team"
+msgstr "팀"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "teams"
+msgstr "팀"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation member composition status"
+msgstr "예약 회원 구성 상태"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Proportion by Type"
+msgstr "유형별 예약 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Proportion by Time"
+msgstr "시간별 예약 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Reservation Proportion by Channel"
+msgstr "채널별 예약 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Individual"
+msgstr "개인"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Joint Organization"
+msgstr "공동 조직"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "General Organization"
+msgstr "일반 조직"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Temporary Organization"
+msgstr "임시 조직"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "D-15+"
+msgstr "D-15+"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "D-14"
+msgstr "D-14"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "D-7"
+msgstr "D-7"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "D-3"
+msgstr "D-3"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "D-1"
+msgstr "D-1"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "D-0"
+msgstr "D-0"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Phone"
+msgstr "전화"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Internet"
+msgstr "인터넷"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Agency"
+msgstr "기관"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Agency"
+msgstr "기관"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Other"
+msgstr "기타"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Visitor Status"
+msgstr "방문자 상태"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Visitor Trends"
+msgstr "방문자 추세"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "30 days prior to the inquiry date"
+msgstr "문의 날짜로부터 30일 전"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Visitors"
+msgstr "방문객"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Total visitors"
+msgstr "총 방문객 수"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Total visitors by section"
+msgstr "섹션별 총 방문자 수"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Compared to last year"
+msgstr "작년과 비교하여"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Visitor Ratio by Age Group"
+msgstr "연령대별 방문자 비율"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "60+ Years"
+msgstr "60년 이상"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "50s"
+msgstr "50초"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "40s"
+msgstr "40초"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "30s"
+msgstr "30초"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "20s"
+msgstr "20초"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "10s"
+msgstr "10초"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Under 10"
+msgstr "10세 미만"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Gender Ratio"
+msgstr "성비"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Male"
+msgstr "남성"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Female"
+msgstr "여성"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Sales Status"
+msgstr "판매 상태"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Sales Trends"
+msgstr "판매 추세"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Sales"
+msgstr "판매"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Last Years Sales (Same Period)"
+msgstr "작년 매출 (동일 기간)"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Total Sales"
+msgstr "총 판매"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Compared to the same period last year"
+msgstr "작년 같은 기간에 비해"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "Average unit price"
+msgstr "평균 단가"
+
+#. module: golfzon_dashboard
+#: model:ir.ui.menu,name:golfzon_dashboard.menu_golfzon_dashboard
+msgid "username"
+msgstr "사용자 이름"
