@@ -39,6 +39,10 @@ body {
   width: 100%;
 }
 
+.o_navbar {
+  display: none;
+}
+
 // Responsive Mixins
 @mixin mobile-xs {
   @media (max-width: #{$mobile-xs}) {
