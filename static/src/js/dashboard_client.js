@@ -536,4 +536,3 @@ class GolfzonDashboard extends Component {
 
 registry.category("actions").add("golfzon.dashboard", GolfzonDashboard);
 export default GolfzonDashboard;
-
