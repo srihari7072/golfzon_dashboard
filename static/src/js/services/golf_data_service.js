@@ -121,36 +121,23 @@ export class GolfDataService {
 
   getDefaultPerformanceData() {
     return {
-      main_title: _t("Cloud CC Core Performance Indicators"),
       sales_performance: {
-        title: _t("Sales Performance Indicators"),
         current_revenue: "120,000,000,000",
         monthly_revenue: "100,000,000",
         current_trend: "+11%",
         monthly_trend: "+11%",
-        current_label: _t("Cumulative Sales This Year"),
-        monthly_label: _t("Current Monthly Sales"),
-        trend_period: _t("(year-over-year)"),
       },
       avg_order_value: {
-        title: _t("Average Order Value Performance"),
         current_weekly_value: "200,000",
         monthly_value: "200,000",
         current_trend: "+11%",
         monthly_trend: "+13%",
-        current_label: _t("Cumulative Unit Price This Year"),
-        monthly_label: _t("Current Monthly Guest Price"),
-        trend_period: _t("(year-over-year)"),
       },
       utilization_rate: {
-        title: _t("Utilization Rate Performance"),
         current_weekly_capacity: "120,000,000,000",
         monthly_capacity: "100,000,000",
         current_trend: "-5%",
         monthly_trend: "+20%",
-        current_label: _t("Cumulative Operation Rate This Year"),
-        monthly_label: _t("Current Month Operation Rate"),
-        trend_period: _t("(year-over-year)"),
       },
     };
   }
