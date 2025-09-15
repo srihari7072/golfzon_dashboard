@@ -160,8 +160,12 @@ export class ChartService {
           interaction: { mode: "nearest", intersect: true },
           scales: {
             x: {
-              grid: { display: true, color: GRID_COLOR, drawBorder: false },
+              grid: { display: false, color: GRID_COLOR, drawBorder: false },
               ticks: {
+                autoSkip: period === "30days" ? true : false,
+                maxTicksLimit: period === "30days" ? 6 : 7,
+                minRotation: 0,
+                maxRotation: 0,
                 color: AXIS_COLOR,
                 font: { size: 12 },
                 callback: function (value, index, ticks) {
@@ -179,6 +183,15 @@ export class ChartService {
               grid: { color: GRID_COLOR, drawBorder: false },
             },
           },
+          datasets: [
+            {
+              barThickness: 10,
+              borderRadius: {
+                topLeft: 5,
+                topRight: 5,
+              },
+            },
+          ],
           plugins: {
             legend: {
               display: true,
@@ -276,7 +289,7 @@ export class ChartService {
           labels,
           datasets: [
             {
-              label: _t("2025 Visitors"),
+              label: _t("Number of Guests"),
               data: visitorData,
               borderColor: "#046DEC",
               backgroundColor: "rgba(33, 150, 243, 0.1)",
@@ -287,7 +300,7 @@ export class ChartService {
               pointStyle: "circle", // Ensure point style is applied to data points
             },
             {
-              label: _t("2024 Visitors"),
+              label: _t("Number of Guests (Same period last year)"),
               data: lastYearData,
               borderColor: "#86E5F5",
               backgroundColor: "transparent",
@@ -451,8 +464,9 @@ export class ChartService {
           maintainAspectRatio: false,
           interaction: { mode: "nearest", intersect: false },
           scales: {
-            y: { beginAtZero: true, 
-              max: 120, 
+            y: {
+              beginAtZero: true,
+              max: 120,
               ticks: { stepSize: 20 },
               grid: { color: "#e0e0e0" },
             },
