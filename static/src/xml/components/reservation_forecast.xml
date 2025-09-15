@@ -49,50 +49,55 @@
                     <canvas t-ref="reservationTrendChart"/>
                 </div>
                 
-                <!-- Stats Cards -->
-                <div class="stats-cards-below">
-                    <div class="stat-card horizontal">
-                        <div class="stat-info">
-                            <span class="stat-label">
-                                <t t-esc="_t('Total number of reservations')"/>
+                <!-- reservation Cards -->
+                <div class="reservation-trend-card-container">
+                    <div class="reservation-trend-card">
+                        <div class="reservation-numbers">
+                            <span class="trend-card-title">
+                                <t t-esc="_t('Total Number of Reservations')"/>
                                 <span class="tooltip-wrapper">
                                     <span class="help-icon">
                                         <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                     </span>
                                     <div class="tooltip-content">
-                                        <t t-esc="_t('30 days after the inquiry date')"/>
+                                        <t t-esc="_t('30 days prior to the inquiry date')"/>
                                     </div>
                                 </span>
                             </span>
-                            <div class="stat-value">2,926</div>
+                            <span class="trend-card-title">2,926</span>
                         </div>
-                        <div class="stat-comparison">
-                            <span class="comparison-label"><t t-esc="_t('compared to same period last year')"/></span>
+                        <div class="trend-wrapper sales-numbers">
+                            <span class="trend-card-title">
+                                <t t-esc="_t('Compared to the Same Period last year')"/>
+                            </span>
                             <span class="trend-indicator trend-up">
                                 <span class="trend-icon">▲</span>
                                 <span>+10%</span>
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card horizontal">
-                        <div class="stat-info">
-                            <span class="stat-label">
-                                <t t-esc="_t('Total Operation rate')"/>
-                                <div class="tooltip-wrapper">
+                    
+                    <div class="reservation-trend-card">
+                        <div class="reservation-numbers">
+                            <span class="trend-card-title">
+                                <t t-esc="_t('Total Operation Rate')"/>
+                                <span class="tooltip-wrapper">
                                     <span class="help-icon">
                                         <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                     </span>
                                     <div class="tooltip-content">
-                                        <t t-esc="_t('30 days after the inquiry date')"/>
+                                        <t t-esc="_t('30 days prior to the inquiry date')"/>
                                     </div>
-                                </div>
+                                </span>
                             </span>
-                            <div class="stat-value">78.5%</div>
+                            <span class="trend-card-title">78.5%</span>
                         </div>
-                        <div class="stat-breakdown horizontal-parts">
-                            <span><t t-esc="_t('Part 1')"/> 82.4%</span>
-                            <span><t t-esc="_t('Part 2')"/> 76.2%</span>
-                            <span><t t-esc="_t('Part 3')"/> 75.3%</span>
+                        <div class="trend-wrapper sales-numbers">
+                            <span class="parts">
+                                <span><t t-esc="_t('Part 1')"/> 82.4%</span>
+                                <span><t t-esc="_t('Part 2')"/> 76.2%</span>
+                                <span><t t-esc="_t('Part 3')"/> 75.3%</span>
+                            </span>
                         </div>
                     </div>
                 </div>
