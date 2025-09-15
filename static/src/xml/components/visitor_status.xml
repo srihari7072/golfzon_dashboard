@@ -131,7 +131,7 @@
                     <div class="figure">
                         <div class="male-percentage" id="malePercent">62%</div>
                         <div class="svg-wrapper">
-                            <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                            <svg class="svg-male" viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
                                 <!-- Grey silhouette -->  
                                 <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-25 90h50c30 0 55 25 55 55v70c0 10-8 18-18 18h-15v127h-40v-80h-10v80h-40V253H42c-10 0-18-8-18-18v-70c0-30 25-55 55-55z" fill="#eee"/>
                                 <!-- Blue fill -->
@@ -150,7 +150,7 @@
                     <div class="figure">
                         <div class="female-percentage" id="femalePercent">38%</div>
                         <div class="svg-wrapper">
-                            <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+                            <svg class="svg-female" viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
                                 <!-- Grey silhouette -->
                                 <path d="M100 20c25 0 45 20 45 45s-20 45-45 45-45-20-45-45 20-45 45-45zm-40 110h80l40 120h-50v110H110v-70H90v70H70V250H20l40-120z" fill="#eee"/>
                                 <!-- Pink fill -->
@@ -169,4 +169,3 @@
         </div>
     </t>
 </templates>
-
