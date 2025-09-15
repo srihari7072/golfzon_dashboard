@@ -14,11 +14,7 @@ $warning-color: #ffb300;
 $info-color: #29b6f6;
 $purple-color: #7e57c2;
 $orange-color: #ff9800;
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+
 // Responsive Breakpoints
 $mobile-xs: 320px;
 $mobile-sm: 375px;
@@ -30,18 +26,6 @@ $laptop-sm: 1280px;
 $laptop-md: 1366px;
 $laptop-lg: 1440px;
 $desktop: 1920px;
-
-body {
-  background: #f7f7fb;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  min-height: 100vh;
-  width: 100%;
-}
-
-.o_navbar {
-  display: none;
-}
 
 // Responsive Mixins
 @mixin mobile-xs {
@@ -1211,7 +1195,6 @@ body {
       letter-spacing: 0%;
       font-size: 16px;
       color: $text-secondary;
-      font-style: italic;
 
       @include mobile {
         font-size: 12px;
@@ -1370,133 +1353,154 @@ body {
           }
         }
 
-        .stats-cards-below {
-          @include flex(column, flex-start, stretch);
-          gap: 12px;
+        // Card container for stat cards
+        .reservation-trend-card-container {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          width: 100%;
+        }
 
-          .stat-card {
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border-radius: 6px;
+        // Individual stat card
+        .reservation-trend-card {
+          background: #fff;
+          border-radius: 6px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+          padding: 16px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          font-family: "Pretendard", "Segoe UI", Arial, sans-serif;
+
+          @include mobile {
             padding: 16px;
-            @include flex(row, space-between, center);
+            min-height: 60px;
+          }
 
-            .stat-info {
-              @include flex(row, flex-start, center);
-              gap: 8px;
+          .reservation-numbers {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            -webkit-box-pack: start;
+            justify-content: flex-start;
+            gap: 8px;
 
-              .stat-label {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
+            .trend-card-title {
+              display: flex;
+              align-items: center;
+              flex-direction: row;
+              -webkit-box-pack: start;
+              justify-content: flex-start;
+              font-size: 18px;
+              color: #060606;
+              font-weight: 600;
+              gap: 15px;
 
-                .tooltip-wrapper {
-                  position: relative;
+              // Tooltip for stat label
+              .tooltip-wrapper {
+                position: relative;
+                display: inline-block;
+
+                .help-icon {
                   display: inline-block;
+                  vertical-align: middle;
+                  margin-left: 2px;
+                  width: 19px;
+                  height: 19px;
+                  cursor: pointer;
+                  background: none;
+                  border: none;
+                  padding: 0;
 
-                  .help-icon {
-                    display: inline-block;
-                    vertical-align: middle;
-                    margin-left: 2px;
-                    width: 20px;
-                    height: 20px;
-                    background: none;
-                    border: none;
-                    padding: 0;
-                    cursor: pointer;
-
-                    img {
-                      width: 100%;
-                      height: 100%;
-                      display: block;
-                    }
-                  }
-
-                  .tooltip-content {
-                    display: none;
-                    position: absolute;
-                    bottom: 120%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #fff;
-                    color: #1976d2;
-                    border: 2px solid #b3d3fa;
-                    border-radius: 8px;
-                    padding: 8px 14px;
-                    font-size: 15px;
-                    font-weight: 400;
-                    white-space: nowrap;
-                    box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
-                    z-index: 10;
-
-                    &::after {
-                      content: "";
-                      position: absolute;
-                      top: 100%;
-                      left: 50%;
-                      transform: translateX(-50%);
-                      border-width: 8px;
-                      border-style: solid;
-                      border-color: #b3d3fa transparent transparent transparent;
-                    }
-                  }
-
-                  &:hover .tooltip-content,
-                  .help-icon:focus + .tooltip-content {
+                  img {
+                    width: 100%;
+                    height: 100%;
                     display: block;
                   }
                 }
-              }
-            }
 
-            .stat-value {
-              font-size: 20px;
-              font-weight: 700;
-              color: $text-primary;
-            }
+                .tooltip-content {
+                  display: none;
+                  position: absolute;
+                  bottom: 120%;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  background: #fff;
+                  color: #1976d2;
+                  border: 2px solid #b3d3fa;
+                  border-radius: 8px;
+                  padding: 8px 14px;
+                  font-size: 15px;
+                  font-weight: 400;
+                  white-space: nowrap;
+                  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+                  z-index: 10;
 
-            .stat-comparison {
-              @include flex(row, flex-end, center);
-              gap: 8px;
-
-              .comparison-label {
-                font-size: 14px;
-                color: #555555;
-              }
-              .trend-indicator {
-                @include flex(row, center, center);
-                gap: 3px;
-                font-size: 11px;
-                font-weight: 700;
-                padding: 4px 10px;
-                border-radius: 6px;
-
-                .trend-icon {
-                  font-size: 14px;
+                  &::after {
+                    content: "";
+                    position: absolute;
+                    top: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border-width: 8px;
+                    border-style: solid;
+                    border-color: #b3d3fa transparent transparent transparent;
+                  }
                 }
 
-                &.trend-up {
-                  background: rgba(76, 175, 80, 0.1);
-                  color: #388e3c;
-                }
-
-                &.trend-down {
-                  background: rgba(244, 67, 54, 0.1);
-                  color: #d32f2f;
+                &:hover .tooltip-content,
+                .help-icon:focus + .tooltip-content {
+                  display: block;
                 }
               }
             }
 
-            .stat-breakdown {
-              &.horizontal-parts {
-                @include flex(row, flex-end, center);
-                gap: 8px;
+            // Stat value
+            .trend-card-title:last-child {
+              font-size: 23px;
+              font-weight: 800;
+              color: #060606;
+            }
+          }
 
-                span {
-                  font-size: 14px;
-                  color: #6f6f6f;
-                }
+          // Comparison/indicator section
+          .trend-wrapper.sales-numbers {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .trend-card-title {
+              font-size: 14px;
+              color: #555555;
+              font-weight: 500;
+            }
+
+            .trend-indicator {
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: $success-color;
+              background: #e6f9ed;
+              border-radius: 6px;
+              padding: 4px 12px;
+              margin-left: 8px;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+
+              &.trend-up {
+                color: $success-color;
+                background: #e6f9ed;
               }
+              &.trend-down {
+                color: $danger-color;
+                background: #fdeaea;
+              }
+            }
+            .parts {
+              color: #6f6f6f;
+              font-size: 16px;
+              font-weight: 600;
             }
           }
         }
@@ -2094,7 +2098,10 @@ body {
         flex-direction: row;
         -webkit-box-pack: start;
         justify-content: flex-start;
-        gap: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #060606;
+        gap: 15px;
 
         // Tooltip for stat label
         .tooltip-wrapper {
@@ -2157,8 +2164,8 @@ body {
 
       // Stat value
       .trend-card-title:last-child {
-        font-size: 18px;
-        font-weight: 500;
+        font-size: 23px;
+        font-weight: 800;
         color: #060606;
       }
     }
@@ -2170,9 +2177,9 @@ body {
       gap: 12px;
 
       .trend-card-title {
-        font-size: 15px;
-        color: $text-secondary;
-        font-weight: 400;
+        font-size: 14px;
+        color: #555555;
+        font-weight: 500;
       }
 
       .trend-indicator {
@@ -2287,11 +2294,14 @@ body {
         color: $text-secondary;
         cursor: pointer;
         transition: all 0.2s;
+        font-weight: 600;
 
         &.active,
         &:hover {
           color: #046dec;
           text-decoration: underline;
+          font-style: bold;
+          font-weight: 700;
         }
       }
     }
@@ -2305,7 +2315,7 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    width: 50%;
+    width: 45%;
 
     @include mobile {
       width: 100%;
@@ -2728,7 +2738,7 @@ body {
   padding-top: 30px;
   padding-bottom: 35px;
   margin-top: 15px;
-  height: 350px;
+  height: 365px;
 
   .chart-header {
     @include flex(row, space-between, flex-start);
