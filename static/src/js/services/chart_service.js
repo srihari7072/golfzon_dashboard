@@ -729,7 +729,7 @@ export class ChartService {
       const femaleFill = document.getElementById("femaleFill");
 
       if (maleFill && femaleFill) {
-        const maxHeight : 400; // SVG viewBox height
+        const maxHeight = 400; // SVG viewBox height
         maleFill.setAttribute("y", maxHeight - (maxHeight * male) / 100);
         maleFill.setAttribute("height", (maxHeight * male) / 100);
         femaleFill.setAttribute("y", maxHeight - (maxHeight * female) / 100);
