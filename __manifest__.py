@@ -70,4 +70,3 @@
     "auto_install": False,
     "license": "LGPL-3",
 } # type: ignore
-
