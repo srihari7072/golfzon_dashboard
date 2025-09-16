@@ -14,11 +14,11 @@ $warning-color: #ffb300;
 $info-color: #29b6f6;
 $purple-color: #7e57c2;
 $orange-color: #ff9800;
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+// *,
+// *::before,
+// *::after {
+//   box-sizing: border-box;
+// }
 // Responsive Breakpoints
 $mobile-xs: 320px;
 $mobile-sm: 375px;
@@ -31,17 +31,17 @@ $laptop-md: 1366px;
 $laptop-lg: 1440px;
 $desktop: 1920px;
 
-body {
-  background: #f7f7fb;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  min-height: 100vh;
-  width: 100%;
-}
+// body {
+//   background: #f7f7fb;
+//   font-family: Arial, sans-serif;
+//   margin: 0;
+//   min-height: 100vh;
+//   width: 100%;
+// }
 
-.o_navbar {
-  display: none;
-}
+// .o_navbar {
+//   display: none;
+// }
 
 // Responsive Mixins
 @mixin mobile-xs {
@@ -978,7 +978,7 @@ body {
     font-family: "Pretendard", sans-serif;
     margin: 0 8px 14px;
     padding: 0;
-    letter-spacing: 0.5px;
+    letter-spacing: 0%;
 
     @include mobile {
       font-size: 20px;
@@ -1190,7 +1190,7 @@ body {
     }
 
     .main-section-title {
-      font-size: 24px;
+      font-size: 30px;
       font-weight: 700;
       color: $text-primary;
       margin: 0;
@@ -1247,18 +1247,20 @@ body {
         background: $white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        padding: 24px;
+        padding: 30px;
         height: 100%;
         @include flex(column, flex-start, stretch);
 
         .chart-header {
+          margin-bottom: 40px;
+          margin-right: 20px;
           @include flex(row, space-between, flex-start);
 
           .chart-title-section {
             .title-with-tooltip {
               @include flex(row, flex-start, center);
               gap: 8px;
-              margin-bottom: 8px;
+              // margin-bottom: 8px;
 
               h3 {
                 font-family: Pretendard;
@@ -1333,15 +1335,19 @@ body {
 
           .time-period-buttons {
             @include flex(row, flex-start, center);
-            gap: 8px;
+            gap: 16px;
 
             .period-btn {
+              font-family: Pretendard;
+              font-weight: 500;
+              font-size: 14px;
+              letter-spacing: 0;
               border: 0;
               background: $white;
-              font-size: 12px;
               color: $text-secondary;
               cursor: pointer;
               transition: all 0.2s;
+              padding: 0 !important;
 
               &.active,
               &:hover {
@@ -1355,168 +1361,132 @@ body {
         .line-chart-container {
           flex: 1;
           height: 280px;
+          min-height: 280px;
+          max-height: 280px;
           padding: 0 18px;
           position: relative;
           margin-bottom: 20px;
 
-          .o_dashboard_sales {
-            width: 100% !important;
-            height: 100% !important;
-          }
           canvas {
             width: 100% !important;
             height: 100% !important;
           }
         }
 
-        // Card container for stat cards
-        .reservation-trend-card-container {
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-          width: 100%;
-        }
+        .stats-cards-below {
+          @include flex(column, flex-start, stretch);
+          gap: 12px;
 
-        // Individual stat card
-        .reservation-trend-card {
-          background: #fff;
-          border-radius: 6px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-          padding: 16px;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          font-family: "Pretendard", "Segoe UI", Arial, sans-serif;
-
-          @include mobile {
+          .stat-card {
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
             padding: 16px;
-            min-height: 60px;
-          }
+            @include flex(row, space-between, center);
 
-          .reservation-numbers {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            -webkit-box-pack: start;
-            justify-content: flex-start;
-            gap: 8px;
+            .stat-info {
+              @include flex(row, flex-start, center);
+              gap: 8px;
 
-            .trend-card-title {
-              display: flex;
-              align-items: center;
-              flex-direction: row;
-              -webkit-box-pack: start;
-              justify-content: flex-start;
-              font-size: 18px;
-              color: #060606;
-              font-weight: 600;
-              gap: 15px;
+              .stat-label {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
 
-              // Tooltip for stat label
-              .tooltip-wrapper {
-                position: relative;
-                display: inline-block;
-
-                .help-icon {
+                .tooltip-wrapper {
+                  position: relative;
                   display: inline-block;
-                  vertical-align: middle;
-                  margin-left: 2px;
-                  width: 19px;
-                  height: 19px;
-                  cursor: pointer;
-                  background: none;
-                  border: none;
-                  padding: 0;
 
-                  img {
-                    width: 100%;
-                    height: 100%;
+                  .help-icon {
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-left: 2px;
+                    width: 20px;
+                    height: 20px;
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    cursor: pointer;
+
+                    img {
+                      width: 100%;
+                      height: 100%;
+                      display: block;
+                    }
+                  }
+
+                  .tooltip-content {
+                    display: none;
+                    position: absolute;
+                    bottom: 120%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #fff;
+                    color: #1976d2;
+                    border: 2px solid #b3d3fa;
+                    border-radius: 8px;
+                    padding: 8px 14px;
+                    font-size: 15px;
+                    font-weight: 400;
+                    white-space: nowrap;
+                    box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+                    z-index: 10;
+
+                    &::after {
+                      content: "";
+                      position: absolute;
+                      top: 100%;
+                      left: 50%;
+                      transform: translateX(-50%);
+                      border-width: 8px;
+                      border-style: solid;
+                      border-color: #b3d3fa transparent transparent transparent;
+                    }
+                  }
+
+                  &:hover .tooltip-content,
+                  .help-icon:focus + .tooltip-content {
                     display: block;
                   }
                 }
+              }
+            }
 
-                .tooltip-content {
-                  display: none;
-                  position: absolute;
-                  bottom: 120%;
-                  left: 50%;
-                  transform: translateX(-50%);
-                  background: #fff;
-                  color: #1976d2;
-                  border: 2px solid #b3d3fa;
-                  border-radius: 8px;
-                  padding: 8px 14px;
-                  font-size: 15px;
-                  font-weight: 400;
-                  white-space: nowrap;
-                  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
-                  z-index: 10;
+            .stat-value {
+              font-size: 20px;
+              font-weight: 700;
+              color: $text-primary;
+            }
 
-                  &::after {
-                    content: "";
-                    position: absolute;
-                    top: 100%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    border-width: 8px;
-                    border-style: solid;
-                    border-color: #b3d3fa transparent transparent transparent;
-                  }
-                }
+            .stat-comparison {
+              @include flex(row, flex-end, center);
+              gap: 8px;
 
-                &:hover .tooltip-content,
-                .help-icon:focus + .tooltip-content {
-                  display: block;
+              .comparison-label {
+                font-size: 14px;
+                color: #555555;
+              }
+
+              .comparison-value {
+                font-size: 12px;
+                font-weight: 600;
+
+                &.increase {
+                  color: #388e3c;
                 }
               }
             }
 
-            // Stat value
-            .trend-card-title:last-child {
-              font-size: 23px;
-              font-weight: 800;
-              color: #060606;
-            }
-          }
+            .stat-breakdown {
+              &.horizontal-parts {
+                @include flex(row, flex-end, center);
+                gap: 8px;
 
-          // Comparison/indicator section
-          .trend-wrapper.sales-numbers {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            .trend-card-title {
-              font-size: 14px;
-              color: #555555;
-              font-weight: 500;
-            }
-
-            .trend-indicator {
-              font-size: 1.1rem;
-              font-weight: 600;
-              color: $success-color;
-              background: #e6f9ed;
-              border-radius: 6px;
-              padding: 4px 12px;
-              margin-left: 8px;
-              display: flex;
-              align-items: center;
-              gap: 4px;
-
-              &.trend-up {
-                color: $success-color;
-                background: #e6f9ed;
+                span {
+                  font-size: 14px;
+                  color: #6f6f6f;
+                }
               }
-              &.trend-down {
-                color: $danger-color;
-                background: #fdeaea;
-              }
-            }
-            .parts {
-              color: #6f6f6f;
-              font-size: 16px;
-              font-weight: 600;
             }
           }
         }
@@ -1531,7 +1501,7 @@ body {
       // 🆕 FIXED: No-shift heatmap layout matching reference images
       .fixed-heatmap-layout {
         display: flex;
-        align-items: center;
+        align-items: flex-start; // Align sidebar with top of heatmap grid
         grid-template-columns: 2fr 1fr;
         gap: 24px;
         background: $white;
@@ -1549,9 +1519,10 @@ body {
         .heatmap-section {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 12px;
 
           .heatmap-header {
+            margin-bottom: 28px;
             h3 {
               font-size: 20px;
               font-weight: 700;
@@ -1578,15 +1549,14 @@ body {
               font-size: 12px;
               color: #6c757d;
               text-transform: uppercase;
-              letter-spacing: 0.5px;
-              padding: 8px;
+              letter-spacing: 0px;
+              padding: 0 8px;
             }
           }
 
           // Grid Container
           .heatmap-grid-container {
             border-radius: 12px;
-            // padding: 8px;
 
             .heatmap-row {
               display: grid;
@@ -1694,12 +1664,17 @@ body {
                     z-index: 10;
                   }
 
-                  // 🆕 ENHANCED: Selected state (green border like reference)
+                  // Enhanced Selected State
                   &.selected {
                     border: 3px solid #28a745 !important;
                     transform: scale(1.05);
                     box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+                    min-height: 60px; // Increase height when selected
                     z-index: 15;
+
+                    @include mobile {
+                      min-height: 50px;
+                    }
                   }
 
                   .box-value {
@@ -1717,7 +1692,7 @@ body {
             justify-content: center;
             margin-left: 140px;
             gap: 20px;
-            padding: 16px;
+            padding: 8px 16px 16px;
             border-radius: 8px;
             flex-wrap: wrap;
 
@@ -1773,6 +1748,7 @@ body {
           border-radius: 12px;
           position: relative;
           height: fit-content;
+          margin-top: 0; // Align with red line by removing default margin
 
           @include mobile {
             margin-top: 16px;
@@ -1898,31 +1874,32 @@ body {
         background: $white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        padding: 24px;
+        padding: 22px 22px 30px;
         flex: 1;
 
         .pie-charts-header {
-          margin-bottom: 20px;
+          margin-bottom: 40px;
 
           h3 {
             font-size: 20px;
             font-weight: 700;
             letter-spacing: 0%;
             color: #060606;
-            margin: 0;
+            margin: 8px;
             text-align: left;
             font-family: "Pretendard", sans-serif;
           }
         }
 
         .pie-charts-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          flex-wrap: wrap;
 
           .pie-chart-grid-item {
-            display: grid;
-            grid-template-columns: 100px 1fr;
+            display: flex;
+            justify-content: space-evenly;
             gap: 10px;
             align-items: center;
 
@@ -1936,21 +1913,30 @@ body {
                 height: 90px !important;
               }
 
+              // Remove the center title since it's now external
               .chart-center-title {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                pointer-events: none;
-                font-weight: 600;
-                font-size: 10px;
-                text-align: center;
-                color: #060606;
-                padding: 2px 4px;
-                border-radius: 3px;
-                white-space: nowrap;
-                font-family: "Pretendard", sans-serif;
+                display: none;
               }
+            }
+
+            // Chart section with title above and legend beside
+            .chart-section {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 8px;
+            }
+
+            // New external chart title styling
+            .chart-title {
+              font-weight: 600;
+              font-size: 10px;
+              text-align: center;
+              color: #060606;
+              font-family: "Pretendard", sans-serif;
+              line-height: 1.2;
+              max-width: 120px;
+              margin: 0;
             }
 
             .chart-content {
@@ -1963,10 +1949,16 @@ body {
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
-                  gap: 6px;
-                  font-size: 11px;
+                  gap: 10px;
+                  font-size: 14px;
                   color: $text-secondary;
                   font-family: "Pretendard", sans-serif;
+
+                  .d-flex {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px; // Add gap between dot and text
+                  }
 
                   .dot {
                     width: 8px;
@@ -2027,7 +2019,7 @@ body {
                   }
 
                   .legend-value {
-                    font-weight: 600;
+                    font-weight: 700;
                     color: #060606;
                   }
                 }
@@ -2180,7 +2172,7 @@ body {
 
       // Stat value
       .trend-card-title:last-child {
-        font-size: 23px;
+        font-size: 18px;
         font-weight: 800;
         color: #060606;
       }
@@ -2224,6 +2216,7 @@ body {
 
   // Chart header styling
   .chart-header {
+    margin: 10px;
     @include flex(row, space-between, flex-start);
 
     .chart-title-section {
@@ -2235,8 +2228,9 @@ body {
         margin-bottom: 8px;
 
         h3 {
-          font-size: 22px;
+          font-size: 20px;
           font-weight: 700;
+          letter-spacing: 0%;
           color: $text-primary;
           font-family: "Pretendard", sans-serif;
           margin: 0;
@@ -2304,13 +2298,16 @@ body {
       gap: 8px;
 
       .period-btn {
+        font-family: Pretendard;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 0;
         border: 0;
         background: $white;
-        font-size: 12px;
         color: $text-secondary;
+        padding: 0 !important;
         cursor: pointer;
         transition: all 0.2s;
-        font-weight: 600;
 
         &.active,
         &:hover {
@@ -2396,7 +2393,7 @@ body {
 .sales-trends-section.sales-trends-v2 {
   margin: 0 30px 80px 30px;
 
-  .sales-trends-v2__panel {
+  .sales-trends-panel {
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -2404,23 +2401,25 @@ body {
     padding: 24px 28px 28px 28px;
   }
 
-  .sales-trends-v2__header {
+  .sales-trends-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 40px;
+    margin-right: 20px;
 
-    .sales-trends-v2__title {
+    .sales-trends-title {
       display: flex;
       align-items: center;
       gap: 8px;
 
       h3 {
         margin: 0;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
         color: #060606;
         font-family: "Pretendard", sans-serif;
+        letter-spacing: 0%;
       }
 
       .tooltip-wrapper {
@@ -2463,11 +2462,15 @@ body {
       }
     }
 
-    .sales-trends-v2__period {
+    .sales-trends-period {
       display: flex;
-      gap: 8px;
+      gap: 16px;
 
       .period-btn {
+        font-family: Pretendard;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 0;
         border: 0;
         background: #fff;
         color: #6f6f6f;
@@ -2475,6 +2478,8 @@ body {
         padding: 8px 14px;
         font-size: 12px;
         cursor: pointer;
+        padding: 0 !important;
+
         transition: color 0.15s ease;
         &:hover,
         &.active {
@@ -2485,7 +2490,7 @@ body {
     }
   }
 
-  .sales-trends-v2__chart {
+  .sales-trends-chart {
     width: 100%;
     .o_dashboard_sales {
       width: 100%;
@@ -2496,7 +2501,7 @@ body {
     }
   }
 
-  .sales-trends-v2__cards {
+  .sales-trends-cards {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -2510,7 +2515,7 @@ body {
     flex: 1;
     min-width: 300px;
 
-    &__content {
+    &-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -2518,14 +2523,14 @@ body {
       min-height: 50px;
     }
 
-    &__left {
+    &-left {
       display: flex;
       flex-direction: column;
       gap: 8px;
       flex: 1;
     }
 
-    &__right {
+    &-right {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -2533,7 +2538,7 @@ body {
       min-height: 50px;
     }
 
-    &__header {
+    &-header {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -2596,14 +2601,14 @@ body {
       }
     }
 
-    &__label {
+    &-label {
       font-size: 18px;
       color: #060606;
       font-weight: 600;
       margin: 0;
     }
 
-    &__value {
+    &-value {
       font-size: 20px;
       line-height: 1.2;
       font-weight: 700;
@@ -2615,7 +2620,7 @@ body {
       margin-top: 4px;
     }
 
-    &__meta {
+    &-meta {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -2623,7 +2628,7 @@ body {
       justify-content: flex-end;
     }
 
-    &__caption {
+    &-caption {
       font-size: 14px;
       font-weight: 500;
       color: #555555;
@@ -2656,22 +2661,22 @@ body {
     @media (max-width: 768px) {
       min-width: 100%;
 
-      &__content {
+      &-content {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
       }
 
-      &__right {
+      &-right {
         align-items: flex-start;
         width: 100%;
       }
 
-      &__meta {
+      &-meta {
         justify-content: flex-start;
       }
 
-      &__value {
+      &-value {
         font-size: 28px;
       }
     }
@@ -2679,15 +2684,15 @@ body {
     @media (max-width: 480px) {
       padding: 16px 20px;
 
-      &__value {
+      &-value {
         font-size: 24px;
       }
 
-      &__label {
+      &-label {
         font-size: 13px;
       }
 
-      &__caption {
+      &-caption {
         font-size: 11px;
       }
     }
@@ -2699,10 +2704,10 @@ body {
       padding: 16px;
       gap: 10px;
 
-      &__value {
+      &-value {
         font-size: 28px;
       }
-      &__caption {
+      &-caption {
         font-size: 13px;
       }
     }
@@ -2712,16 +2717,16 @@ body {
   @media (max-width: 768px) {
     margin: 0 16px 40px 16px;
 
-    .sales-trends-v2__panel {
+    .sales-trends-panel {
       padding: 16px;
     }
-    .sales-trends-v2__cards {
+    .sales-trends-cards {
       grid-template-columns: 1fr;
     }
     .metric-card {
       padding: 16px;
     }
-    .sales-trends-v2__chart .o_dashboard_sales canvas {
+    .sales-trends-chart .o_dashboard_sales canvas {
       height: 340px !important;
     }
   }
@@ -2754,9 +2759,10 @@ body {
   padding-top: 30px;
   padding-bottom: 35px;
   margin-top: 15px;
-  height: 365px;
+  height: 370px;
 
   .chart-header {
+    margin: 10px;
     @include flex(row, space-between, flex-start);
 
     .chart-title-section {
