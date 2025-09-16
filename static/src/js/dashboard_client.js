@@ -43,7 +43,7 @@ class GolfzonDashboard extends Component {
       userName: "username",
       drawerOpen: false,
       showWeatherDetails: false,
-      currentDate: DateUtils.formatCurrentDate(),
+      currentDate: DateUtils.formatCurrentDate(), // e.g., "Tuesday, September 16, 2025"
       userLocation: null,
       weather: {
         temperature: 27,
@@ -437,20 +437,20 @@ class GolfzonDashboard extends Component {
 
   formatTimeDisplay(timeSlot) {
     const timeMap = {
-      "Dawn (5 AM - 7 AM)": "morning",
-      "Morning (8 AM - 12 PM)": "morning",
-      "Afternoon (1 PM - 4 PM)": "afternoon",
-      "Night (5 PM - 7 PM)": "evening",
+      "_t('Dawn (5 AM - 7 AM)')": "Dawn",
+      "_t('Morning (8 AM - 12 PM)')": "Morning",
+      "_t('Afternoon (1 PM - 4 PM)')": "Afternoon",
+      "_t('Night (5 PM - 7 PM)')": "Evening",
     };
-    return timeMap[timeSlot] || "morning";
+    return timeMap[timeSlot] || timeSlot;
   }
 
   generateHourlyBreakdown(timeSlot, totalValue) {
     const timeRanges = {
-      "Dawn (5 AM -7 AM)": [5, 6, 7],
-      "Morning (8 AM -12 PM)": [8, 9, 10, 11, 12],
-      "Afternoon (1 PM - 4 PM)": [13, 14, 15, 16],
-      "Night (5 PM - 7 PM)": [17, 18, 19],
+      "_t('Dawn (5 AM - 7 AM)')": [5, 6, 7],
+      "_t('Morning (8 AM -12 PM)')": [8, 9, 10, 11, 12],
+      "_t('Afternoon (1 PM - 4 PM)')": [13, 14, 15, 16],
+      "_t('Night (5 PM - 7 PM)')": [17, 18, 19],
     };
 
     const hours = timeRanges[timeSlot] || [8, 9, 10, 11, 12];
