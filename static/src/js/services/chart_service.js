@@ -443,6 +443,7 @@ export class ChartService {
               borderColor: "#046DEC",
               backgroundColor: "rgba(33, 150, 243, 0.1)",
               borderWidth: 2,
+              fill: true,
               tension: 0.4,
               pointRadius: 4,
               pointStyle: "circle", // Ensure point style is applied to data points
@@ -685,12 +686,18 @@ export class ChartService {
         type: "doughnut",
         data: {
           datasets: [
-            { data, backgroundColor: colors, borderWidth: 0, cutout: "60%" },
+            {
+              data,
+              backgroundColor: colors,
+              borderWidth: 0,
+              cutout: "40%",
+            },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          aspectRatio: 1, // Force square aspect ratio
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -702,6 +709,9 @@ export class ChartService {
               padding: 12,
               displayColors: false,
             },
+          },
+          layout: {
+            padding: 0,
           },
         },
       });
@@ -719,10 +729,11 @@ export class ChartService {
       const femaleFill = document.getElementById("femaleFill");
 
       if (maleFill && femaleFill) {
-        maleFill.setAttribute("y", 400 - (400 * male) / 100);
-        maleFill.setAttribute("height", (400 * male) / 100);
-        femaleFill.setAttribute("y", 400 - (400 * female) / 100);
-        femaleFill.setAttribute("height", (400 * female) / 100);
+        const maxHeight : 400; // SVG viewBox height
+        maleFill.setAttribute("y", maxHeight - (maxHeight * male) / 100);
+        maleFill.setAttribute("height", (maxHeight * male) / 100);
+        femaleFill.setAttribute("y", maxHeight - (maxHeight * female) / 100);
+        femaleFill.setAttribute("height", (maxHeight * female) / 100);
 
         const malePercent = document.getElementById("malePercent");
         const femalePercent = document.getElementById("femalePercent");
