@@ -574,14 +574,18 @@ body {
 
     .multi-info-container {
       @include flex(row, space-between, center);
-      gap: 60px;
-      // min-width: 1000px;
-      // margin-right: 33px;
+      gap: 30px;
+
+      .vertical-line {
+        height: 44px;
+        border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
+        display: inline-block;
+      }
     }
 
     .info-section {
       @include flex(row, flex-start, center);
-      gap: 8px;
+      gap: 12px;
       width: auto;
 
       &.dropdown-section {
@@ -605,6 +609,10 @@ body {
         @include flex(row, flex-start, center);
         gap: 2px;
 
+        .custom-gap {
+          gap: 8px;
+        }
+
         .info-label {
           text-transform: uppercase;
           letter-spacing: 0;
@@ -612,18 +620,29 @@ body {
           font-weight: 600;
           font-style: SemiBold;
           font-size: 18px;
-          color: #131314;
+          color: black;
+          margin-right: 5px;
           // line-height: 125%;
         }
 
         .info-value {
-          color: #6f6f6f;
+          color: #555555;
           font-weight: 600;
           font-family: Pretendard;
           font-style: SemiBold;
           font-size: 18px;
           letter-spacing: 0;
           text-align: center;
+          // margin-right: 8px;
+        }
+
+        .info-numbers {
+          font-family: Pretendard;
+          font-weight: 700;
+          font-size: 20px;
+          letter-spacing: 0%;
+          text-align: center;
+          color: black;
         }
 
         @include laptop-lg {
@@ -634,25 +653,31 @@ body {
           .info-value {
             font-size: 11px;
           }
+          .info-numbers {
+            font-size: 13px !important;
+          }
         }
 
         @media (max-width: 1600px) {
           .info-label {
-            font-size: 11px !important;
+            font-size: 13px !important;
             // line-height: 120%;
           }
           .info-value {
-            font-size: 11px !important;
+            font-size: 13px !important;
+          }
+          .info-numbers {
+            font-size: 14px !important;
           }
         }
       }
 
       .weather-details-btn {
         height: 44px;
-        width: 205px;
+        width: 200px;
         background: #f5f4f3;
         border: none;
-        letter-spacing: 0.5px;
+        letter-spacing: 0px;
         // padding: 6px 12px;
         border-radius: 8px;
         font-size: 14px;
@@ -713,16 +738,23 @@ body {
     }
 
     .side-by-side-container {
-      @include flex(row, flex-start, stretch);
-      padding: 12px;
-      gap: 12px;
+      @include flex(row, space-between, stretch);
+      padding: 24px 0 36px;
       height: 250px;
+
+      .vertical-line {
+        height: 100%;
+        border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
+        display: inline-block;
+        // margin-right: 25px;
+      }
 
       .weather-half {
         flex: 1;
         @include flex(column, flex-start, stretch);
-        max-width: 50%;
+        max-width: 42.5% !important;
         height: 100%;
+        // margin-right: 50px;
 
         .weather-section-header {
           margin-bottom: 6px;
@@ -778,7 +810,7 @@ body {
               background: transparent;
               border-right: 1px solid
                 var(--Gray-gray-200, rgba(239, 239, 239, 1));
-              padding: 4px 6px;
+              padding: 4px 18px;
               text-align: center;
               font-size: 14px;
               min-width: 60px;
@@ -833,7 +865,7 @@ body {
       .tables-half {
         flex: 1;
         @include flex(column, flex-start, stretch);
-        max-width: 50%;
+        max-width: 55%;
         height: 100%;
         font-family: "Pretendard", sans-serif;
 
@@ -871,26 +903,30 @@ body {
                 height: 100%;
                 overflow-y: scroll !important;
                 overflow-x: hidden;
-                border: 1px solid $border-color;
+                border-bottom: 1px solid $border-color;
                 border-radius: 4px;
                 background: $white;
-                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                padding-right: 16px;
+                min-height: 350px;
+                // box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
                 &::-webkit-scrollbar {
-                  width: 8px !important;
-                  background: $background-light;
+                  width: 6px !important;
+                  min-height: 20px !important;
+                  background: none;
+                  margin-left: 10px !important;
                 }
 
                 &::-webkit-scrollbar-track {
-                  background: $background-light;
+                  background: none;
                   border-radius: 10px;
-                  border: 1px solid rgba(227, 232, 242, 0.5);
+                  // border: 1px solid rgba(227, 232, 242, 0.5);
                 }
 
                 &::-webkit-scrollbar-thumb {
                   background: #efefef;
                   border-radius: 6px;
-                  border: 2px solid $background-light;
+                  // border: 2px solid $background-light;
                   min-height: 20px;
 
                   &:hover {
@@ -1024,11 +1060,11 @@ body {
   }
 
   .weather-half {
-    max-width: 48% !important;
+    max-width: 42% !important;
   }
 
   .tables-half {
-    max-width: 52% !important;
+    max-width: 50% !important;
   }
 
   .reservation-table {
@@ -1046,6 +1082,7 @@ body {
 
   .weather-time-slot {
     font-size: 10px !important;
+    padding: 4px 15px;
   }
 }
 
@@ -1070,11 +1107,11 @@ body {
   }
 
   .weather-half {
-    max-width: 48% !important;
+    max-width: 43% !important;
   }
 
   .tables-half {
-    max-width: 52% !important;
+    max-width: 54% !important;
   }
 
   .reservation-table {
@@ -1092,6 +1129,7 @@ body {
 
   .weather-time-slot {
     font-size: 10px !important;
+    padding: 4px 13px !important;
   }
 }
 
@@ -1149,6 +1187,7 @@ body {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
       position: relative;
+      // height: 266px;
 
       &:hover {
         transform: translateY(-2px);
@@ -1216,8 +1255,8 @@ body {
         background: $white;
 
         .metrics-row {
-          display: flex;
-          flex-direction: row;
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
           gap: 10px;
           justify-content: space-between;
           align-items: stretch;
@@ -1233,6 +1272,7 @@ body {
             justify-content: center;
             align-items: flex-start;
             min-width: 0;
+            height: auto;
 
             .metric-label {
               font-size: 12px;
@@ -1359,13 +1399,12 @@ body {
   }
 
   .forecast-main-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     gap: 30px;
     min-height: 600px;
-
+    align-items: stretch;
     @include mobile {
-      grid-template-columns: 1fr;
+      flex-direction: column;
       gap: 16px;
       min-height: 0;
       height: auto;
@@ -1379,6 +1418,14 @@ body {
 
     // Left Side
     .forecast-left-side {
+      width: 45%;
+      @include mobile {
+        width: 100%;
+      }
+      @include tablet {
+        width: 45%;
+      }
+
       .line-chart-card {
         background: $white;
         border-radius: 8px;
@@ -1428,7 +1475,7 @@ body {
                     width: 100%;
                     height: 100%;
                     display: block;
-                    filter: none; // Remove blue tint if present
+                    filter: none;
                   }
                 }
 
@@ -1642,376 +1689,390 @@ body {
       }
     }
 
-    // Right Side - Enhanced Heatmap
+    // Right Side - 55% width for heatmap and pie charts
     .forecast-right-side {
+      width: 55%;
       @include flex(column, flex-start, stretch);
       gap: 20px;
+      @include mobile {
+        width: 100%;
+      }
+      @include tablet {
+        width: 55%;
+      }
 
-      // 🆕 FIXED: No-shift heatmap layout matching reference images
-      .fixed-heatmap-layout {
-        display: flex;
-        align-items: flex-start; // Align sidebar with top of heatmap grid
-        grid-template-columns: 2fr 1fr;
-        gap: 24px;
-        background: $white;
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
+      // Heatmap card
+      .reservation-trends-section {
         @include mobile {
-          grid-template-columns: 1fr;
-          gap: 16px;
-          padding: 16px;
+          margin: 0 16px 40px;
+        }
+        @include tablet {
+          margin: 0 20px 50px;
         }
 
-        // Heatmap Section (Left)
-        .heatmap-section {
+        // Main Layout
+        .heatmap-main-layout {
           display: flex;
-          flex-direction: column;
-          gap: 12px;
-
-          .heatmap-header {
-            margin-bottom: 28px;
-            h3 {
-              font-size: 20px;
-              font-weight: 700;
-              letter-spacing: 0%;
-              color: $text-primary;
-              font-family: "Pretendard", sans-serif;
-              margin: 0;
-            }
+          gap: 24px;
+          background: $white;
+          border-radius: 12px;
+          padding: 30px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          min-height: 400px;
+          @include mobile {
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px;
           }
 
-          // Days Header Row
-          .heatmap-days-header {
-            display: grid;
-            grid-template-columns: 140px repeat(7, 1fr);
-            gap: 2px;
+          // Left: Heatmap Grid Section
+          .heatmap-grid-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
 
-            @include mobile {
-              grid-template-columns: 100px repeat(7, 1fr);
+            // Header Section (inside the card)
+            .heatmap-header-section {
+              margin-bottom: 20px;
+              .heatmap-title {
+                font-size: 20px;
+                font-weight: 700;
+                letter-spacing: 0%;
+                color: $text-primary;
+                font-family: "Pretendard", sans-serif;
+                margin: 0;
+              }
             }
 
-            .day-header {
-              text-align: center;
-              font-weight: 600;
-              font-size: 12px;
-              color: #6c757d;
-              text-transform: uppercase;
-              letter-spacing: 0px;
-              padding: 0 8px;
-            }
-          }
-
-          // Grid Container
-          .heatmap-grid-container {
-            border-radius: 12px;
-
-            .heatmap-row {
+            // Days Header Row
+            .heatmap-days-header {
               display: grid;
-              grid-template-columns: 140px 1fr;
-              gap: 8px;
-              margin-bottom: 2px;
-
+              grid-template-columns: 140px repeat(7, 1fr);
+              gap: 2px;
+              margin-bottom: 8px;
               @include mobile {
-                grid-template-columns: 100px 1fr;
+                grid-template-columns: 100px repeat(7, 1fr);
               }
 
-              &:last-child {
-                margin-bottom: 0;
-              }
-
-              .time-row-label {
-                display: flex;
-                align-items: center;
+              .day-header {
+                text-align: center;
                 font-weight: 600;
-                font-size: 11px;
+                font-size: 14px;
                 color: #495057;
-                padding: 12px;
-                white-space: nowrap;
-
-                @include mobile {
-                  font-size: 10px;
-                  padding: 8px;
-                }
+                padding: 8px;
+                font-family: "Pretendard", sans-serif;
               }
+            }
 
-              .heatmap-boxes-row {
+            // Grid Container
+            .heatmap-grid-container {
+              border-radius: 8px;
+              margin-bottom: 20px;
+
+              .heatmap-row {
                 display: grid;
-                grid-template-columns: repeat(7, 1fr);
-                gap: 2px;
+                grid-template-columns: 140px 1fr;
+                gap: 8px;
+                margin-bottom: 2px;
+                @include mobile {
+                  grid-template-columns: 100px 1fr;
+                }
 
-                .heatmap-box {
-                  aspect-ratio: 1;
-                  min-height: 50px;
+                &:last-child {
+                  margin-bottom: 0;
+                }
+
+                .time-row-label {
                   display: flex;
                   align-items: center;
-                  justify-content: center;
-                  cursor: pointer;
-                  transition: all 0.3s ease;
-                  border: 2px solid transparent;
-                  font-weight: 700;
-                  font-size: 13px;
-                  position: relative;
-
+                  font-weight: 600;
+                  font-size: 12px;
+                  color: #495057;
+                  padding: 8px 12px;
+                  white-space: nowrap;
+                  font-family: "Pretendard", sans-serif;
                   @include mobile {
-                    min-height: 40px;
-                    font-size: 11px;
+                    font-size: 10px;
+                    padding: 6px 8px;
+                  }
+                }
+
+                .heatmap-boxes-row {
+                  display: grid;
+                  grid-template-columns: repeat(7, 1fr);
+                  gap: 2px;
+
+                  .heatmap-box {
+                    aspect-ratio: 1;
+                    min-height: 60px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    border: 2px solid transparent;
+                    font-weight: 700;
+                    font-size: 14px;
+                    border-radius: 4px;
+                    @include mobile {
+                      min-height: 45px;
+                      font-size: 12px;
+                    }
+
+                    // Color Classifications
+                    &.top-20 {
+                      background: #0d47a1;
+                      color: $white;
+                    }
+                    &.top-20-40 {
+                      background: #1976d2;
+                      color: $white;
+                    }
+                    &.median-20 {
+                      background: #42a5f5;
+                      color: $white;
+                    }
+                    &.bottom-20-40 {
+                      background: #90caf9;
+                      color: $white;
+                    }
+                    &.bottom-20 {
+                      background: #e3f2fd;
+                      color: #1976d2;
+                    }
+
+                    // Hover Effect
+                    &:hover {
+                      transform: scale(1.05);
+                      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                      z-index: 10;
+                    }
+
+                    // Selected State (green border)
+                    &.selected {
+                      border: 3px solid #28a745 !important;
+                      transform: scale(1.05);
+                      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+                      z-index: 15;
+                    }
+
+                    .box-value {
+                      position: relative;
+                      z-index: 2;
+                    }
+                  }
+                }
+              }
+            }
+
+            // Legend Section (below the 28 boxes)
+            .heatmap-legend-section {
+              // margin-top: 16px;
+
+              .heatmap-legend {
+                display: flex;
+                justify-content: end;
+                gap: 15px;
+                flex-wrap: wrap;
+                @include mobile {
+                  gap: 12px;
+                  padding: 8px 0;
+                }
+
+                .legend-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 12px;
+                  color: #495057;
+                  font-weight: 500;
+                  font-family: "Pretendard", sans-serif;
+
+                  .legend-dot {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 8px;
+
+                    &.top-20 {
+                      background: #0d47a1;
+                    }
+                    &.top-20-40 {
+                      background: #1976d2;
+                    }
+                    &.median-20 {
+                      background: #42a5f5;
+                    }
+                    &.bottom-20-40 {
+                      background: #90caf9;
+                    }
+                    &.bottom-20 {
+                      background: #e3f2fd;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Right: Details Sidebar
+          .heatmap-details-sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 24px;
+            background: $white;
+            border: 1px solid #e0e6ed;
+            border-radius: 12px;
+            height: fit-content;
+            min-width: 280px;
+            margin-top: 100px;
+            @include mobile {
+              margin-top: 16px;
+              min-width: auto;
+            }
+
+            // Default Content (when no box selected)
+            .sidebar-default-content {
+              text-align: center;
+              padding: 40px 20px;
+
+              .default-message {
+                .default-title {
+                  font-size: 16px;
+                  font-weight: 600;
+                  color: #495057;
+                  margin: 0 0 12px 0;
+                  font-family: "Pretendard", sans-serif;
+                }
+
+                .default-subtitle {
+                  font-size: 12px;
+                  color: #6c757d;
+                  margin: 0;
+                  line-height: 1.4;
+                  font-family: "Pretendard", sans-serif;
+                }
+              }
+            }
+
+            // Selected Content
+            .sidebar-selected-content {
+              // Alert Messages Section
+              .alert-message-section {
+                margin-bottom: 16px;
+
+                .alert-message {
+                  border-radius: 20px;
+                  padding: 12px 16px;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  font-size: 12px;
+                  font-weight: 500;
+                  margin-bottom: 8px;
+
+                  .alert-badge {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    flex-shrink: 0;
                   }
 
-                  // Color Classifications
-                  &.top-20 {
+                  &.highest {
                     background: linear-gradient(
                       135deg,
-                      #0d47a1 0%,
-                      #1a237e 100%
+                      #fce4ec 0%,
+                      #f8bbd9 100%
                     );
-                    color: $white;
+                    border: 1px solid #f48fb1;
+                    color: #ad1457;
+                    .alert-badge {
+                      background: #e91e63;
+                      color: $white;
+                    }
                   }
 
-                  &.top-20-40 {
-                    background: linear-gradient(
-                      135deg,
-                      #1976d2 0%,
-                      #1565c0 100%
-                    );
-                    color: $white;
-                  }
-
-                  &.median-20 {
-                    background: linear-gradient(
-                      135deg,
-                      #42a5f5 0%,
-                      #2196f3 100%
-                    );
-                    color: $white;
-                  }
-
-                  &.bottom-20-40 {
-                    background: linear-gradient(
-                      135deg,
-                      #90caf9 0%,
-                      #64b5f6 100%
-                    );
-                    color: $white;
-                  }
-
-                  &.bottom-20 {
+                  &.lowest {
                     background: linear-gradient(
                       135deg,
                       #e3f2fd 0%,
                       #bbdefb 100%
                     );
-                    color: #1976d2;
-                  }
-
-                  // Hover Effect
-                  &:hover {
-                    transform: scale(1.05);
-                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-                    border-color: #28a745;
-                    z-index: 10;
-                  }
-
-                  // Enhanced Selected State
-                  &.selected {
-                    border: 3px solid #28a745 !important;
-                    transform: scale(1.05);
-                    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-                    min-height: 60px; // Increase height when selected
-                    z-index: 15;
-
-                    @include mobile {
-                      min-height: 50px;
+                    border: 1px solid #90caf9;
+                    color: #0d47a1;
+                    .alert-badge {
+                      background: #2196f3;
+                      color: $white;
                     }
                   }
+                }
+              }
 
-                  .box-value {
-                    position: relative;
-                    z-index: 2;
+              // Sidebar Header Section (no duplicate day)
+              .sidebar-header-section {
+                border-bottom: 1px solid #e0e6ed;
+                padding-bottom: 16px;
+                margin-bottom: 16px;
+
+                .sidebar-title {
+                  font-size: 24px;
+                  font-weight: 700;
+                  margin: 0 0 8px 0;
+                  color: #1976d2;
+                  font-family: "Pretendard", sans-serif;
+                  text-align: center;
+                }
+
+                .sidebar-subtitle {
+                  font-size: 12px;
+                  color: #6c757d;
+                  margin: 0;
+                  font-family: "Pretendard", sans-serif;
+                  text-align: center;
+                }
+              }
+
+              // Hourly Breakdown Section (in columns)
+              .hourly-breakdown-section {
+                // Time Headers Row
+                .time-headers-row {
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 8px;
+
+                  .time-header {
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #495057;
+                    text-align: center;
+                    padding: 4px;
+                    flex: 1;
+                    font-family: "Pretendard", sans-serif;
                   }
                 }
-              }
-            }
-          }
 
-          // Legend
-          .heatmap-legend {
-            display: flex;
-            justify-content: center;
-            margin-left: 140px;
-            gap: 20px;
-            padding: 8px 16px 16px;
-            border-radius: 8px;
-            flex-wrap: wrap;
+                // Teams Values Row
+                .teams-values-row {
+                  display: flex;
+                  justify-content: space-between;
 
-            @include mobile {
-              gap: 12px;
-              padding: 12px;
-            }
-
-            .legend-item {
-              display: flex;
-              align-items: center;
-              gap: 6px;
-              font-size: 14px;
-              color: #333333;
-              line-height: 125%;
-              letter-spacing: 0%;
-              font-weight: 500;
-              font-family: "Pretendard", sans-serif;
-
-              .legend-dot {
-                width: 8px;
-                height: 8px;
-                border-radius: 20px;
-
-                &.top-20 {
-                  background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+                  .team-value {
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #1976d2;
+                    text-align: center;
+                    padding: 4px;
+                    flex: 1;
+                    font-family: "Pretendard", sans-serif;
+                  }
                 }
-                &.top-20-40 {
-                  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-                }
-                &.median-20 {
-                  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
-                }
-                &.bottom-20-40 {
-                  background: linear-gradient(135deg, #90caf9 0%, #64b5f6 100%);
-                }
-                &.bottom-20 {
-                  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-                }
-              }
-            }
-          }
-        }
-
-        // 🆕 FIXED: Always-visible sidebar (right side)
-        .fixed-sidebar {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          padding: 20px;
-          background: $white;
-          border: 1px solid #e0e6ed;
-          border-radius: 12px;
-          position: relative;
-          height: fit-content;
-          margin-top: 0; // Align with red line by removing default margin
-
-          @include mobile {
-            margin-top: 16px;
-          }
-
-          // 🆕 Alert Messages (highest/lowest)
-          .alert-message {
-            border-radius: 20px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 1.3;
-
-            .alert-badge {
-              width: 20px;
-              height: 20px;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 11px;
-              font-weight: 700;
-              flex-shrink: 0;
-            }
-
-            // Highest reservations (red/pink)
-            &.highest {
-              background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
-              border: 1px solid #f48fb1;
-              color: #ad1457;
-
-              .alert-badge {
-                background: #e91e63;
-                color: $white;
-              }
-            }
-
-            // 🆕 Lowest reservations (blue/gray)
-            &.lowest {
-              background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-              border: 1px solid #90caf9;
-              color: #0d47a1;
-
-              .alert-badge {
-                background: #2196f3;
-                color: $white;
-              }
-            }
-          }
-
-          // Sidebar Header
-          .sidebar-header {
-            border-bottom: 1px solid #e0e6ed;
-            padding-bottom: 16px;
-
-            .sidebar-title {
-              font-size: 24px;
-              font-weight: 700;
-              margin: 0 0 8px 0;
-              color: $primary-color;
-              font-family: "Pretendard", sans-serif;
-
-              .day-text,
-              .time-text {
-                text-transform: uppercase;
-              }
-
-              .time-text {
-                margin-left: 8px;
-              }
-            }
-
-            .sidebar-subtitle {
-              font-size: 12px;
-              color: $text-secondary;
-              margin: 0;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              font-family: "Pretendard", sans-serif;
-            }
-          }
-
-          // Hourly Breakdown
-          .hourly-breakdown {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-
-            .hour-row {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: 8px 12px;
-              border-radius: 6px;
-              font-size: 13px;
-              transition: background-color 0.2s;
-
-              &:hover {
-                background: #e9ecef;
-              }
-
-              .hour-time {
-                color: $text-primary;
-                font-weight: 500;
-                font-family: "Pretendard", sans-serif;
-              }
-
-              .hour-teams {
-                color: $text-secondary;
-                font-weight: 600;
-                font-family: "Pretendard", sans-serif;
               }
             }
           }
@@ -2023,18 +2084,16 @@ body {
         background: $white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        padding: 22px 22px 30px;
+        padding: 20px;
         flex: 1;
 
         .pie-charts-header {
-          margin-bottom: 40px;
-
+          margin-bottom: 20px;
           h3 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            letter-spacing: 0%;
             color: #060606;
-            margin: 8px;
+            margin: 0;
             text-align: left;
             font-family: "Pretendard", sans-serif;
           }
@@ -2044,133 +2103,183 @@ body {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          flex-wrap: wrap;
+          gap: 20px;
 
-          .pie-chart-grid-item {
+          .pie-chart-item {
+            flex: 1;
             display: flex;
-            justify-content: space-evenly;
-            gap: 10px;
-            align-items: center;
+            flex-direction: column;
 
-            .pie-chart-wrapper {
-              position: relative;
-              width: 90px;
-              height: 90px;
+            .chart-title-wrapper {
+              margin-bottom: 8px; // Reduced from 16px
+              text-align: left;
 
-              canvas {
-                width: 90px !important;
-                height: 90px !important;
-              }
-
-              // Remove the center title since it's now external
-              .chart-center-title {
-                display: none;
+              .chart-title {
+                font-weight: 500;
+                font-size: 11px;
+                color: #495057;
+                font-family: "Pretendard", sans-serif;
+                line-height: 1.1;
               }
             }
 
-            // Chart section with title above and legend beside
-            .chart-section {
+            .chart-and-legend {
               display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 8px;
-            }
+              align-items: flex-start;
+              gap: 12px;
 
-            // New external chart title styling
-            .chart-title {
-              font-weight: 600;
-              font-size: 10px;
-              text-align: center;
-              color: #060606;
-              font-family: "Pretendard", sans-serif;
-              line-height: 1.2;
-              max-width: 120px;
-              margin: 0;
-            }
+              .pie-chart-wrapper {
+                position: relative;
+                width: 120px;
+                height: 120px;
+                flex-shrink: 0;
 
-            .chart-content {
+                canvas {
+                  width: 120px !important;
+                  height: 120px !important;
+                }
+
+                .chart-center-title {
+                  display: none;
+                }
+              }
+
               .chart-legend {
+                flex: 1;
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
+                gap: 3px;
+                justify-content: center;
 
                 .legend-entry {
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
-                  gap: 10px;
-                  font-size: 14px;
-                  color: $text-secondary;
-                  font-family: "Pretendard", sans-serif;
+                  min-height: 16px;
+                  padding: 1px 0;
 
-                  .d-flex {
+                  .legend-label {
                     display: flex;
                     align-items: center;
-                    gap: 6px; // Add gap between dot and text
-                  }
+                    gap: 6px;
+                    flex: 1;
 
-                  .dot {
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    flex-shrink: 0;
+                    .dot {
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      flex-shrink: 0;
 
-                    // Member Type Colors
-                    &.individual {
-                      background: #1958a4;
-                    }
-                    &.joint {
-                      background: #4489da;
-                    }
-                    &.general {
-                      background: #4c9cfd;
-                    }
-                    &.temporary {
-                      background: #3a96d4;
+                      // Member Type Colors
+                      &.individual {
+                        background: #1958a4;
+                      }
+                      &.joint {
+                        background: #4489da;
+                      }
+                      &.general {
+                        background: #4c9cfd;
+                      }
+                      &.temporary {
+                        background: #3a96d4;
+                      }
+
+                      // Advance Booking Colors
+                      &.d15 {
+                        background: #1958a4;
+                      }
+                      &.d14 {
+                        background: #4489da;
+                      }
+                      &.d7 {
+                        background: #4c9cfd;
+                      }
+                      &.d3 {
+                        background: #3a96da;
+                      }
+                      &.d1 {
+                        background: #5ab4f0;
+                      }
+                      &.d0 {
+                        background: #91d3ff;
+                      }
+
+                      // Regional Colors
+                      &.phone {
+                        background: #1958a4;
+                      }
+                      &.internet {
+                        background: #4489da;
+                      }
+                      &.agency1 {
+                        background: #4c9cfd;
+                      }
+                      &.agency2 {
+                        background: #3a96d4;
+                      }
+                      &.other {
+                        background: #5ab4f0;
+                      }
                     }
 
-                    // Advance Booking Colors
-                    &.d15 {
-                      background: #1958a4;
-                    }
-                    &.d14 {
-                      background: #4489da;
-                    }
-                    &.d7 {
-                      background: #4c9cfd;
-                    }
-                    &.d3 {
-                      background: #3a96da;
-                    }
-                    &.d1 {
-                      background: #5ab4f0;
-                    }
-                    &.d0 {
-                      background: #91d3ff;
-                    }
-
-                    // Regional Colors
-                    &.phone {
-                      background: #1958a4;
-                    }
-                    &.internet {
-                      background: #4489da;
-                    }
-                    &.agency1 {
-                      background: #4c9cfd;
-                    }
-                    &.agency2 {
-                      background: #3a96d4;
-                    }
-                    &.other {
-                      background: #5ab4f0;
+                    span:not(.dot) {
+                      font-size: 11px;
+                      color: #495057;
+                      font-family: "Pretendard", sans-serif;
+                      font-weight: 400;
+                      white-space: nowrap;
+                      line-height: 1.2;
                     }
                   }
 
                   .legend-value {
                     font-weight: 700;
                     color: #060606;
+                    font-size: 11px;
+                    font-family: "Pretendard", sans-serif;
+                    margin-left: 8px;
+                    flex-shrink: 0;
                   }
+                }
+              }
+            }
+          }
+
+          // Responsive Design
+          @include tablet {
+            flex-direction: column;
+            gap: 20px;
+
+            .pie-chart-item {
+              .chart-and-legend {
+                justify-content: center;
+                gap: 20px;
+              }
+            }
+          }
+
+          @include mobile {
+            flex-direction: column;
+            gap: 16px;
+
+            .pie-chart-item {
+              .chart-and-legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+
+                .pie-chart-wrapper {
+                  width: 110px;
+                  height: 110px;
+                  canvas {
+                    width: 110px !important;
+                    height: 110px !important;
+                  }
+                }
+
+                .chart-legend {
+                  width: 100%;
+                  max-width: 100px;
                 }
               }
             }
