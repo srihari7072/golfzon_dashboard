@@ -27,7 +27,7 @@ export class ChartService {
     this.chartInstances.forEach((c) => {
       try {
         c.destroy();
-      } catch (_) {}
+      } catch (_) { }
     });
     this.chartInstances.clear();
   }
@@ -44,7 +44,7 @@ export class ChartService {
     try {
       const stored = localStorage.getItem("dashboard_lang");
       if (stored === "ko_KR") return "ko-KR";
-    } catch (_) {}
+    } catch (_) { }
     return "en-US";
   }
 
@@ -140,16 +140,20 @@ export class ChartService {
               data: current,
               backgroundColor: COLOR_PRIMARY,
               borderWidth: 0,
-              barPercentage: 0.55,
+              barPercentage: 0.6,
               categoryPercentage: 0.6,
+              borderRadius: { topLeft: 20, topRight: 20, bottomLeft: 0, bottomRight: 0 },
+              borderSkipped: 'bottom',
             },
             {
               label: _t("Last Year's Sales (Same Period)"),
               data: lastYear,
               backgroundColor: COLOR_SECONDARY,
               borderWidth: 0,
-              barPercentage: 0.55,
+              barPercentage: 0.6,
               categoryPercentage: 0.6,
+              borderRadius: { topLeft: 20, topRight: 20, bottomLeft: 0, bottomRight: 0 },
+              borderSkipped: 'bottom',
             },
           ],
         },
@@ -160,7 +164,7 @@ export class ChartService {
           interaction: { mode: "nearest", intersect: true },
           scales: {
             x: {
-              grid: { display: false, color: GRID_COLOR, drawBorder: false },
+              grid: { display: false },
               ticks: {
                 autoSkip: period === "30days" ? true : false,
                 maxTicksLimit: period === "30days" ? 6 : 7,
@@ -180,7 +184,7 @@ export class ChartService {
               beginAtZero: true,
               suggestedMax: 700,
               ticks: { stepSize: 100, color: AXIS_COLOR, font: { size: 12 } },
-              grid: { color: GRID_COLOR, drawBorder: false },
+              grid: { display: true, color: GRID_COLOR, drawBorder: false },
             },
           },
           datasets: [
@@ -300,7 +304,7 @@ export class ChartService {
               pointStyle: "circle", // Ensure point style is applied to data points
             },
             {
-              label: _t("Number of Guests (Same period last year)"),
+              label: _t("Number of Guests (Same Period Last Year)"),
               data: lastYearData,
               borderColor: "#86E5F5",
               backgroundColor: "transparent",
@@ -449,7 +453,7 @@ export class ChartService {
               pointStyle: "circle", // Ensure point style is applied to data points
             },
             {
-              label: _t("Reservations (Same period last year)"),
+              label: _t("Reservations (Same Period Last Year)"),
               data: lastYearData,
               borderColor: "#86E5F5",
               backgroundColor: "transparent",
@@ -609,6 +613,46 @@ export class ChartService {
         },
       };
 
+      // New plugin to draw percentage labels
+      const percentageLabelsPlugin = {
+        id: "percentageLabels",
+        afterDatasetsDraw(chart) {
+          const { ctx, scales, data } = chart;
+          const x = scales.x;
+          const meta = chart.getDatasetMeta(0);
+          if (!meta || !meta.data) return;
+
+          ctx.save();
+          ctx.font = "bold 14px Arial";
+          ctx.fillStyle = "#FFFFFF";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+
+          meta.data.forEach((bar, index) => {
+            const value = data.datasets[0].data[index];
+            const barEndX = x.getPixelForValue(value);
+            const barCenterY = bar.y;
+            
+            // For small values, position text in the center of the bar
+            // For larger values, position near the end
+            let textX;
+            if (value < 5) {
+              // For very small bars, center the text in the bar
+              const barStartX = x.getPixelForValue(0);
+              textX = barStartX + (barEndX - barStartX) / 2;
+            } else {
+              // For larger bars, position near the end
+              textX = barEndX - 20;
+            }
+            
+            const text = `${value}%`;
+            ctx.fillText(text, textX, barCenterY);
+          });
+
+          ctx.restore();
+        },
+      };
+
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "bar",
         data: {
@@ -634,20 +678,18 @@ export class ChartService {
           indexAxis: "y",
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 10,
+              right: 50,
+              bottom: 10,
+              left: 10,
+            },
+          },
           plugins: {
             legend: { display: false },
             tooltip: {
-              enabled: true,
-              backgroundColor: "#3C3F44",
-              titleColor: "#fff",
-              bodyColor: "#fff",
-              cornerRadius: 8,
-              padding: 12,
-              displayColors: false,
-              callbacks: {
-                title: () => "",
-                label: (ctx) => `${ctx.label}: ${ctx.parsed.x}%`,
-              },
+              enabled: false, // Disabled tooltip to remove hover details
             },
             barTrack: { color: "#EEF3FA", radius: 12 },
           },
@@ -660,13 +702,17 @@ export class ChartService {
               border: { display: false },
             },
             y: {
-              ticks: { color: "#6f6f6f", font: { size: 14, weight: "600" } },
+              ticks: { 
+                color: "#6f6f6f", 
+                font: { size: 14, weight: "600" },
+                padding: 10,
+              },
               grid: { display: false },
               border: { display: false },
             },
           },
         },
-        plugins: [barTrackPlugin],
+        plugins: [barTrackPlugin, percentageLabelsPlugin], // Added the new plugin here
       });
 
       this.chartInstances.set("age", chart);
