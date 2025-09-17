@@ -22,70 +22,70 @@ msgid "Previous Period"
 msgstr "이전 기간"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Cloud CC Core Performance Indicators"
 msgstr "클라우드 CC 핵심 성과 지표"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Sales Performance Indicators"
 msgstr "영업 성과 지표"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Average Order Value Performance"
 msgstr "평균 주문 금액 성과"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Utilization Rate Performance"
 msgstr "이용률 성과"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Cumulative Sales This Year"
 msgstr "올해 누적 매출"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Monthly Sales"
 msgstr "현재 월 매출"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Cumulative Unit Price This Year"
 msgstr "올해 누적 객단가"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Monthly Guest Price"
 msgstr "현재 월 객단가"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Cumulative Operation Rate This Year"
 msgstr "올해 누적 가동률"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Month Operation Rate"
 msgstr "현재 월 가동률"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
-msgid "year-over-year"
-msgstr "전년 대비"
+msgid "(year-over-year)"
+msgstr "(전년 대비)"
 
 #. module: golfzon_dashboard
 #. odoo-python
@@ -148,25 +148,25 @@ msgid "Cumulative Operation Rate This Year"
 msgstr "올해 누적 가동률"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Month Operation Rate"
 msgstr "현재 월 운영률"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Weekly Average"
 msgstr "현재 주간 평균"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Weekly Capacity"
 msgstr "현재 주간 처리량"
 
 #. module: golfzon_dashboard
-#. odoo-python
+#. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
 msgid "Current Weekly Revenue"
 msgstr "현재 주간 수익"
@@ -228,7 +228,7 @@ msgstr "예약"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Reservations (Same period last year)"
+msgid "Reservations (Same Period Last Year)"
 msgstr "예약 (지난해 동기 대비)"
 
 #. module: golfzon_dashboard
@@ -397,15 +397,27 @@ msgstr "CRM 캠페인"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Today:"
+#: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
+msgid "TODAY:"
 msgstr "오늘:"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "WEATHER"
-msgstr "날씨"
+#: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
+msgid "WEATHER:"
+msgstr "날씨:"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
+msgid "TOTAL RESERVATIONS:"
+msgstr "총 예약:"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
+msgid "FULL TEE TIME:"
+msgstr "풀 티타임:"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -424,18 +436,6 @@ msgstr "강수 확률"
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Precipitation"
 msgstr "강수량"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "TOTAL RESERVATIONS"
-msgstr "총 예약"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "FULL TEE TIME"
-msgstr "풀 티타임"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -625,13 +625,13 @@ msgstr "밤 (오후 5시 - 오후 7시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "This is the time with the least reservations."
 msgstr "이것은 예약이 가장 적은 시간입니다."
 
 #. module: golfzon_dashboard
 #. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "This is the time with the most reservations"
 msgstr "이때가 가장 많은 예약이 있는 시간입니다."
 
