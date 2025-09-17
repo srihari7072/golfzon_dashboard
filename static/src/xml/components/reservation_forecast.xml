@@ -109,114 +109,136 @@
     <t t-name="golfzon_dashboard.FixedHeatmapLayout">
         <div class="forecast-right-side">
             <!-- Fixed Container with Heatmap and Sidebar -->
-            <div class="fixed-heatmap-layout">
-                <!-- Heatmap Section -->
-                <div class="heatmap-section">
-                    <div class="heatmap-header">
-                        <h3>
-                            <t t-esc="_t('Reservation Trends')"/>
-                        </h3>
+            <div class="reservation-trends-section">
+                <!-- Main Heatmap Layout with header inside -->
+                <div class="heatmap-main-layout">
+                    <!-- Left: Heatmap Grid -->
+                    <div class="heatmap-grid-section">
+                        <!-- Header Inside the card -->
+                        <div class="heatmap-header-section">
+                            <h3 class="heatmap-title">
+                                <t t-esc="_t('Reservation Trend')"/>
+                            </h3>
+                        </div>
+                        
+                        <!-- Days Header -->
+                        <div class="heatmap-days-header">
+                            <div class="time-label-spacer"></div>
+                            <t t-foreach="state.heatmapData.headers" t-as="day" t-key="day">
+                                <div class="day-header" t-esc="day"/>
+                            </t>
+                        </div>
+                        
+                        <!-- Heatmap Grid -->
+                        <div class="heatmap-grid-container">
+                            <t t-foreach="state.heatmapData.rows" t-as="timeRow" t-key="timeRow_index">
+                                <div class="heatmap-row">
+                                    <div class="time-row-label" t-esc="timeRow.label"/>
+                                    <div class="heatmap-boxes-row">
+                                        <t t-foreach="timeRow.data" t-as="value" t-key="value_index">
+                                            <div class="heatmap-box"
+                                                t-att-class="this.getHeatmapCellClass(value)"
+                                                t-att-data-day-index="value_index"
+                                                t-att-data-time-index="timeRow_index"
+                                                t-att-data-value="value"
+                                                t-on-click="(ev) => this.selectHeatmapBox({
+                                                    dayIndex: value_index,
+                                                    timeIndex: timeRow_index,
+                                                    value: value,
+                                                    day: state.heatmapData.headers[value_index],
+                                                    timeSlot: timeRow.label
+                                                }, ev)">
+                                                <span class="box-value" t-esc="value"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        
+                        <!-- Legend Section (below the 28 boxes) -->
+                        <div class="heatmap-legend-section">
+                            <div class="heatmap-legend">
+                                <div class="legend-item">
+                                    <div class="legend-dot top-20"></div>
+                                    <span><t t-esc="_t('Top 20%')"/></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot top-20-40"></div>
+                                    <span><t t-esc="_t('Top 20-40%')"/></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot median-20"></div>
+                                    <span><t t-esc="_t('Median 20%')"/></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot bottom-20-40"></div>
+                                    <span><t t-esc="_t('Bottom 20-40%')"/></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot bottom-20"></div>
+                                    <span><t t-esc="_t('Bottom 20%')"/></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Days Header -->
-                    <div class="heatmap-days-header">
-                        <div class="time-label-spacer"></div>
-                        <t t-foreach="state.heatmapData.headers" t-as="day" t-key="day">
-                            <div class="day-header" t-esc="day"/>
-                        </t>
-                    </div>
-                    <!-- Heatmap Grid -->
-                    <div class="heatmap-grid-container">
-                        <t t-foreach="state.heatmapData.rows" t-as="timeRow" t-key="timeRow_index">
-                            <div class="heatmap-row">
-                                <div class="time-row-label" t-esc="timeRow.label"/>
-                                <div class="heatmap-boxes-row">
-                                    <t t-foreach="timeRow.data" t-as="value" t-key="value_index">
-                                        <div class="heatmap-box"
-                                            t-att-class="this.getHeatmapCellClass(value)"
-                                            t-att-data-day-index="value_index"
-                                            t-att-data-time-index="timeRow_index"
-                                            t-att-data-value="value"
-                                            t-on-click="(ev) => this.selectHeatmapBox({
-                                                dayIndex: value_index,
-                                                timeIndex: timeRow_index,
-                                                value: value,
-                                                day: state.heatmapData.headers[value_index],
-                                                timeSlot: timeRow.label
-                                            }, ev)">
-                                            <span class="box-value" t-esc="value"/>
-                                        </div>
+                    
+                    <!-- Right: Details Sidebar -->
+                    <div class="heatmap-details-sidebar">
+                        <!-- Default content when no box is selected -->
+                        <div class="sidebar-default-content" t-if="!state.selectedHeatmapBox.isVisible">
+                            <div class="default-message">
+                                <h4 class="default-title">
+                                    <t t-esc="_t('When selecting the right cell')"/>
+                                </h4>
+                                <p class="default-subtitle">
+                                    <t t-esc="_t('You can check the number of teams booked by time zone for that cell.')"/>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Selected box details -->
+                        <div class="sidebar-selected-content" t-if="state.selectedHeatmapBox.isVisible">
+                            <!-- Alert Messages -->
+                            <div class="alert-message-section">
+                                <div class="alert-message highest" t-if="state.selectedHeatmapBox.isHighest">
+                                    <span class="alert-badge">⚠</span>
+                                    <span class="alert-text">
+                                        <t t-esc="_t('Its the time with the most reservations.')"/>
+                                    </span>
+                                </div>
+                                <div class="alert-message lowest" t-if="state.selectedHeatmapBox.isLowest">
+                                    <span class="alert-badge">ⓘ</span>
+                                    <span class="alert-text">
+                                        <t t-esc="_t('Its the time with the least reservations.')"/>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sidebar Header (no duplicate day, no timeslot) -->
+                            <div class="sidebar-header-section">
+                                <h2 class="sidebar-title" t-esc="state.selectedHeatmapBox.displayDay"/>
+                                <p class="sidebar-subtitle">
+                                    <t t-esc="_t('Number of reservations by time zone')"/>
+                                </p>
+                            </div>
+                            
+                            <!-- Hourly Breakdown in Columns -->
+                            <div class="hourly-breakdown-section">
+                                <!-- Time Headers Row -->
+                                <div class="time-headers-row">
+                                    <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot_index + '_header'">
+                                        <div class="time-header" t-esc="_t(hourSlot.hour)"/>
+                                    </t>
+                                </div>
+                                <!-- Teams Values Row -->
+                                <div class="teams-values-row">
+                                    <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot_index + '_value'">
+                                        <div class="team-value" t-esc="_t(hourSlot.teams)"/>
                                     </t>
                                 </div>
                             </div>
-                        </t>
-                    </div>
-                    <!-- Legend -->
-                    <div class="heatmap-legend">
-                        <div class="legend-item">
-                            <div class="legend-dot top-20"></div>
-                            <span>
-                                <t t-esc="_t('Top 20%')"/>
-                            </span>
                         </div>
-                        <div class="legend-item">
-                            <div class="legend-dot top-20-40"></div>
-                            <span>
-                                <t t-esc="_t('Top 20-40%')"/>
-                            </span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot median-20"></div>
-                            <span>
-                                <t t-esc="_t('Median 20%')"/>
-                            </span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot bottom-20-40"></div>
-                            <span>
-                                <t t-esc="_t('Bottom 20-40%')"/>
-                            </span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot bottom-20"></div>
-                            <span>
-                                <t t-esc="_t('Bottom 20%')"/>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <!-- 🆕 FIXED: Always-visible sidebar (no close button) -->
-                <div class="fixed-sidebar">
-                    <!-- 🆕 Conditional Alert Messages -->
-                    <div class="alert-message highest" t-if="state.selectedHeatmapBox.isHighest">
-                        <span class="alert-badge">⑤</span>
-                        <span class="alert-text">
-                            <t t-esc="_t('This is the time with the most reservations.')"/>
-                        </span>
-                    </div>
-                    <div class="alert-message lowest" t-if="state.selectedHeatmapBox.isLowest">
-                        <span class="alert-badge">ⓘ</span>
-                        <span class="alert-text">
-                            <t t-esc="_t('This is the time with the least reservations.')"/>
-                        </span>
-                    </div>
-                    <!-- Sidebar Header -->
-                    <div class="sidebar-header">
-                        <h2 class="sidebar-title">
-                            <span class="day-text" t-esc="state.selectedHeatmapBox.displayDay"/>
-                            <span class="time-text" t-esc="state.selectedHeatmapBox.displayTime"/>
-                        </h2>
-                        <p class="sidebar-subtitle">
-                            <t t-esc="_t('Number of reservation teams by time slot')"/>
-                        </p>
-                    </div>
-                    <!-- Hourly Breakdown -->
-                    <div class="hourly-breakdown">
-                        <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot.hour">
-                            <div class="hour-row">
-                                <span class="hour-time" t-esc="hourSlot.hour"/>
-                                <span class="hour-teams" t-esc="hourSlot.teams"/>
-                            </div>
-                        </t>
                     </div>
                 </div>
             </div>
@@ -230,47 +252,47 @@
         <div class="pie-charts-card">
             <div class="pie-charts-header">
                 <h3>
-                    <t t-esc="_t('Reservation member composition status')"/>
+                    <t t-esc="_t('Reservation Member Composition Status')"/>
                 </h3>
             </div>
             <div class="pie-charts-grid">
                 <!-- Member Type Chart -->
-                <div class="pie-chart-grid-item">
-                    <div class="chart-section">
+                <div class="pie-chart-item">
+                    <div class="chart-title-wrapper">
                         <div class="chart-title">
                             <t t-esc="_t('Reservation Proportion by Type')"/>
                         </div>
+                    </div>
+                    <div class="chart-and-legend">
                         <div class="pie-chart-wrapper">
                             <canvas t-ref="memberTypeChart"/>
                         </div>
-                    </div>
-                    <div class="chart-content">
                         <div class="chart-legend">
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot individual"></span>
-                                    <span><t t-esc="_t('Individual')"/></span>
+                                    <span>Individual</span>
                                 </div>
                                 <span class="legend-value">76%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot joint"></span>
-                                    <span><t t-esc="_t('Joint Organization')"/></span>
+                                    <span>Joint Organization</span>
                                 </div>
                                 <span class="legend-value">13%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot general"></span>
-                                    <span><t t-esc="_t('General Organization')"/></span>
+                                    <span>General Organization</span>
                                 </div>
                                 <span class="legend-value">2%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot temporary"></span>
-                                    <span><t t-esc="_t('Temporary Organization')"/></span>
+                                    <span>Temporary Organization</span>
                                 </div>
                                 <span class="legend-value">8%</span>
                             </div>
@@ -279,54 +301,54 @@
                 </div>
                 
                 <!-- Advance Booking Chart -->
-                <div class="pie-chart-grid-item">
-                    <div class="chart-section">
+                <div class="pie-chart-item">
+                    <div class="chart-title-wrapper">
                         <div class="chart-title">
                             <t t-esc="_t('Reservation Proportion by Time')"/>
                         </div>
+                    </div>
+                    <div class="chart-and-legend">
                         <div class="pie-chart-wrapper">
                             <canvas t-ref="advanceBookingChart"/>
                         </div>
-                    </div>
-                    <div class="chart-content">
                         <div class="chart-legend">
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot d15"></span>
                                     <span>D-15+</span>
                                 </div>
                                 <span class="legend-value">43%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot d14"></span>
                                     <span>D-14</span>
                                 </div>
                                 <span class="legend-value">17%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot d7"></span>
                                     <span>D-7</span>
                                 </div>
                                 <span class="legend-value">26%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot d3"></span>
                                     <span>D-3</span>
                                 </div>
                                 <span class="legend-value">7%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot d1"></span>
                                     <span>D-1</span>
                                 </div>
                                 <span class="legend-value">6%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot d0"></span>
                                     <span>D-0</span>
                                 </div>
@@ -337,49 +359,49 @@
                 </div>
                 
                 <!-- Regional Distribution Chart -->
-                <div class="pie-chart-grid-item">
-                    <div class="chart-section">
+                <div class="pie-chart-item">
+                    <div class="chart-title-wrapper">
                         <div class="chart-title">
                             <t t-esc="_t('Reservation Proportion by Channel')"/>
                         </div>
+                    </div>
+                    <div class="chart-and-legend">
                         <div class="pie-chart-wrapper">
                             <canvas t-ref="regionalChart"/>
                         </div>
-                    </div>
-                    <div class="chart-content">
                         <div class="chart-legend">
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot phone"></span>
-                                    <span><t t-esc="_t('Phone')"/></span>
+                                    <span>Phone</span>
                                 </div>
                                 <span class="legend-value">48%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot internet"></span>
-                                    <span><t t-esc="_t('Internet')"/></span>
+                                    <span>Internet</span>
                                 </div>
                                 <span class="legend-value">19%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot agency1"></span>
-                                    <span><t t-esc="_t('Agency')"/></span>
+                                    <span>Agency</span>
                                 </div>
                                 <span class="legend-value">8%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot agency2"></span>
-                                    <span><t t-esc="_t('Agency')"/></span>
+                                    <span>Agency</span>
                                 </div>
                                 <span class="legend-value">7%</span>
                             </div>
                             <div class="legend-entry">
-                                <div class="d-flex align-items-center">
+                                <div class="legend-label">
                                     <span class="dot other"></span>
-                                    <span><t t-esc="_t('Other')"/></span>
+                                    <span>Other</span>
                                 </div>
                                 <span class="legend-value">18%</span>
                             </div>
