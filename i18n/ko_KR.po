@@ -560,8 +560,8 @@ msgstr "파트 3"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Reservation Trends"
-msgstr "예약 추이"
+msgid "Reservation Trend"
+msgstr "예약 동향"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -602,38 +602,128 @@ msgstr "하위 20%"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Dawn (5 AM -7 AM)"
-msgstr "새벽 (오전 5시 - 오전 7시)"
+msgid "Dawn(5 AM -7 AM)"
+msgstr "새벽(5시 - 7시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Morning (8 AM -12 PM)"
-msgstr "오전 (오전 8시 - 12시)"
+msgid "Morning(8 AM -12 PM)"
+msgstr "오전(8시 - 12시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Afternoon (1 PM -4 PM)"
-msgstr "오후 (오후 1시 - 4시)"
+msgid "Afternoon(1 PM -4 PM)"
+msgstr "오후( 1시 - 4시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Night (5 PM -7 PM)"
-msgstr "밤 (오후 5시 - 오후 7시)"
+msgid "Night(5 PM -7 PM)"
+msgstr "밤(5시 - 7시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "This is the time with the least reservations."
-msgstr "이것은 예약이 가장 적은 시간입니다."
+msgid "When selecting the right cell"
+msgstr "올바른 셀을 선택할 때"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "This is the time with the most reservations"
-msgstr "이때가 가장 많은 예약이 있는 시간입니다."
+msgid "You can check the number of teams booked by time zone for that cell."
+msgstr "해당 셀에 대해 시간대별로 예약된 팀 수를 확인할 수 있습니다."
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "Its the time with the most reservations."
+msgstr "가장 많은 예약이 이루어지는 시간입니다"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "Its the time with the least reservations."
+msgstr "예약이 가장 적은 시간입니다"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "Number of reservations by time zone"
+msgstr "시간대별 예약 수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "8 AM"
+msgstr "8 시"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "9 AM"
+msgstr "9 시"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "10 AM"
+msgstr "10 시"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "11 AM"
+msgstr "11 시"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "12 PM"
+msgstr "12 시"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "0 teams"
+msgstr "0 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "1 teams"
+msgstr "1 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "2 teams"
+msgstr "2 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "2 teams"
+msgstr "2 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "3 teams"
+msgstr "3 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "4 teams"
+msgstr "4 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "5 teams"
+msgstr "5 팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -667,14 +757,8 @@ msgstr "시간대별 예약 팀 수"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "teams"
-msgstr "팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Reservation member composition status"
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forcast.xml:0
+msgid "Reservation Member Composition Status"
 msgstr "예약 회원 구성 현황"
 
 #. module: golfzon_dashboard
