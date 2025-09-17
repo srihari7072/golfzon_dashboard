@@ -27,7 +27,7 @@ export class ChartService {
     this.chartInstances.forEach((c) => {
       try {
         c.destroy();
-      } catch (_) { }
+      } catch (_) {}
     });
     this.chartInstances.clear();
   }
@@ -44,7 +44,7 @@ export class ChartService {
     try {
       const stored = localStorage.getItem("dashboard_lang");
       if (stored === "ko_KR") return "ko-KR";
-    } catch (_) { }
+    } catch (_) {}
     return "en-US";
   }
 
@@ -119,6 +119,15 @@ export class ChartService {
       return d;
     });
 
+    // Find today's index in the data
+    const todayIndex = dateIndex.findIndex((date) => {
+      return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      );
+    });
+
     const current = this._generateRandomData(labels.length, 200, 700);
     const lastYear = this._generateRandomData(labels.length, 150, 550);
 
@@ -142,8 +151,13 @@ export class ChartService {
               borderWidth: 0,
               barPercentage: 0.6,
               categoryPercentage: 0.6,
-              borderRadius: { topLeft: 20, topRight: 20, bottomLeft: 0, bottomRight: 0 },
-              borderSkipped: 'bottom',
+              borderRadius: {
+                topLeft: 20,
+                topRight: 20,
+                bottomLeft: 0,
+                bottomRight: 0,
+              },
+              borderSkipped: "bottom",
             },
             {
               label: _t("Last Year's Sales (Same Period)"),
@@ -152,8 +166,13 @@ export class ChartService {
               borderWidth: 0,
               barPercentage: 0.6,
               categoryPercentage: 0.6,
-              borderRadius: { topLeft: 20, topRight: 20, bottomLeft: 0, bottomRight: 0 },
-              borderSkipped: 'bottom',
+              borderRadius: {
+                topLeft: 20,
+                topRight: 20,
+                bottomLeft: 0,
+                bottomRight: 0,
+              },
+              borderSkipped: "bottom",
             },
           ],
         },
@@ -166,16 +185,40 @@ export class ChartService {
             x: {
               grid: { display: false },
               ticks: {
-                autoSkip: period === "30days" ? true : false,
-                maxTicksLimit: period === "30days" ? 6 : 7,
+                autoSkip: false, // Changed from true to ensure we can control which labels show
+                maxTicksLimit: period === "30days" ? 8 : 7, // Increased slightly for 30 days
                 minRotation: 0,
                 maxRotation: 0,
                 color: AXIS_COLOR,
                 font: { size: 12 },
                 callback: function (value, index, ticks) {
-                  if (index === 0 || index === ticks.length - 1) {
+                  // Always show first label
+                  if (index === 0) {
                     return this.getLabelForValue(value);
                   }
+
+                  // Always show last label
+                  if (index === ticks.length - 1) {
+                    return this.getLabelForValue(value);
+                  }
+
+                  // Always show today's label if it exists
+                  if (todayIndex !== -1 && index === todayIndex) {
+                    return this.getLabelForValue(value);
+                  }
+
+                  // For 30 days period, show strategic intervals
+                  if (period === "30days") {
+                    // Show every 5th day approximately (adjusting based on array length)
+                    const interval = Math.ceil(ticks.length / 6);
+                    if (index % interval === 0) {
+                      return this.getLabelForValue(value);
+                    }
+                  } else {
+                    // For 7 days, show all labels
+                    return this.getLabelForValue(value);
+                  }
+
                   return "";
                 },
               },
@@ -632,7 +675,7 @@ export class ChartService {
             const value = data.datasets[0].data[index];
             const barEndX = x.getPixelForValue(value);
             const barCenterY = bar.y;
-            
+
             // For small values, position text in the center of the bar
             // For larger values, position near the end
             let textX;
@@ -644,7 +687,7 @@ export class ChartService {
               // For larger bars, position near the end
               textX = barEndX - 20;
             }
-            
+
             const text = `${value}%`;
             ctx.fillText(text, textX, barCenterY);
           });
@@ -702,8 +745,8 @@ export class ChartService {
               border: { display: false },
             },
             y: {
-              ticks: { 
-                color: "#6f6f6f", 
+              ticks: {
+                color: "#6f6f6f",
                 font: { size: 14, weight: "600" },
                 padding: 10,
               },
@@ -736,14 +779,15 @@ export class ChartService {
               data,
               backgroundColor: colors,
               borderWidth: 0,
-              cutout: "40%",
+              cutout: "40%", // Further reduced for thicker donut
             },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          aspectRatio: 1, // Force square aspect ratio
+          aspectRatio: 1,
+          devicePixelRatio: window.devicePixelRatio || 2,
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -754,10 +798,26 @@ export class ChartService {
               cornerRadius: 8,
               padding: 12,
               displayColors: false,
+              callbacks: {
+                label: function (context) {
+                  return context.parsed + "%";
+                },
+              },
             },
           },
           layout: {
-            padding: 0,
+            padding: 2, // Minimal padding for maximum chart size
+          },
+          elements: {
+            arc: {
+              borderWidth: 0,
+              borderRadius: 0,
+            },
+          },
+          animation: {
+            animateRotate: true,
+            animateScale: false,
+            duration: 600,
           },
         },
       });
