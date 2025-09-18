@@ -193,32 +193,9 @@ export class ChartService {
                 font: { size: 12 },
                 callback: function (value, index, ticks) {
                   // Always show first label
-                  if (index === 0) {
+                  if (index === 0 || index === ticks.length - 1) {
                     return this.getLabelForValue(value);
                   }
-
-                  // Always show last label
-                  if (index === ticks.length - 1) {
-                    return this.getLabelForValue(value);
-                  }
-
-                  // Always show today's label if it exists
-                  if (todayIndex !== -1 && index === todayIndex) {
-                    return this.getLabelForValue(value);
-                  }
-
-                  // For 30 days period, show strategic intervals
-                  if (period === "30days") {
-                    // Show every 5th day approximately (adjusting based on array length)
-                    const interval = Math.ceil(ticks.length / 6);
-                    if (index % interval === 0) {
-                      return this.getLabelForValue(value);
-                    }
-                  } else {
-                    // For 7 days, show all labels
-                    return this.getLabelForValue(value);
-                  }
-
                   return "";
                 },
               },
