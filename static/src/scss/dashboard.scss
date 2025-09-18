@@ -752,7 +752,7 @@ body {
       .weather-half {
         flex: 1;
         @include flex(column, flex-start, stretch);
-        max-width: 42.5% !important;
+        max-width: 41.5% !important;
         height: 100%;
         // margin-right: 50px;
 
