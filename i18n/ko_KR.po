@@ -764,6 +764,12 @@ msgstr "12 팀"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "13 teams"
+msgstr "13 팀"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "24 teams"
 msgstr "24 팀"
 
