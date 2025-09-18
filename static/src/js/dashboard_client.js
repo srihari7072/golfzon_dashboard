@@ -461,11 +461,11 @@ class GolfzonDashboard extends Component {
     // Special case for specific examples
     if (totalValue === 5 && timeSlot.includes("Afternoon")) {
       return [
-        { hour: "_t('8 AM')", teams: "_t('0 teams')" },
-        { hour: "_t('9 AM')", teams: "_t('1 teams')" },
-        { hour: "_t('10 AM')", teams: "_t('1 teams')" },
-        { hour: "_t('11 AM')", teams: "_t('0 teams')" },
-        { hour: "_t('12 PM')", teams: "_t('3 teams')" },
+        { hour: _t("8 AM"), teams: _t("0 teams") },
+        { hour: _t("9 AM"), teams: _t("1 teams") },
+        { hour: _t("10 AM"), teams: _t("1 teams") },
+        { hour: _t("11 AM"), teams: _t("0 teams") },
+        { hour: _t("12 PM"), teams: _t("3 teams") },
       ];
     }
 
