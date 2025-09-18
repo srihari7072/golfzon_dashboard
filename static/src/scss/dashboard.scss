@@ -2095,7 +2095,7 @@ body {
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         padding: 20px;
-        flex: 1;
+        // flex: 1;
 
         .pie-charts-header {
           margin-bottom: 20px;
@@ -2111,14 +2111,14 @@ body {
 
         .pie-charts-grid {
           display: flex;
-          justify-content: space-between;
+          justify-content: space-evenly;
           align-items: flex-start;
-          gap: 20px;
 
           .pie-chart-item {
-            flex: 1;
+            flex: 0 0 auto;
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
 
             .chart-title-wrapper {
               margin-bottom: 8px; // Reduced from 16px
@@ -2130,25 +2130,25 @@ body {
                 color: #495057;
                 font-family: "Pretendard", sans-serif;
                 line-height: 1.1;
-                margin-left: 50px;
+                margin-left: 35px;
                 margin-bottom: 10px;
               }
             }
 
             .chart-and-legend {
               display: flex;
-              align-items: flex-start;
-              gap: 12px;
+              align-items: center;
+              gap: 16px;
 
               .pie-chart-wrapper {
                 position: relative;
-                width: 120px;
-                height: 120px;
+                width: 160px;
+                height: 160px;
                 flex-shrink: 0;
 
                 canvas {
-                  width: 120px !important;
-                  height: 120px !important;
+                  width: 160px !important;
+                  height: 160px !important;
                 }
 
                 .chart-center-title {
@@ -2160,8 +2160,10 @@ body {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
-                gap: 3px;
+                gap: 6px;
                 justify-content: center;
+                min-width: 80px;
+                max-width: 80px;
 
                 .legend-entry {
                   display: flex;
