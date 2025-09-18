@@ -225,16 +225,15 @@
                             
                             <!-- Hourly Breakdown in Columns -->
                             <div class="hourly-breakdown-section">
-                                <!-- Time Headers Row -->
-                                <div class="time-headers-row">
-                                    <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot_index + '_header'">
-                                        <div class="time-header" t-esc="_t(hourSlot.hour)"/>
-                                    </t>
-                                </div>
-                                <!-- Teams Values Row -->
-                                <div class="teams-values-row">
-                                    <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot_index + '_value'">
-                                        <div class="team-value" t-esc="_t(hourSlot.teams)"/>
+                                <div class="hourly-columns-row">
+                                    <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot_index + '_col'">
+                                        <div class="hourly-column">
+                                            <div class="time-header" t-esc="_t(hourSlot.hour)"/>
+                                            <div class="team-value" t-esc="_t(hourSlot.teams)"/>
+                                        </div>
+                                        <t t-if="hourSlot_index !== state.selectedHeatmapBox.hourlyBreakdown.length - 1">
+                                            <div class="vertical-divider"></div>
+                                        </t>
                                     </t>
                                 </div>
                             </div>
