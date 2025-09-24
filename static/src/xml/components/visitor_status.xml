@@ -37,6 +37,7 @@
             </div>
         </div>
     </t>
+    
     <t t-name="golfzon_dashboard.VisitorTrend">
         <div class="visitor-trend">
             <t t-call="golfzon_dashboard.ChartHeader">
@@ -59,19 +60,28 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                    <t t-esc="state.selectedPeriod === '7days' ? _t('7 days prior to latest visit date') : _t('30 days prior to latest visit date')"/>
                                 </div>
                             </span>
                         </span>
-                        <span class="trend-card-title">9,416</span>
+                        <!-- ✅ DYNAMIC: Total visitors from database -->
+                        <span class="trend-card-title" t-esc="state.visitorData.totalVisitors"/>
                     </div>
                     <div class="trend-wrapper sales-numbers">
                         <span class="trend-card-title">
                             <t t-esc="_t('Compared to last year')"/>
                         </span>
-                        <span class="trend-indicator trend-up">
-                            <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
-                            <span t-esc="state.performanceData.sales_performance.monthly_trend"/>
+                        <!-- ✅ FIXED: Use state.hasTrendDown property -->
+                        <span class="trend-indicator" t-att-class="state.hasTrendDown ? 'trend-down' : 'trend-up'">
+                            <span class="trend-icon" t-esc="state.hasTrendDown ? '▼' : '▲'"/>
+                            <span>
+                                <t t-if="Math.abs(state.visitorData.growthPercentage) >= 100">
+                                    <t t-esc="state.hasTrendDown ? '100%' : '100%'"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="Math.abs(state.visitorData.growthPercentage) + '%'"/>
+                                </t>
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -84,19 +94,20 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                    <t t-esc="state.selectedPeriod === '7days' ? _t('7 days section breakdown') : _t('30 days section breakdown')"/>
                                 </div>
                             </span>
                         </span>
+                        <!-- ✅ DYNAMIC: Section totals from database -->
                         <div class="trend-card-title">
                             <span>
-                                <t t-esc="_t('Part 1')"/> 4,500
+                                <t t-esc="_t('Part 1')"/> <t t-esc="state.visitorData.sectionTotals.part1 || 0"/>
                             </span>
                             <span>
-                                <t t-esc="_t('Part 2')"/> 4,300
+                                <t t-esc="_t('Part 2')"/> <t t-esc="state.visitorData.sectionTotals.part2 || 0"/>
                             </span>
                             <span>
-                                <t t-esc="_t('Part 3')"/> 616
+                                <t t-esc="_t('Part 3')"/> <t t-esc="state.visitorData.sectionTotals.part3 || 0"/>
                             </span>
                         </div>
                     </div>
@@ -104,6 +115,7 @@
             </div>
         </div>
     </t>
+
     <t t-name="golfzon_dashboard.VisitorInfo">
         <div class="visitor-info">
             <div class="age-trend-graph">
