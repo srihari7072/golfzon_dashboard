@@ -26,14 +26,28 @@
     - Modular SCSS with component separation
     - Professional error handling and logging
     """,
-    "author": "Sri Hari",
+    "author": "Golfzon",
     "depends": ["web", "base"],
     "data": [
         "security/ir.model.access.csv",
         "views/menu.xml", 
         "views/templates.xml",
         "data/dummy_data.xml",
+        "views/booking_info_views.xml",
+        "views/account_info.xml",
+        "views/accounts.xml",
+        "views/admin_login_his.xml",
+        "views/admin_privacy_his.xml",
+        "views/api_log.xml",
+        "views/bookg_confirm_his.xml",
+        "views/persons.xml",
+        "views/visit_customer.xml",
+        "views/payment_infos_views.xml",
+        "views/sales_infos_views.xml",
+        "views/day_sum_payments_views.xml",
+        "views/day_sum_greenfees_views.xml",
     ],
+
     "assets": {
         "web.assets_backend": [
             # Main SCSS file (imports all components)
