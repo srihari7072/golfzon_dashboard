@@ -8,8 +8,11 @@ export class GolfDataService {
   }
 
   async fetchGolfInfo(lat = null, lon = null) {
+    console.log("🔄 Fetching booking info from database...");
+
     if (!this.rpc) {
-      return this.getDefaultGolfData();
+      console.warn("⚠️ RPC not available, trying HTTP endpoint...");
+      return await this.fetchViaHTTP();
     }
 
     try {
@@ -18,107 +21,111 @@ export class GolfDataService {
         lon: lon,
       });
 
-      return {
-        reservations: golfData.reservations,
-        teeTime: golfData.teeTime,
-        reservationDetails: golfData.reservationDetails,
-      };
+      if (golfData.status === "success") {
+        console.log(
+          "✅ Successfully fetched booking data from database via RPC:",
+          {
+            reservations: golfData.reservations,
+            reservationCount: golfData.reservationDetails.length,
+          }
+        );
+
+        return {
+          reservations: golfData.reservations,
+          teeTime: golfData.teeTime,
+          reservationDetails: golfData.reservationDetails,
+        };
+      } else {
+        console.warn("⚠️ RPC failed:", golfData.message);
+        return await this.fetchViaHTTP();
+      }
     } catch (error) {
-      console.error("Error fetching golf data:", error);
-      return this.getDefaultGolfData();
+      console.error("❌ RPC error, trying HTTP fallback:", error);
+      return await this.fetchViaHTTP();
+    }
+  }
+
+  async fetchViaHTTP() {
+    try {
+      const response = await fetch("/golfzon/api/bookings");
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("✅ Successfully fetched booking data via HTTP:", {
+          count: data.count,
+        });
+
+        return {
+          reservations: { current: data.count, total: 80 },
+          teeTime: {
+            part1: { current: Math.floor(data.count * 0.4), total: 50 },
+            part2: { current: Math.floor(data.count * 0.35), total: 30 },
+            part3: { current: Math.floor(data.count * 0.25), total: 15 },
+          },
+          reservationDetails: data.reservations,
+        };
+      } else {
+        console.error("❌ HTTP fetch failed:", data.message);
+        return this.getEmptyGolfData();
+      }
+    } catch (error) {
+      console.error("❌ HTTP fetch also failed:", error);
+      return this.getEmptyGolfData();
     }
   }
 
   async fetchPerformanceData() {
+    console.log("🔄 Fetching performance data...");
+
     if (!this.rpc) {
+      console.warn(
+        "⚠️ RPC service not available, using default performance data"
+      );
       return this.getDefaultPerformanceData();
     }
 
     try {
-      return await this.rpc("/golfzon/dashboard/performance_indicators");
+      const data = await this.rpc("/golfzon/dashboard/performance_indicators");
+      console.log("✅ Performance data fetched:", data);
+
+      if (
+        data &&
+        data.sales_performance &&
+        data.avg_order_value &&
+        data.utilization_rate
+      ) {
+        return data;
+      } else {
+        console.warn("⚠️ Performance data incomplete, using defaults");
+        return this.getDefaultPerformanceData();
+      }
     } catch (error) {
-      console.error("Error fetching performance data:", error);
+      console.error("❌ Error fetching performance data:", error);
       return this.getDefaultPerformanceData();
     }
   }
 
   async fetchDashboardData() {
-    const defaultData = {
-      customer_growth: [60, 40, 20, 80, 50, 70, 90, 30, 40, 55, 75, 85],
-      activities: [
-        "13 mins ago - New Reservation",
-        "1 hour ago - 2 New Leads",
-        "Today - 3 SMS Campaigns",
-      ],
-    };
+    console.log("🔄 Fetching dashboard data...");
 
     if (!this.rpc) {
-      return defaultData;
+      console.warn(
+        "⚠️ RPC service not available, using default dashboard data"
+      );
+      return this.getDefaultDashboardData();
     }
 
     try {
-      return await this.rpc("/golfzon/dashboard/data");
+      const data = await this.rpc("/golfzon/dashboard/data");
+      console.log("✅ Dashboard data fetched:", data);
+      return data;
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-      return defaultData;
+      console.error("❌ Error fetching dashboard data:", error);
+      return this.getDefaultDashboardData();
     }
   }
 
-  getDefaultGolfData() {
-    const names = [
-      _t("John Smith"),
-      _t("Sarah Johnson"),
-      _t("Mike Wilson"),
-      _t("Emily Davis"),
-      _t("David Brown"),
-      _t("Lisa Anderson"),
-      _t("Tom Garcia"),
-      _t("Anna Martinez"),
-      _t("Chris Lee"),
-      _t("Jessica Taylor"),
-      _t("Robert Chen"),
-      _t("Maria Rodriguez"),
-      _t("Kevin Park"),
-      _t("Amanda White"),
-      _t("Daniel Kim"),
-      _t("Rachel Green"),
-      _t("James Wilson"),
-      _t("Michelle Brown"),
-      _t("Steven Clark"),
-      _t("Jennifer Lopez"),
-    ];
-
-    const reservationDetails = [];
-    const today = new Date().toISOString().split("T")[0];
-
-    for (let i = 0; i < 80; i++) {
-      const startHour = 6 + i * 0.25;
-      const hour = Math.floor(startHour);
-      const minute = Math.floor((startHour - hour) * 60);
-      const teeTime = `${hour.toString().padStart(2, "0")}:${minute
-        .toString()
-        .padStart(2, "0")}`;
-
-      reservationDetails.push({
-        id: `R${(i + 1).toString().padStart(3, "0")}`,
-        person: names[i % names.length],
-        date: today,
-        teeTime: teeTime,
-        rounds: Math.random() > 0.5 ? 18 : 9,
-      });
-    }
-
-    return {
-      reservations: { current: 78, total: 80 },
-      teeTime: {
-        part1: { current: 40, total: 50 },
-        part2: { current: 25, total: 30 },
-        part3: { current: 7, total: 15 },
-      },
-      reservationDetails: reservationDetails,
-    };
-  }
-
+  // Required default data structures
   getDefaultPerformanceData() {
     return {
       sales_performance: {
@@ -139,6 +146,29 @@ export class GolfDataService {
         current_trend: "-5%",
         monthly_trend: "+20%",
       },
+    };
+  }
+
+  getEmptyGolfData() {
+    return {
+      reservations: { current: 0, total: 80 },
+      teeTime: {
+        part1: { current: 0, total: 50 },
+        part2: { current: 0, total: 30 },
+        part3: { current: 0, total: 15 },
+      },
+      reservationDetails: [],
+    };
+  }
+
+  getDefaultDashboardData() {
+    return {
+      customer_growth: [60, 40, 20, 80, 50, 70, 90, 30, 40, 55, 75, 85],
+      activities: [
+        "13 mins ago - New Reservation",
+        "1 hour ago - 2 New Leads",
+        "Today - 3 SMS Campaigns",
+      ],
     };
   }
 }
