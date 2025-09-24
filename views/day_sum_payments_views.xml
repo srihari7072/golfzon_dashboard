@@ -1,0 +1,58 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_day_sum_payments_tree" model="ir.ui.view">
+        <field name="name">day.sum.payments.list</field>
+        <field name="model">day.sum.payments</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="pay_date"/>
+                <field name="account_id"/>
+                <field name="store_cd_id"/>
+                <field name="payment_cd_id"/>
+                <field name="pay_group"/>
+                <field name="pay_amt"/>
+                <field name="course_group_cd_id"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_day_sum_payments_form" model="ir.ui.view">
+        <field name="name">day.sum.payments.form</field>
+        <field name="model">day.sum.payments</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="pay_date"/>
+                        <field name="account_id"/>
+                        <field name="store_cd_id"/>
+                        <field name="payment_cd_id"/>
+                        <field name="pay_group"/>
+                        <field name="pay_amt"/>
+                    </group>
+                    <group>
+                        <field name="course_group_cd_id"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_day_sum_payments" model="ir.actions.act_window">
+        <field name="name">Day Sum Payments</field>
+        <field name="res_model">day.sum.payments</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_day_sum_payments_root" name="Daily Summaries"/>
+    <menuitem id="menu_day_sum_payments"
+              name="Day Sum Payments"
+              parent="menu_day_sum_payments_root"
+              action="action_day_sum_payments"/>
+</odoo>

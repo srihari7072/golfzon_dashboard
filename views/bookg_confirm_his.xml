@@ -1,0 +1,64 @@
+<odoo>
+    <!-- List View -->
+    <record id="view_bookg_confirm_his_list" model="ir.ui.view">
+        <field name="name">bookg.confirm.his.list</field>
+        <field name="model">bookg.confirm.his</field>
+        <field name="arch" type="xml">
+            <list string="Booking Confirmation History">
+                <field name="bookg_confirm_his_id"/>
+                <field name="bookg_info_id"/>
+                <field name="time_table_id"/>
+                <field name="res_modify_scd"/>
+                <field name="green_fee_cd_id"/>
+                <field name="greenfee_discount_id"/>
+              
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_bookg_confirm_his_form" model="ir.ui.view">
+        <field name="name">bookg.confirm.his.form</field>
+        <field name="model">bookg.confirm.his</field>
+        <field name="arch" type="xml">
+            <form string="Booking Confirmation History">
+                <sheet>
+                    <group>
+                        <field name="bookg_confirm_his_id"/>
+                        <field name="bookg_info_id"/>
+                        <field name="time_table_id"/>
+                        <field name="res_modify_scd"/>
+                        <field name="green_fee_cd_id"/>
+                        <field name="greenfee_discount_id"/>
+                        <field name="apply_greenfee_amt"/>
+                        <field name="play_persons"/>
+                        <field name="caddie_s_yn"/>
+                        <field name="prepayed_amt"/>
+                        <field name="prepayments_id"/>
+                        <field name="package_id"/>
+                        <field name="cancel_cd_id"/>
+                        <field name="cancel_remarks"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                        <field name="reserve_id"/>
+                        <field name="reserve_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bookg_confirm_his" model="ir.actions.act_window">
+        <field name="name">Booking Confirmation History</field>
+        <field name="res_model">bookg.confirm.his</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_bookg_confirm_his_root" name="Booking_confirm_his"/>
+    <menuitem id="menu_bookg_confirm_his_sub"
+              name="Confirmation History"
+              parent="menu_bookg_confirm_his_root"
+              action="action_bookg_confirm_his"/>
+</odoo>

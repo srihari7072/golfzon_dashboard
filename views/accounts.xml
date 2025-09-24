@@ -1,0 +1,81 @@
+<odoo>
+    <!-- List View -->
+    <record id="view_account_details_list" model="ir.ui.view">
+        <field name="name">account.details.list</field>
+        <field name="model">account.details</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="account_id"/>
+                <field name="account_code"/>
+                <field name="bsu_name"/>
+                <field name="ceo_name"/>
+                <field name="manager"/>
+                <field name="cc_bsu_name"/>
+                <field name="post_no"/>
+                <field name="addr"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_account_details_form" model="ir.ui.view">
+        <field name="name">account.details.form</field>
+        <field name="model">account.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="account_id"/>
+                        <field name="account_code"/>
+                        <field name="bsu_name"/>
+                        <field name="ceo_name"/>
+                        <field name="manager"/>
+                        <field name="cc_bsu_name"/>
+                        <field name="post_no"/>
+                        <field name="addr"/>
+                        <field name="addr_extra"/>
+                        <field name="tel"/>
+                        <field name="fax"/>
+                        <field name="booking_tel"/>
+                        <field name="front_tel"/>
+                        <field name="game_tel"/>
+                        <field name="room_tel"/>
+                        <field name="business_no"/>
+                        <field name="corp_no"/>
+                        <field name="business_status"/>
+                        <field name="business_event"/>
+                        <field name="condo_yn"/>
+                        <field name="home_tax"/>
+                        <field name="tax_area"/>
+                        <field name="tax_code"/>
+                        <field name="lang_scd"/>
+                        <field name="bsu_name_abbr"/>
+                        <field name="group_yn"/>
+                        <field name="use_yn"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                        <field name="updated_id"/>
+                        <field name="updated_at"/>
+                        <field name="deleted_id"/>
+                        <field name="deleted_at"/>
+                        <field name="sort_order"/>
+                        <field name="co_area"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_account_details" model="ir.actions.act_window">
+        <field name="name">Accounts</field>
+        <field name="res_model">account.details</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_account_details_root" name="Accounts"/>
+    <menuitem id="menu_account_details" name="Manage Details"
+              parent="menu_account_details_root" action="action_account_details"/>
+</odoo>

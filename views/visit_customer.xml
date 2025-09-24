@@ -1,0 +1,86 @@
+
+<odoo>
+    <!-- List View -->
+    <record id="view_visit_customer_list" model="ir.ui.view">
+        <field name="name">visit.customer.list</field>
+        <field name="model">visit.customer</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="visit_name"/>
+                <field name="visit_date"/>
+                <field name="person_code"/>
+                <field name="member_no"/>
+                <field name="mobile_phone"/>
+                <field name="greenfee_amt"/>
+                <field name="checkout_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_visit_customer_form" model="ir.ui.view">
+        <field name="name">visit.customer.form</field>
+        <field name="model">visit.customer</field>
+        <field name="arch" type="xml">
+            <form string="Visit Customer">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="visit_name"/>
+                            <field name="visit_date"/>
+                            <field name="person_code"/>
+                            <field name="member_no"/>
+                            <field name="mobile_phone"/>
+                            <field name="greenfee_amt"/>
+                            <field name="checkout_at"/>
+                        </group>
+                        <group>
+                            <field name="customer_id"/>
+                            <field name="visit_team_id"/>
+                            <field name="bookg_info_id"/>
+                            <field name="account_id"/>
+                            <field name="visit_seq"/>
+                            <field name="locker_no"/>
+                            <field name="gender_scd"/>
+                            <field name="hole_scd"/>
+                            <field name="chkin_method_scd"/>
+                            <field name="visit_state_scd"/>
+                            <field name="green_fee_cd_id"/>
+                            <field name="discount_class_cd_id"/>
+                            <field name="area_cd_id"/>
+                            <field name="greenfee_discount_id"/>
+                            <field name="locker_ord"/>
+                            <field name="coupon_issue_code"/>
+                            <field name="nation_scd"/>
+                            <field name="rounding_inf_agree_yn"/>
+                            <field name="org_greenfee_amt"/>
+                            <field name="discount_amt"/>
+                            <field name="discount_remark"/>
+                            <field name="issue_coupon_id"/>
+                            <field name="created_id"/>
+                            <field name="created_at"/>
+                            <field name="updated_id"/>
+                            <field name="updated_at"/>
+                            <field name="deleted_id"/>
+                            <field name="deleted_at"/>
+                            <field name="cart_discount_amt"/>
+                            <field name="coupon_discount_amt"/>
+                            <field name="spc_yn"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_visit_customer" model="ir.actions.act_window">
+        <field name="name">Visit Customers</field>
+        <field name="res_model">visit.customer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_visit_customer_root" name="Visit Customers"/>
+    <menuitem id="menu_visit_customer" name="Visit Customers" parent="menu_visit_customer_root" action="action_visit_customer"/>
+</odoo>

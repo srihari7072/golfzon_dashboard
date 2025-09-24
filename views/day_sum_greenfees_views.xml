@@ -1,0 +1,65 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_day_sum_greenfees_tree" model="ir.ui.view">
+        <field name="name">day.sum.greenfees.list</field>
+        <field name="model">day.sum.greenfees</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="visit_date"/>
+                <field name="account_id"/>
+                <field name="hole_scd"/>
+                <field name="member_cd_id"/>
+                <field name="green_fee_cd_id"/>
+                <field name="gender_scd"/>
+                <field name="visit_cnt"/>
+                <field name="tot_amt"/>
+                <field name="net_amt"/>
+                <field name="vat_amt"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_day_sum_greenfees_form" model="ir.ui.view">
+        <field name="name">day.sum.greenfees.form</field>
+        <field name="model">day.sum.greenfees</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="visit_date"/>
+                        <field name="account_id"/>
+                        <field name="hole_scd"/>
+                        <field name="member_cd_id"/>
+                        <field name="green_fee_cd_id"/>
+                        <field name="gender_scd"/>
+                        <field name="visit_cnt"/>
+                    </group>
+                    <group>
+                        <field name="tot_amt"/>
+                        <field name="net_amt"/>
+                        <field name="vat_amt"/>
+                        <field name="etc_amt"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_day_sum_greenfees" model="ir.actions.act_window">
+        <field name="name">Day Sum Greenfees</field>
+        <field name="res_model">day.sum.greenfees</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_day_sum_greenfees_root" name="Golf Operations"/>
+    <menuitem id="menu_day_sum_greenfees"
+              name="Day Sum Greenfees"
+              parent="menu_day_sum_greenfees_root"
+              action="action_day_sum_greenfees"/>
+</odoo>
