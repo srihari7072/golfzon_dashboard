@@ -61,15 +61,15 @@
                                     </div>
                                 </span>
                             </span>
-                            <div class="stat-value">2,926</div>
+                            <div class="stat-value" t-esc="state.forecastData.summary_stats.total_reservations"/>
                         </div>
                         <div class="stat-comparison">
                             <span class="comparison-label">
                                 <t t-esc="_t('compared to same period last year')"/>
                             </span>
-                            <span class="trend-indicator trend-up">
-                                <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
-                                <span>+10%</span>
+                            <span class="trend-indicator" t-att-class="state.forecastData.summary_stats.growth_percentage >= 0 ? 'trend-up' : 'trend-down'">
+                                <span class="trend-icon" t-esc="state.forecastData.summary_stats.growth_percentage >= 0 ? '▲' : '▼'"/>
+                                <span t-esc="(state.forecastData.summary_stats.growth_percentage >= 0 ? '+' : '') + state.forecastData.summary_stats.growth_percentage + '%'"/>
                             </span>
                         </div>
                     </div>
@@ -86,17 +86,17 @@
                                     </div>
                                 </div>
                             </span>
-                            <div class="stat-value">78.5%</div>
+                            <div class="stat-value" t-esc="state.forecastData.summary_stats.utilization_rate + '%'"/>
                         </div>
                         <div class="stat-breakdown horizontal-parts">
                             <span>
-                                <t t-esc="_t('Part 1')"/> 82.4%
+                                <t t-esc="_t('Part 1')"/> <t t-esc="state.forecastData.summary_stats.month_comparison.month1"/>%
                             </span>
                             <span>
-                                <t t-esc="_t('Part 2')"/> 76.2%
+                                <t t-esc="_t('Part 2')"/> <t t-esc="state.forecastData.summary_stats.month_comparison.month2"/>%
                             </span>
                             <span>
-                                <t t-esc="_t('Part 3')"/> 75.3%
+                                <t t-esc="_t('Part 3')"/> <t t-esc="state.forecastData.summary_stats.month_comparison.month3"/>%
                             </span>
                         </div>
                     </div>
@@ -189,10 +189,10 @@
                         <div class="sidebar-default-content" t-if="!state.selectedHeatmapBox.isVisible">
                             <div class="default-message">
                                 <h4 class="default-title">
-                                    <t t-esc="_t('When selecting the right cell')"/>
+                                    <t t-esc="_t('When selecting the cell on the right,')"/>
                                 </h4>
                                 <p class="default-subtitle">
-                                    <t t-esc="_t('You can check the number of teams booked by time zone for that cell.')"/>
+                                    <t t-esc="_t('You can check the number of reserved teams by time slot for that cell.')"/>
                                 </p>
                             </div>
                         </div>
