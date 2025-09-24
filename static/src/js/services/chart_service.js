@@ -63,7 +63,6 @@ export class ChartService {
     }
   }
 
-  // Helper function to get weather data for a specific date
   _getWeatherData(date) {
     // Sample weather data - replace with actual API call if needed
     const weatherOptions = [
@@ -77,7 +76,6 @@ export class ChartService {
     return weatherOptions[weatherIndex];
   }
 
-  // Helper function to format sales amount
   _formatSalesAmount(value) {
     return `${(value * 10000).toLocaleString()} won`;
   }
@@ -286,52 +284,140 @@ export class ChartService {
     }
   }
 
-  createVisitorChart(canvasEl, period) {
-    if (!this._validateCanvas(canvasEl, "Visitor Chart")) return;
-
-    const labels = this.getDateLabels(period);
-    const days = period === "7days" ? 7 : 30;
-
-    const today = new Date();
-    const start = new Date(today);
-    start.setDate(today.getDate() - (days - 1));
-    const dateIndex = Array.from({ length: days }, (_, i) => {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      return d;
-    });
-
-    const visitorData = this._generateRandomData(labels.length, 200, 600);
-    const lastYearData = this._generateRandomData(labels.length, 100, 400);
-
-    this.destroyChart("visitor");
+  async fetchVisitorData(period) {
+    console.log(`🔄 ChartService: Fetching visitor data for ${period}...`);
 
     try {
+      const url =
+        window.location.origin + `/golfzon/api/visitor_data?period=${period}`;
+      const response = await fetch(url);
+
+      console.log(`📞 Visitor API: ${response.status} ${response.statusText}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("✅ Visitor data fetched:", {
+          period: data.period,
+          currentTotal: data.data.totals.current_total,
+          prevYearTotal: data.data.totals.prev_year_total,
+          growth: data.data.totals.growth_percentage,
+          dataPoints: data.data.current_visitors.length,
+        });
+
+        return data;
+      } else {
+        console.error("❌ Visitor data fetch failed:", data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Error fetching visitor data:", error);
+      return null;
+    }
+  }
+
+  async createVisitorChart(canvasEl, period) {
+    if (!this._validateCanvas(canvasEl, "Visitor Chart")) return;
+
+    console.log(`🔄 ChartService: Creating visitor chart for ${period}...`);
+
+    try {
+      const url =
+        window.location.origin + `/golfzon/api/visitor_data?period=${period}`;
+      console.log(`📞 Fetching visitor data from: ${url}`);
+
+      const response = await fetch(url);
+      console.log(`📞 Response status: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const visitorResponse = await response.json();
+      console.log("📊 Raw visitor response:", visitorResponse);
+
+      if (visitorResponse.status !== "success") {
+        console.error(
+          "❌ ChartService: Visitor data fetch failed:",
+          visitorResponse.message
+        );
+        this._showChartError(
+          canvasEl,
+          `Failed to load visitor data: ${visitorResponse.message}`
+        );
+        return;
+      }
+
+      const data = visitorResponse.data;
+      const labels = data.labels || [];
+      const visitorData = (
+        data.current_visitors ||
+        data.current_data ||
+        []
+      ).map((x) => parseInt(x) || 0); // ✅ FIXED: Ensure integers
+      const lastYearData = (
+        data.prev_year_visitors ||
+        data.prev_year_data ||
+        []
+      ).map((x) => parseInt(x) || 0); // ✅ FIXED: Ensure integers
+
+      console.log(
+        "✅ ChartService: Creating visitor chart with database data:",
+        {
+          labels: labels.length,
+          currentTotal: data.totals ? data.totals.current_total : 0,
+          prevYearTotal: data.totals ? data.totals.prev_year_total : 0,
+          currentData: visitorData,
+          lastYearData: lastYearData,
+        }
+      );
+
+      // ✅ FIXED: Validate data arrays
+      if (!visitorData.length || visitorData.every((x) => x === 0)) {
+        console.warn(
+          "⚠️ ChartService: All visitor data is zero, showing empty state"
+        );
+      }
+
+      this.destroyChart("visitor");
+
+      const maxValue = Math.max(...visitorData, ...lastYearData, 10); // Minimum 10
+      const chartMax = Math.max(Math.ceil(maxValue * 1.2), 10);
+
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
         data: {
           labels,
           datasets: [
             {
-              label: _t("Number of Guests"),
+              label: _t("Number of Visitors"),
               data: visitorData,
               borderColor: "#046DEC",
-              backgroundColor: "rgba(33, 150, 243, 0.1)",
+              backgroundColor: "transparent",
               borderWidth: 2,
-              fill: true,
+              fill: false,
               tension: 0.4,
-              pointRadius: 0,
-              pointStyle: "circle", // Ensure point style is applied to data points
+              pointRadius: 4,
+              pointStyle: "circle",
+              pointBackgroundColor: "#046DEC",
+              pointBorderColor: "#046DEC",
             },
             {
-              label: _t("Number of Guests (Same Period Last Year)"),
+              label: _t("Number of Visitors for the Same Period Last Year"),
               data: lastYearData,
               borderColor: "#86E5F5",
               backgroundColor: "transparent",
               borderWidth: 2,
+              fill: false,
               tension: 0.4,
-              pointRadius: 0,
-              pointStyle: "circle", // Ensure point style is applied to data points
+              pointRadius: 4,
+              pointStyle: "circle",
+              pointBackgroundColor: "#86E5F5",
+              pointBorderColor: "#86E5F5",
             },
           ],
         },
@@ -351,21 +437,6 @@ export class ChartService {
                 padding: 16,
                 font: { size: 12, weight: "600" },
                 color: "#1e1e1e",
-                generateLabels: function (chart) {
-                  const data = chart.data;
-                  if (data.datasets.length) {
-                    return data.datasets.map((dataset, i) => ({
-                      text: dataset.label,
-                      fillStyle: dataset.borderColor,
-                      strokeStyle: dataset.borderColor,
-                      lineWidth: 1,
-                      pointStyle: "circle",
-                      hidden: !chart.isDatasetVisible(i),
-                      datasetIndex: i,
-                    }));
-                  }
-                  return [];
-                },
               },
             },
             tooltip: {
@@ -383,24 +454,11 @@ export class ChartService {
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  const d = dateIndex[idx];
-                  return this._formatFullDate(d) || labels[idx] || "";
+                  return labels[idx] || "";
                 },
                 label: (ctx) => {
-                  const value = ctx.raw ?? 0;
-                  const isCurrentYear = ctx.datasetIndex === 0;
-                  if (isCurrentYear) {
-                    return `Visitors: ${value.toLocaleString()}`;
-                  } else {
-                    const idx = ctx.dataIndex;
-                    const date = dateIndex[idx];
-                    const weather = this._getWeatherData(date);
-                    return [
-                      `Visitors: ${value.toLocaleString()}`,
-                      `Weather: ${weather.condition}`,
-                      `Temperature: ${weather.temp}`,
-                    ];
-                  }
+                  const value = parseInt(ctx.raw) || 0; // ✅ FIXED: Ensure integer display
+                  return `Visitors: ${value.toLocaleString()}`;
                 },
               },
             },
@@ -409,7 +467,11 @@ export class ChartService {
             x: {
               ticks: {
                 callback: function (value, index, ticks) {
-                  if (index === 0 || index === ticks.length - 1) {
+                  if (
+                    period === "7days" ||
+                    index === 0 ||
+                    index === ticks.length - 1
+                  ) {
                     return this.getLabelForValue(value);
                   }
                   return "";
@@ -420,8 +482,13 @@ export class ChartService {
             },
             y: {
               beginAtZero: true,
-              max: 700,
-              ticks: { stepSize: 100 },
+              max: chartMax,
+              ticks: {
+                stepSize: Math.max(Math.ceil(chartMax / 8), 1),
+                callback: function (value) {
+                  return parseInt(value).toLocaleString(); // ✅ FIXED: Integer display
+                },
+              },
               grid: { color: "#e0e0e0" },
             },
           },
@@ -429,58 +496,138 @@ export class ChartService {
       });
 
       this.chartInstances.set("visitor", chart);
+
+      console.log("✅ ChartService: Visitor chart created successfully");
+
       return chart;
     } catch (e) {
-      console.error("Error creating Visitor chart:", e);
+      console.error("❌ ChartService: Error creating visitor chart:", e);
+      this._showChartError(
+        canvasEl,
+        `Error loading visitor data: ${e.message}`
+      );
     }
   }
 
-  createReservationChart(canvasEl, period) {
-    if (!this._validateCanvas(canvasEl, "Reservation Chart")) return;
-
-    const labels = this.getDateLabels(period);
-    const days = period === "7days" ? 7 : 30;
-
-    const today = new Date();
-    const start = new Date(today);
-    start.setDate(today.getDate() - (days - 1));
-    const dateIndex = Array.from({ length: days }, (_, i) => {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      return d;
-    });
-
-    const currentYearData = this._generateRandomData(labels.length, 40, 100);
-    const lastYearData = this._generateRandomData(labels.length, 30, 80);
-
-    this.destroyChart("reservation");
+  async fetchChartDataViaHTTP(chartType = "reservation", period = "30days") {
+    console.log(
+      `🔄 ChartService: Fetching ${chartType} data via HTTP for ${period}...`
+    );
 
     try {
+      const url = `/golfzon/api/chart_data?chart_type=${chartType}&period=${period}`;
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data && data.status === "success") {
+        console.log("✅ ChartService: Chart data fetched via HTTP:", {
+          chartType: data.chart_type,
+          period: data.period,
+          currentTotal: data.data.totals?.current_total || 0,
+          prevYearTotal: data.data.totals?.prev_year_total || 0,
+          dataPoints: data.data.current_reservations?.length || 0,
+          dateRange: data.data.date_info
+            ? `${data.data.date_info.current_start} to ${data.data.date_info.current_end}`
+            : "Unknown",
+        });
+
+        return data.data;
+      } else {
+        console.error(
+          "❌ ChartService: HTTP fetch failed:",
+          data?.message || "Unknown error"
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ ChartService: HTTP fetch error:", error);
+      return null;
+    }
+  }
+
+  async createReservationChart(canvasEl, period, rpcService) {
+    if (!this._validateCanvas(canvasEl, "Reservation Chart")) return;
+
+    console.log(
+      `🔄 ChartService: Creating clean reservation chart for ${period}...`
+    );
+
+    try {
+      // Fetch data via HTTP
+      const chartData = await this.fetchChartDataViaHTTP("reservation", period);
+
+      if (!chartData) {
+        console.error("❌ ChartService: No chart data received");
+        this._showChartError(canvasEl, "Failed to fetch database chart data");
+        return;
+      }
+
+      const labels = chartData.labels || [];
+      const currentData = chartData.current_reservations || [];
+      const prevYearData = chartData.prev_year_reservations || [];
+      const dateInfo = chartData.date_info || {};
+
+      console.log("✅ ChartService: Creating clean chart design:", {
+        labels: labels.length,
+        currentData: currentData.length,
+        prevYearData: prevYearData.length,
+        currentTotal: chartData.totals?.current_total || 0,
+      });
+
+      // Check if we have any data
+      const hasCurrentData = currentData.some((val) => val > 0);
+      const hasPrevYearData = prevYearData.some((val) => val > 0);
+
+      if (!hasCurrentData && !hasPrevYearData) {
+        const message = "No reservation data available for selected period";
+        this._showChartError(canvasEl, message);
+        this.lastChartData = chartData;
+        return;
+      }
+
+      this.destroyChart("reservation");
+
+      const maxValue = Math.max(...currentData, ...prevYearData, 10);
+
+      // ✅ CLEAN LABELS - No date ranges, simple names only
+      const currentLabel = _t("Reservation Count");
+      const prevYearLabel = _t("Reservation Countfor the Same Period Last Year");
+
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
         data: {
           labels,
           datasets: [
             {
-              label: _t("Reservations"),
-              data: currentYearData,
+              label: currentLabel,
+              data: currentData,
               borderColor: "#046DEC",
-              backgroundColor: "rgba(33, 150, 243, 0.1)",
+              backgroundColor: "transparent", // ✅ REMOVED: No background fill
               borderWidth: 2,
-              fill: true,
+              fill: false, // ✅ CRITICAL: No fill area
               tension: 0.4,
               pointRadius: 4,
-              pointStyle: "circle", // Ensure point style is applied to data points
+              pointStyle: "circle",
+              pointBackgroundColor: "#046DEC",
+              pointBorderColor: "#046DEC",
             },
             {
-              label: _t("Reservations (Same Period Last Year)"),
-              data: lastYearData,
+              label: prevYearLabel,
+              data: prevYearData,
               borderColor: "#86E5F5",
-              backgroundColor: "transparent",
+              backgroundColor: "transparent", // ✅ REMOVED: No background fill
               borderWidth: 2,
+              fill: false, // ✅ CRITICAL: No fill area
               tension: 0.4,
               pointRadius: 4,
-              pointStyle: "circle", // Ensure point style is applied to data points
+              pointStyle: "circle",
+              pointBackgroundColor: "#86E5F5",
+              pointBorderColor: "#86E5F5",
             },
           ],
         },
@@ -491,21 +638,41 @@ export class ChartService {
           scales: {
             y: {
               beginAtZero: true,
-              max: 120,
-              ticks: { stepSize: 20 },
-              grid: { color: "#e0e0e0" },
+              max: Math.ceil(maxValue * 1.1),
+              ticks: {
+                stepSize: Math.max(Math.ceil(maxValue / 8), 5),
+                font: { size: 11 },
+                color: "#666",
+              },
+              grid: {
+                color: "#f0f0f0",
+                lineWidth: 1,
+              },
+              border: { display: false },
             },
             x: {
               ticks: {
                 callback: function (value, index, ticks) {
-                  if (index === 0 || index === ticks.length - 1) {
-                    return this.getLabelForValue(value);
+                  // Show fewer labels for cleaner look
+                  const totalTicks = ticks.length;
+                  if (period === "7days") {
+                    // Show every other label for 7 days
+                    return index % 2 === 0 || index === totalTicks - 1
+                      ? this.getLabelForValue(value)
+                      : "";
+                  } else {
+                    // Show every 6th label for 30 days
+                    return index % 6 === 0 || index === totalTicks - 1
+                      ? this.getLabelForValue(value)
+                      : "";
                   }
-                  return "";
                 },
-                font: { size: 12 },
+                font: { size: 11 },
+                color: "#666",
+                maxRotation: 0,
               },
               grid: { display: false },
+              border: { display: false },
             },
           },
           plugins: {
@@ -515,231 +682,142 @@ export class ChartService {
               labels: {
                 usePointStyle: true,
                 pointStyle: "circle",
-                boxWidth: 6,
-                boxHeight: 6,
-                padding: 16,
-                font: { size: 12, weight: "600" },
-                color: "#1e1e1e",
+                boxWidth: 8,
+                boxHeight: 8,
+                padding: 20,
+                font: { size: 12, weight: "normal" }, // ✅ Normal weight, not bold
+                color: "#333",
                 generateLabels: function (chart) {
-                  const data = chart.data;
-                  if (data.datasets.length) {
-                    return data.datasets.map((dataset, i) => ({
-                      text: dataset.label,
-                      fillStyle: dataset.borderColor,
-                      strokeStyle: dataset.borderColor,
-                      lineWidth: 1,
-                      pointStyle: "circle",
-                      hidden: !chart.isDatasetVisible(i),
-                      datasetIndex: i,
-                    }));
-                  }
-                  return [];
+                  // ✅ CLEAN LEGEND - Simple labels only
+                  return chart.data.datasets.map((dataset, i) => ({
+                    text: dataset.label,
+                    fillStyle: dataset.borderColor,
+                    strokeStyle: dataset.borderColor,
+                    lineWidth: 2,
+                    pointStyle: "circle",
+                    hidden: !chart.isDatasetVisible(i),
+                    datasetIndex: i,
+                  }));
                 },
               },
             },
             tooltip: {
               enabled: true,
               displayColors: false,
-              backgroundColor: "#3C3F44",
+              backgroundColor: "#333",
               titleColor: "#fff",
               bodyColor: "#fff",
-              padding: 12,
-              cornerRadius: 8,
-              caretSize: 6,
-              titleFont: { size: 14, weight: "600" },
-              bodyFont: { size: 13 },
+              padding: 10,
+              cornerRadius: 6,
+              titleFont: { size: 13, weight: "600" },
+              bodyFont: { size: 12 },
               callbacks: {
                 title: (items) => {
-                  if (!items || !items[0]) return "";
-                  const idx = items[0].dataIndex;
-                  const d = dateIndex[idx];
-                  return this._formatFullDate(d) || labels[idx] || "";
+                  const index = items[0]?.dataIndex;
+                  return labels[index] || "";
                 },
                 label: (ctx) => {
-                  const value = ctx.parsed.y;
-                  const isCurrentYear = ctx.datasetIndex === 0;
-                  if (isCurrentYear) {
-                    return `Reservations: ${value}`;
-                  } else {
-                    const idx = ctx.dataIndex;
-                    const date = dateIndex[idx];
-                    const weather = this._getWeatherData(date);
-                    return [
-                      `Reservations: ${value}`,
-                      `Weather: ${weather.condition}`,
-                      `Temperature: ${weather.temp}`,
-                    ];
-                  }
+                  const isPrevYear = ctx.datasetIndex === 1;
+                  const prefix = isPrevYear ? "This Year" : "Last Year"; // This year / Last year
+                  return `${prefix}: ${ctx.parsed.y} reservations`; // English: cases/reservations
                 },
               },
+            },
+          },
+          elements: {
+            line: {
+              borderWidth: 2,
+            },
+            point: {
+              radius: 4,
+              hoverRadius: 6,
             },
           },
         },
       });
 
       this.chartInstances.set("reservation", chart);
+
+      // Store chart data for statistics
+      this.lastChartData = chartData;
+
+      console.log(
+        "✅ ChartService: Clean reservation chart created successfully"
+      );
+
       return chart;
     } catch (e) {
-      console.error("Error creating reservation chart:", e);
+      console.error(
+        "❌ ChartService: Error creating clean reservation chart:",
+        e
+      );
+      this._showChartError(canvasEl, "Error creating chart");
     }
   }
 
-  createAgeChart(canvasEl) {
-    if (!this._validateCanvas(canvasEl, "Age Chart")) return;
-
-    this.destroyChart("age");
-
+  _showChartError(canvasEl, message) {
     try {
-      const MAX = 60;
-      const labels = ["60+ years", "50s", "40s", "30s", "20s", "Under 10"];
-      const values = [22, 27, 20, 20, 9, 2];
+      const ctx = canvasEl.getContext("2d");
+      ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
-      const barTrackPlugin = {
-        id: "barTrack",
-        beforeDatasetsDraw(chart) {
-          const { ctx, scales } = chart;
-          const x = scales.x;
-          const meta = chart.getDatasetMeta(0);
-          if (!meta || !meta.data) return;
+      // Set canvas size if not set
+      if (canvasEl.width === 0) {
+        canvasEl.width = 400;
+        canvasEl.height = 200;
+      }
 
-          const trackColor = "#EEF3FA";
-          const radius = 12;
-          const x0 = x.getPixelForValue(0);
-          const xMax = x.getPixelForValue(MAX);
+      ctx.fillStyle = "#ff6b6b";
+      ctx.font = "14px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
 
-          ctx.save();
-          ctx.fillStyle = trackColor;
+      // Split long messages
+      const words = message.split(" ");
+      const lines = [];
+      let currentLine = "";
 
-          meta.data.forEach((bar) => {
-            const h = bar.height;
-            const top = bar.y - h / 2;
-            const width = xMax - x0;
-            const r = Math.min(radius, h / 2, width / 2);
-            ctx.beginPath();
-            ctx.moveTo(x0 + r, top);
-            ctx.lineTo(x0 + width - r, top);
-            ctx.quadraticCurveTo(x0 + width, top, x0 + width, top + r);
-            ctx.lineTo(x0 + width, top + h - r);
-            ctx.quadraticCurveTo(x0 + width, top + h, x0 + width - r, top + h);
-            ctx.lineTo(x0 + r, top + h);
-            ctx.quadraticCurveTo(x0, top + h, x0, top + h - r);
-            ctx.lineTo(x0, top + r);
-            ctx.quadraticCurveTo(x0, top, x0 + r, top);
-            ctx.closePath();
-            ctx.fill();
-          });
-
-          ctx.restore();
-        },
-      };
-
-      // New plugin to draw percentage labels
-      const percentageLabelsPlugin = {
-        id: "percentageLabels",
-        afterDatasetsDraw(chart) {
-          const { ctx, scales, data } = chart;
-          const x = scales.x;
-          const meta = chart.getDatasetMeta(0);
-          if (!meta || !meta.data) return;
-
-          ctx.save();
-          ctx.font = "bold 14px Arial";
-          ctx.fillStyle = "#FFFFFF";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-
-          meta.data.forEach((bar, index) => {
-            const value = data.datasets[0].data[index];
-            const barEndX = x.getPixelForValue(value);
-            const barCenterY = bar.y;
-
-            // For small values, position text in the center of the bar
-            // For larger values, position near the end
-            let textX;
-            if (value < 5) {
-              // For very small bars, center the text in the bar
-              const barStartX = x.getPixelForValue(0);
-              textX = barStartX + (barEndX - barStartX) / 2;
-            } else {
-              // For larger bars, position near the end
-              textX = barEndX - 20;
-            }
-
-            const text = `${value}%`;
-            ctx.fillText(text, textX, barCenterY);
-          });
-
-          ctx.restore();
-        },
-      };
-
-      const chart = new Chart(canvasEl.getContext("2d"), {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: _t("Visitor Ratio"),
-              data: values,
-              backgroundColor: [
-                "#4489DA",
-                "#1958A4",
-                "#4C9CFD",
-                "#4C9CFD",
-                "#3A96D4",
-                "#5AB4F0",
-              ],
-              borderRadius: 15,
-              barThickness: 25,
-            },
-          ],
-        },
-        options: {
-          indexAxis: "y",
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: {
-            padding: {
-              top: 10,
-              right: 50,
-              bottom: 10,
-              left: 10,
-            },
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              enabled: false, // Disabled tooltip to remove hover details
-            },
-            barTrack: { color: "#EEF3FA", radius: 12 },
-          },
-          scales: {
-            x: {
-              min: 0,
-              max: MAX,
-              ticks: { display: false },
-              grid: { display: false },
-              border: { display: false },
-            },
-            y: {
-              ticks: {
-                color: "#6f6f6f",
-                font: { size: 14, weight: "600" },
-                padding: 10,
-              },
-              grid: { display: false },
-              border: { display: false },
-            },
-          },
-        },
-        plugins: [barTrackPlugin, percentageLabelsPlugin], // Added the new plugin here
+      words.forEach((word) => {
+        const testLine = currentLine + (currentLine ? " " : "") + word;
+        if (testLine.length > 40 && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
       });
+      if (currentLine) lines.push(currentLine);
 
-      this.chartInstances.set("age", chart);
-      return chart;
+      const lineHeight = 20;
+      const startY =
+        canvasEl.height / 2 - ((lines.length - 1) * lineHeight) / 2;
+
+      lines.forEach((line, index) => {
+        ctx.fillText(line, canvasEl.width / 2, startY + index * lineHeight);
+      });
     } catch (e) {
-      console.error("Error creating age chart:", e);
+      console.error("Error showing chart error message:", e);
     }
+  }
+
+  getChartStatistics() {
+    return (
+      this.lastChartData?.totals || {
+        current_total: 0,
+        prev_year_total: 0,
+        growth_percentage: 0,
+        operation_rate: 0,
+      }
+    );
+  }
+
+  getOperationBreakdown() {
+    return (
+      this.lastChartData?.operation_breakdown || {
+        part1: 0,
+        part2: 0,
+        part3: 0,
+      }
+    );
   }
 
   createPieChart(canvasEl, chartId, data, colors) {
@@ -806,26 +884,328 @@ export class ChartService {
     }
   }
 
-  initializeGenderAnimation() {
-    function setGenderPercent(male, female) {
-      const maleFill = document.getElementById("maleFill");
-      const femaleFill = document.getElementById("femaleFill");
+  async fetchAgeDemographics() {
+    console.log("🔄 ChartService: Fetching age demographics...");
 
-      if (maleFill && femaleFill) {
-        const maxHeight = 400; // SVG viewBox height
-        maleFill.setAttribute("y", maxHeight - (maxHeight * male) / 100);
-        maleFill.setAttribute("height", (maxHeight * male) / 100);
-        femaleFill.setAttribute("y", maxHeight - (maxHeight * female) / 100);
-        femaleFill.setAttribute("height", (maxHeight * female) / 100);
+    try {
+      // ✅ FIXED: Use absolute URL to avoid language prefix
+      const url = window.location.origin + "/golfzon/api/demographics/age";
+      const response = await fetch(url);
 
-        const malePercent = document.getElementById("malePercent");
-        const femalePercent = document.getElementById("femalePercent");
-        if (malePercent) malePercent.textContent = male + "%";
-        if (femalePercent) femalePercent.textContent = female + "%";
-      } else {
-        console.warn("Gender animation elements not found");
+      console.log(`📞 Fetching from: ${url}`);
+      console.log(`📞 Response status: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("✅ Age demographics fetched:", {
+          totalPersons: data.data.total_persons,
+          hasData: data.data.has_data,
+          isSample: data.data.is_sample || false,
+        });
+        return data.data;
+      } else {
+        console.error("❌ Age demographics fetch failed:", data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Error fetching age demographics:", error);
+      return null;
     }
-    setTimeout(() => setGenderPercent(62, 38), 100);
+  }
+
+  async fetchGenderDemographics() {
+    console.log("🔄 ChartService: Fetching gender demographics...");
+
+    try {
+      // ✅ FIXED: Use absolute URL to avoid language prefix
+      const url = window.location.origin + "/golfzon/api/demographics/gender";
+      const response = await fetch(url);
+
+      console.log(`📞 Fetching from: ${url}`);
+      console.log(`📞 Response status: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("✅ Gender demographics fetched:", {
+          totalPersons: data.data.total_persons,
+          malePercentage: data.data.male_percentage,
+          femalePercentage: data.data.female_percentage,
+          isSample: data.data.is_sample || false,
+        });
+        return data.data;
+      } else {
+        console.error("❌ Gender demographics fetch failed:", data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Error fetching gender demographics:", error);
+      return null;
+    }
+  }
+
+  async createAgeChart(canvasEl) {
+    if (!this._validateCanvas(canvasEl, "Age Chart")) return;
+
+    console.log(
+      "🔄 ChartService: Creating age chart with database demographics..."
+    );
+
+    try {
+      // Fetch real age data from database
+      const ageData = await this.fetchAgeDemographics();
+
+      if (!ageData || !ageData.has_data) {
+        console.error("❌ ChartService: No age data available");
+        this._showChartError(canvasEl, "No age data available from database");
+        return;
+      }
+
+      const labels = ageData.labels;
+      const values = ageData.percentages;
+      const counts = ageData.counts;
+
+      console.log("✅ ChartService: Creating age chart with database data:", {
+        labels: labels.length,
+        values: values,
+        totalPersons: ageData.total_persons,
+      });
+
+      this.destroyChart("age");
+
+      const MAX = Math.max(...values) + 10; // Dynamic max based on data
+
+      // Track background plugin
+      const barTrackPlugin = {
+        id: "barTrack",
+        beforeDatasetsDraw(chart) {
+          const { ctx, scales } = chart;
+          const x = scales.x;
+          const meta = chart.getDatasetMeta(0);
+          if (!meta || !meta.data) return;
+
+          const trackColor = "#EEF3FA";
+          const radius = 12;
+          const x0 = x.getPixelForValue(0);
+          const xMax = x.getPixelForValue(MAX);
+
+          ctx.save();
+          ctx.fillStyle = trackColor;
+
+          meta.data.forEach((bar) => {
+            const h = bar.height;
+            const top = bar.y - h / 2;
+            const width = xMax - x0;
+            const r = Math.min(radius, h / 2, width / 2);
+            ctx.beginPath();
+            ctx.moveTo(x0 + r, top);
+            ctx.lineTo(x0 + width - r, top);
+            ctx.quadraticCurveTo(x0 + width, top, x0 + width, top + r);
+            ctx.lineTo(x0 + width, top + h - r);
+            ctx.quadraticCurveTo(x0 + width, top + h, x0 + width - r, top + h);
+            ctx.lineTo(x0 + r, top + h);
+            ctx.quadraticCurveTo(x0, top + h, x0, top + h - r);
+            ctx.lineTo(x0, top + r);
+            ctx.quadraticCurveTo(x0, top, x0 + r, top);
+            ctx.closePath();
+            ctx.fill();
+          });
+
+          ctx.restore();
+        },
+      };
+
+      // Percentage labels plugin with database data
+      const percentageLabelsPlugin = {
+        id: "percentageLabels",
+        afterDatasetsDraw(chart) {
+          const { ctx, scales, data } = chart;
+          const x = scales.x;
+          const meta = chart.getDatasetMeta(0);
+          if (!meta || !meta.data) return;
+
+          ctx.save();
+          ctx.font = "bold 14px Arial";
+          ctx.fillStyle = "#FFFFFF";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+
+          meta.data.forEach((bar, index) => {
+            const value = data.datasets[0].data[index];
+            const barEndX = x.getPixelForValue(value);
+            const barCenterY = bar.y;
+
+            let textX;
+            if (value < 5) {
+              const barStartX = x.getPixelForValue(0);
+              textX = barStartX + (barEndX - barStartX) / 2;
+            } else {
+              textX = barEndX - 20;
+            }
+
+            const text = `${value}%`;
+            ctx.fillText(text, textX, barCenterY);
+          });
+
+          ctx.restore();
+        },
+      };
+
+      const chart = new Chart(canvasEl.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Visitor Ratio",
+              data: values, // ✅ Using database percentages
+              backgroundColor: [
+                "#4489DA",
+                "#1958A4",
+                "#4C9CFD",
+                "#4C9CFD",
+                "#3A96D4",
+                "#5AB4F0",
+              ],
+              borderRadius: 15,
+              barThickness: 25,
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 10,
+              right: 50,
+              bottom: 10,
+              left: 10,
+            },
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                label: (context) => {
+                  const index = context.dataIndex;
+                  const percentage = values[index];
+                  const count = counts[index];
+                  return [`${percentage}% of total`, `${count} persons`];
+                },
+              },
+            },
+            barTrack: { color: "#EEF3FA", radius: 12 },
+          },
+          scales: {
+            x: {
+              min: 0,
+              max: MAX,
+              ticks: { display: false },
+              grid: { display: false },
+              border: { display: false },
+            },
+            y: {
+              ticks: {
+                color: "#6f6f6f",
+                font: { size: 14, weight: "600" },
+                padding: 10,
+              },
+              grid: { display: false },
+              border: { display: false },
+            },
+          },
+        },
+        plugins: [barTrackPlugin, percentageLabelsPlugin],
+      });
+
+      this.chartInstances.set("age", chart);
+
+      console.log(
+        "✅ ChartService: Age chart created successfully with database data"
+      );
+
+      return chart;
+    } catch (e) {
+      console.error("❌ ChartService: Error creating age chart:", e);
+      this._showChartError(canvasEl, "Error loading age demographics");
+    }
+  }
+
+  async initializeGenderAnimation() {
+    console.log(
+      "🔄 ChartService: Initializing gender animation with database data..."
+    );
+
+    try {
+      // Fetch real gender data from database
+      const genderData = await this.fetchGenderDemographics();
+
+      if (!genderData || !genderData.has_data) {
+        console.warn(
+          "⚠️ ChartService: No gender data available, using defaults"
+        );
+        this.setGenderPercent(50, 50); // Default fallback
+        return;
+      }
+
+      console.log(
+        "✅ ChartService: Setting gender animation with database data:",
+        {
+          male: genderData.male_percentage,
+          female: genderData.female_percentage,
+          totalPersons: genderData.total_persons,
+        }
+      );
+
+      // Animate with database values
+      setTimeout(() => {
+        this.setGenderPercent(
+          genderData.male_percentage,
+          genderData.female_percentage
+        );
+      }, 100);
+    } catch (error) {
+      console.error(
+        "❌ ChartService: Error initializing gender animation:",
+        error
+      );
+      this.setGenderPercent(50, 50); // Fallback
+    }
+  }
+
+  setGenderPercent(male, female) {
+    const maleFill = document.getElementById("maleFill");
+    const femaleFill = document.getElementById("femaleFill");
+
+    if (maleFill && femaleFill) {
+      const maxHeight = 400; // SVG viewBox height
+      maleFill.setAttribute("y", maxHeight - (maxHeight * male) / 100);
+      maleFill.setAttribute("height", (maxHeight * male) / 100);
+      femaleFill.setAttribute("y", maxHeight - (maxHeight * female) / 100);
+      femaleFill.setAttribute("height", (maxHeight * female) / 100);
+
+      const malePercent = document.getElementById("malePercent");
+      const femalePercent = document.getElementById("femalePercent");
+      if (malePercent) malePercent.textContent = male + "%";
+      if (femalePercent) femalePercent.textContent = female + "%";
+
+      console.log(
+        `📊 Gender display updated: ${male}% male, ${female}% female`
+      );
+    } else {
+      console.warn("⚠️ Gender animation elements not found in DOM");
+    }
   }
 }
