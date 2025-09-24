@@ -19,9 +19,15 @@ class GolfzonDashboard extends Component {
 
   setup() {
     // Initialize services
-    const rpcService = this.tryGetService("rpc");
-    this.weatherService = new WeatherService(rpcService);
-    this.golfDataService = new GolfDataService(rpcService);
+    try {
+      this.rpc = useService("rpc");
+      console.log("✅ RPC Service available");
+    } catch (e) {
+      console.warn("⚠️ RPC Service not available, using HTTP fallback");
+      this.rpc = null;
+    }
+    this.weatherService = new WeatherService(this.rpc);
+    this.golfDataService = new GolfDataService(this.rpc);
     this.chartService = new ChartService();
 
     // Expose _t to the template context
@@ -36,6 +42,7 @@ class GolfzonDashboard extends Component {
     this.memberTypeChart = useRef("memberTypeChart");
     this.advanceBookingChart = useRef("advanceBookingChart");
     this.regionalChart = useRef("regionalChart");
+    this.heatmapCellDetails = {};
 
     this.state = useState({
       activeMenuItem: "dashboard",
@@ -79,9 +86,15 @@ class GolfzonDashboard extends Component {
       showReservationDetails: false,
       selectedSlot: { day: "", period: "", count: 0 },
       heatmapData: this.getInitialHeatmapData(),
-
-      // 🆕 FIXED: Always-visible sidebar state
       selectedHeatmapBox: this.getDefaultHeatmapBox(),
+
+      visitorData: {
+        totalVisitors: 0,
+        growthPercentage: 0,
+        sectionTotals: { part1: 0, part2: 0, part3: 0 },
+        isGrowthPositive: true,
+      },
+      hasTrendDown: false,
 
       ...DateUtils.generatePeriodLabels(),
     });
@@ -89,38 +102,32 @@ class GolfzonDashboard extends Component {
     onMounted(() => this.onMounted());
   }
 
-  tryGetService(serviceName) {
-    try {
-      return useService(serviceName);
-    } catch (e) {
-      console.warn(
-        `${serviceName} service not available, using fallback behavior`
-      );
-      return null;
-    }
-  }
-
   getInitialHeatmapData() {
     return {
       headers: [
-        _t("Sun"),
-        _t("Mon"),
-        _t("Tue"),
-        _t("Wed"),
-        _t("Thu"),
-        _t("Fri"),
-        _t("Sat"),
+        this._t("Sunday"),
+        this._t("Monday"),
+        this._t("Tuesday"),
+        this._t("Wednesday"),
+        this._t("Thursday"),
+        this._t("Friday"),
+        this._t("Saturday"),
       ],
       rows: [
-        { label: _t("Dawn(5 AM -7 AM)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        { label: _t("Morning(8 AM - 12 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        { label: _t("Afternoon(1 PM - 4 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        { label: _t("Night(5 PM - 7 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        {
+          label: this._t("Early Morning(5 AM -7 AM)"),
+          data: [0, 0, 0, 0, 0, 0, 0],
+        },
+        { label: this._t("Morning(8 AM -12 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        {
+          label: this._t("Afternoon(1 PM -4 PM)"),
+          data: [0, 0, 0, 0, 0, 0, 0],
+        },
+        { label: this._t("Night(5 PM -7 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
       ],
     };
   }
 
-  // 🆕 NEW: Default sidebar content
   getDefaultHeatmapBox() {
     return {
       dayIndex: null,
@@ -140,8 +147,15 @@ class GolfzonDashboard extends Component {
   async onMounted() {
     console.log("Dashboard mounted - initializing...");
 
-    // Initialize heatmap data
-    this.setDefaultForecastData();
+    this.state.visitorData = {
+      totalVisitors: 0,
+      growthPercentage: 0,
+      sectionTotals: { part1: 0, part2: 0, part3: 0 },
+      isGrowthPositive: true,
+    };
+    this.state.hasTrendDown = false;
+
+    await this.loadHeatmapData();
 
     // Initialize all data
     await Promise.all([
@@ -154,7 +168,7 @@ class GolfzonDashboard extends Component {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Initialize charts after DOM is ready
-    this.initializeAllCharts();
+    await this.initializeAllCharts();
 
     // Event listeners
     document.addEventListener("click", this.handleOutsideDrawer.bind(this));
@@ -211,8 +225,11 @@ class GolfzonDashboard extends Component {
     }
   }
 
-  initializeAllCharts() {
-    console.log("Initializing all charts...");
+  async initializeAllCharts() {
+    console.log("Initializing all charts with data...");
+
+    // Wait for DOM to render
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const canvasElements = [
       { name: "salesChart", ref: this.canvasRef },
@@ -227,19 +244,21 @@ class GolfzonDashboard extends Component {
     canvasElements.forEach(({ name, ref }) => {
       if (!ref.el) {
         console.warn(`Canvas element not found: ${name}`);
+      } else {
+        console.log(`✅ Canvas element found: ${name}`);
       }
     });
 
-    this.updateAllCharts();
+    await this.updateAllCharts();
 
     if (this.ageRef.el) {
-      this.chartService.createAgeChart(this.ageRef.el);
+      await this.chartService.createAgeChart(this.ageRef.el);
     }
 
     this.initializePieCharts();
 
-    setTimeout(() => {
-      this.chartService.initializeGenderAnimation();
+    setTimeout(async () => {
+      await this.chartService.initializeGenderAnimation();
     }, 200);
   }
 
@@ -284,37 +303,124 @@ class GolfzonDashboard extends Component {
     });
   }
 
-  updateAllCharts() {
-    if (this.canvasRef.el) {
-      this.chartService.createSalesChart(
-        this.canvasRef.el,
-        this.state.selectedPeriod
-      );
-    }
+  async updateAllCharts() {
+    try {
+      console.log("🔄 Dashboard: Updating all charts with database data...");
 
-    if (this.visitorRef.el) {
-      this.chartService.createVisitorChart(
-        this.visitorRef.el,
-        this.state.selectedPeriod
-      );
-    }
+      if (this.canvasRef.el) {
+        this.chartService.createSalesChart(
+          this.canvasRef.el,
+          this.state.selectedPeriod
+        );
+      }
 
-    if (this.reservationTrendChart.el) {
-      this.chartService.createReservationChart(
-        this.reservationTrendChart.el,
-        this.state.selectedPeriod
-      );
+      if (this.visitorRef.el) {
+        console.log("🔄 Dashboard: Creating visitor chart via HTTP");
+        await this.chartService.createVisitorChart(
+          this.visitorRef.el,
+          this.state.selectedPeriod
+        );
+      }
+      await this.updateVisitorCards(this.state.selectedPeriod);
+
+      if (this.reservationTrendChart.el) {
+        console.log("🔄 Dashboard: Creating reservation chart via HTTP");
+
+        await this.chartService.createReservationChart(
+          this.reservationTrendChart.el,
+          this.state.selectedPeriod,
+          null // Pass null
+        );
+      }
+
+      this.updateChartStatistics();
+    } catch (error) {
+      console.error("❌ Dashboard: Error updating charts:", error);
     }
   }
 
-  // Event handlers
+  updateChartStatistics() {
+    // Update the statistics shown below the chart
+    const stats = this.chartService.getChartStatistics();
+    const breakdown = this.chartService.getOperationBreakdown();
+
+    // Update state for template display
+    this.state.forecastData.summary_stats = {
+      total_reservations: stats.current_total,
+      utilization_rate: stats.operation_rate,
+      growth_percentage: stats.growth_percentage,
+      month_comparison: {
+        month1: breakdown.part1,
+        month2: breakdown.part2,
+        month3: breakdown.part3,
+      },
+    };
+  }
+
+  async updateVisitorCards(period) {
+    console.log(`🔄 Dashboard: Updating visitor cards for ${period}...`);
+
+    try {
+      const url =
+        window.location.origin + `/golfzon/api/visitor_data?period=${period}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status === "success") {
+        const visitorData = data.data;
+
+        console.log("✅ Dashboard: Visitor cards data loaded:", {
+          currentTotal: visitorData.totals.current_total,
+          growth: visitorData.totals.growth_percentage,
+          sections: visitorData.section_totals,
+        });
+
+        // ✅ FIXED: Set hasTrendDown as state property, not getter
+        this.state.visitorData = {
+          totalVisitors: visitorData.totals.current_total,
+          growthPercentage: visitorData.totals.growth_percentage,
+          sectionTotals: visitorData.section_totals,
+          isGrowthPositive: visitorData.totals.growth_percentage >= 0,
+        };
+
+        // ✅ FIXED: Set hasTrendDown as state property for XML template
+        this.state.hasTrendDown = visitorData.totals.growth_percentage < 0;
+      } else {
+        console.error("❌ Dashboard: Failed to load visitor cards data");
+        // Set default values
+        this.state.visitorData = {
+          totalVisitors: 0,
+          growthPercentage: 0,
+          sectionTotals: { part1: 0, part2: 0, part3: 0 },
+          isGrowthPositive: true,
+        };
+        this.state.hasTrendDown = false; // ✅ Default value
+      }
+    } catch (error) {
+      console.error("❌ Dashboard: Error updating visitor cards:", error);
+      // Set default values on error
+      this.state.visitorData = {
+        totalVisitors: 0,
+        growthPercentage: 0,
+        sectionTotals: { part1: 0, part2: 0, part3: 0 },
+        isGrowthPositive: true,
+      };
+      this.state.hasTrendDown = false; // ✅ Default value
+    }
+  }
+
   setActiveMenuItem(item) {
     this.state.activeMenuItem = item;
   }
 
-  setPeriod(period) {
-    this.state.selectedPeriod = period;
-    this.updateAllCharts();
+  async setPeriod(period) {
+    if (this.state.selectedPeriod !== period) {
+      this.state.selectedPeriod = period;
+      console.log(`📊 Period changed to: ${period}`);
+
+      // Update both charts and visitor data
+      await this.updateAllCharts();
+    }
   }
 
   toggleWeatherDetails() {
@@ -350,7 +456,6 @@ class GolfzonDashboard extends Component {
     window.location.href = "/web/session/logout";
   }
 
-  // 🆕 ENHANCED: Utility methods for heatmap
   getHeatmapCellClass(value) {
     if (typeof value !== "number" || value === 0) return "bottom-20";
 
@@ -390,180 +495,122 @@ class GolfzonDashboard extends Component {
     return allValues;
   }
 
-  calculatePercentile(sortedArray, percentile) {
-    const index = (percentile / 100) * (sortedArray.length - 1);
-    if (Math.floor(index) === index) {
-      return sortedArray[index];
-    } else {
-      const i = Math.floor(index);
-      const fraction = index - i;
-      return sortedArray[i] + (sortedArray[i + 1] - sortedArray[i]) * fraction;
+  async loadHeatmapData() {
+    console.log("🔄 Loading heatmap data with pre-calculated details...");
+
+    try {
+      const response = await fetch("/golfzon/api/heatmap_data");
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("✅ Heatmap data with details loaded:", {
+          dateRange: data.data.date_range,
+          headers: data.data.headers,
+          rowsCount: data.data.rows.length,
+          preCalculatedCells: Object.keys(data.data.cell_details).length,
+        });
+
+        // Store both heatmap data AND pre-calculated details
+        this.state.heatmapData = {
+          headers: data.data.headers,
+          rows: data.data.rows,
+          date_range: data.data.date_range,
+        };
+
+        // ✅ STORE PRE-CALCULATED DETAILS for instant access
+        this.heatmapCellDetails = data.data.cell_details;
+
+        console.log("📊 Heatmap ready for instant interactions");
+      } else {
+        console.error("❌ Failed to load heatmap data:", data.message);
+        // Even on error, we have empty but valid structure
+        if (data.data && data.data.cell_details) {
+          this.heatmapCellDetails = data.data.cell_details;
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error loading heatmap data:", error);
+      // Initialize empty details to prevent errors
+      this.heatmapCellDetails = {};
     }
   }
 
-  // 🆕 FIXED: Box selection updates sidebar content only
   selectHeatmapBox(box, event) {
     event.stopPropagation();
 
-    // Clear previous selections
+    console.log("🔄 Box clicked - instant response:", {
+      day: box.day,
+      dayIndex: box.dayIndex,
+      timeIndex: box.timeIndex,
+      boxValue: box.value,
+    });
+
+    // Visual selection
     document.querySelectorAll(".heatmap-box.selected").forEach((el) => {
       el.classList.remove("selected");
     });
-
-    // Add green border to selected box
     event.target.closest(".heatmap-box").classList.add("selected");
 
-    // Generate detailed hourly breakdown
-    const hourlyBreakdown = this.generateDetailedHourlyBreakdown(
-      box.timeSlot,
-      box.value
-    );
+    // ✅ INSTANT ACCESS to pre-calculated details
+    const cellKey = `${box.dayIndex}_${box.timeIndex}`;
+    const cellDetails = this.heatmapCellDetails[cellKey];
 
-    const allValues = this.getAllHeatmapValues();
-    const maxValue = Math.max(...allValues);
-    const minValue = Math.min(...allValues.filter((v) => v > 0));
+    if (cellDetails) {
+      console.log("✅ Instant cell details:", {
+        dayName: cellDetails.day_name,
+        date: cellDetails.date,
+        totalTeams: cellDetails.total_teams,
+        hourlyItems: cellDetails.hourly_breakdown.length,
+      });
 
-    // Update sidebar content only (no layout shift)
-    this.state.selectedHeatmapBox = {
-      ...box,
-      hourlyBreakdown: hourlyBreakdown,
-      isHighest: box.value === maxValue && box.value > 0,
-      isLowest: box.value === minValue && box.value > 0,
-      displayDay: this.formatDayDisplayOnly(box.day), // Fixed function name
-      isVisible: true,
-    };
+      // Determine if highest/lowest
+      const allValues = this.getAllHeatmapValues();
+      const maxValue = Math.max(...allValues);
+      const minValue = Math.min(...allValues.filter((v) => v > 0));
+
+      // ✅ INSTANT UPDATE - no waiting, no loading
+      this.state.selectedHeatmapBox = {
+        ...box,
+        displayDay: cellDetails.day_name,
+        date: cellDetails.date,
+        hourlyBreakdown: cellDetails.hourly_breakdown,
+        isHighest: box.value === maxValue && box.value > 0,
+        isLowest:
+          box.value === minValue &&
+          box.value > 0 &&
+          allValues.filter((v) => v > 0).length > 1,
+        isVisible: true,
+        hasData: cellDetails.has_data,
+      };
+
+      console.log("📊 Sidebar updated instantly!");
+    } else {
+      console.warn("⚠️ No pre-calculated details found for cell:", cellKey);
+
+      // Show basic info
+      this.state.selectedHeatmapBox = {
+        ...box,
+        displayDay: this.formatDayDisplayOnly(box.day),
+        hourlyBreakdown: [{ hour: "No data", teams: this._t("teams") }],
+        isHighest: false,
+        isLowest: false,
+        isVisible: true,
+        hasData: false,
+      };
+    }
   }
 
   formatDayDisplayOnly(day) {
     const dayMap = {
-      Mon: "Monday",
-      Tue: "Tuesday",
-      Wed: "Wednesday",
-      Thu: "Thursday",
-      Fri: "Friday",
-      Sat: "Saturday",
-      Sun: "Sunday",
+      Mon: this._t("Monday"),
+      Tue: this._t("Tuesday"),
+      Wed: this._t("Wednesday"),
+      Thu: this._t("Thursday"),
+      Fri: this._t("Friday"),
+      Sat: this._t("Saturday"),
+      Sun: this._t("Sunday"),
     };
     return dayMap[day] || day;
-  }
-
-  generateDetailedHourlyBreakdown(timeSlot, totalValue) {
-    const timeRanges = {
-      "Dawn(5 AM - 7 AM)": [5, 6, 7],
-      "Morning(8 AM -12 PM)": [8, 9, 10, 11, 12],
-      "Afternoon(1 PM - 4 PM)": [13, 14, 15, 16],
-      "Night(5 PM - 7 PM)": [17, 18, 19],
-    };
-
-    const hours = timeRanges[timeSlot] || [8, 9, 10, 11, 12];
-    const breakdown = [];
-
-    // Special case for specific examples
-    if (totalValue === 5 && timeSlot.includes("Afternoon")) {
-      return [
-        { hour: _t("8 AM"), teams: _t("0 teams") },
-        { hour: _t("9 AM"), teams: _t("1 teams") },
-        { hour: _t("10 AM"), teams: _t("1 teams") },
-        { hour: _t("11 AM"), teams: _t("0 teams") },
-        { hour: _t("12 PM"), teams: _t("3 teams") },
-      ];
-    }
-
-    // Generate realistic distribution for other cases
-    let remaining = totalValue;
-    hours.forEach((hour, index) => {
-      let count;
-      if (remaining === 0) {
-        count = 0;
-      } else if (index === hours.length - 1) {
-        count = remaining;
-      } else {
-        const maxCount = Math.ceil(remaining / (hours.length - index));
-        count = Math.min(
-          remaining,
-          Math.max(0, Math.floor(Math.random() * maxCount))
-        );
-        remaining = Math.max(0, remaining - count);
-      }
-
-      // Format time display
-      const formattedHour = this.formatHourDisplay(hour);
-
-      // Format team text properly
-      let teamText;
-      if (count === 0) {
-        teamText = "0 teams";
-      } else if (count === 1) {
-        teamText = "1 teams";
-      } else {
-        teamText = `${count} teams`;
-      }
-
-      // Add to breakdown array
-      breakdown.push({
-        hour: formattedHour,
-        teams: teamText,
-      });
-    });
-
-    return breakdown;
-  }
-
-  formatHourDisplay(hour) {
-    if (hour <= 12) {
-      return hour === 12 ? "12 PM" : `${hour} AM`;
-    } else {
-      return `${hour - 12} PM`;
-    }
-  }
-
-  // Backward compatibility
-  showReservationDetails(timePeriod, dayIndex, count, event) {
-    const days = [
-      _t("Sun"),
-      _t("Mon"),
-      _t("Tue"),
-      _t("Wed"),
-      _t("Thu"),
-      _t("Fri"),
-      _t("Sat"),
-    ];
-
-    this.selectHeatmapBox(
-      {
-        dayIndex: dayIndex,
-        timeIndex: 0,
-        value: count,
-        day: days[dayIndex],
-        timeSlot: timePeriod,
-      },
-      event
-    );
-  }
-
-  setDefaultForecastData() {
-    // Use exact data from reference image
-    const daysOfWeek = [
-      _t("Sun"),
-      _t("Mon"),
-      _t("Tue"),
-      _t("Wed"),
-      _t("Thu"),
-      _t("Fri"),
-      _t("Sat"),
-    ];
-
-    const heatmapData = {
-      headers: daysOfWeek,
-      rows: [
-        { label: _t("Dawn(5 AM -7 AM)"), data: [23, 10, 12, 10, 16, 13, 1] },
-        { label: _t("Morning(8 AM -12 PM)"), data: [12, 5, 5, 6, 5, 8, 2] },
-        { label: _t("Afternoon(1 PM -4 PM)"), data: [18, 13, 5, 3, 5, 6, 3] },
-        { label: _t("Night(5 PM -7 PM)"), data: [0, 18, 10, 15, 22, 28, 10] },
-      ],
-    };
-
-    this.state.heatmapData = heatmapData;
   }
 
   willDestroy() {
