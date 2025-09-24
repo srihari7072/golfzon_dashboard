@@ -120,14 +120,14 @@ msgstr "2개의 새로운 리드"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Number of Guests"
-msgstr "객실 수"
+msgid "Number of Visitors"
+msgstr "내장객 수"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Number of Guests (Same Period Last Year)"
-msgstr "작년 동기간 고객 수"
+msgid "Number of Visitors for the Same Period Last Year"
+msgstr "전년도 동기간 내장객 수"
 
 #. module: golfzon_dashboard
 #. odoo-python
@@ -222,14 +222,14 @@ msgstr "예약 패턴"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Reservations"
-msgstr "예약"
+msgid "Reservation Count"
+msgstr "예약 수"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Reservations (Same Period Last Year)"
-msgstr "예약 (지난해 동기 대비)"
+msgid "Reservation Countfor the Same Period Last Year"
+msgstr "전년도 동기간 예약 수"
 
 #. module: golfzon_dashboard
 #. odoo-python
@@ -602,38 +602,38 @@ msgstr "하위 20%"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Dawn(5 AM -7 AM)"
-msgstr "새벽(5시 - 7시)"
+msgid "Early Morning(5 AM -7 AM)"
+msgstr "새벽(5~7시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Morning(8 AM -12 PM)"
-msgstr "오전(8시 - 12시)"
+msgstr "오전(8~12시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Afternoon(1 PM -4 PM)"
-msgstr "오후( 1시 - 4시)"
+msgstr "오후(13~16시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Night(5 PM -7 PM)"
-msgstr "밤(5시 - 7시)"
+msgstr "야간(17~19시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "When selecting the right cell"
-msgstr "올바른 셀을 선택할 때"
+msgid "When selecting the cell on the right,"
+msgstr "우측 셀 선택 시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "You can check the number of teams booked by time zone for that cell."
-msgstr "해당 셀에 대해 시간대별로 예약된 팀 수를 확인할 수 있습니다."
+msgid "You can check the number of reserved teams by time slot for that cell."
+msgstr "해당셀의 시간대별 예약 팀수를확인할 수 있습니다."
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -760,12 +760,6 @@ msgstr "11 팀"
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "12 teams"
 msgstr "12 팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "13 teams"
-msgstr "13 팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -998,65 +992,59 @@ msgstr "평균 거래 금액"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Sun"
+msgid "Sunday"
 msgstr "일"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Mon"
+msgid "Monday"
 msgstr "월"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Tue"
+msgid "Tuesday"
 msgstr "화"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Wed"
+msgid "Wednesday"
 msgstr "수"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Thu"
+msgid "Thursday"
 msgstr "목"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Fri"
+msgid "Friday"
 msgstr "금"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Sat"
+msgid "Saturday"
 msgstr "토"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Dawn (5-7 AM)"
-msgstr "새벽 (5-7 AM)"
+msgid "0 teams"
+msgstr "팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Morning (8am-12pm)"
-msgstr "오전 (8am-12pm)"
+msgid "1 team"
+msgstr "팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Afternoon (1-4 PM)"
-msgstr "오후 (1-4 PM)"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Night (5-7 PM)"
-msgstr "저녁 (5-7 PM)"
+msgid "teams"
+msgstr "팀"
