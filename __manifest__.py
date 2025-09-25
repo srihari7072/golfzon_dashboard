@@ -26,7 +26,7 @@
     - Modular SCSS with component separation
     - Professional error handling and logging
     """,
-    "author": "Golfzon",
+    "author": "Sri Hari",
     "depends": ["web", "base"],
     "data": [
         "security/ir.model.access.csv",
