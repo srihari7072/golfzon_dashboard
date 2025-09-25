@@ -53,8 +53,8 @@
                         </div>
                         <div class="metric-value" t-esc="currentValue"/>
                         <div class="trend-wrapper">
-                            <div t-att-class="'trend-indicator ' + (hasTrendDown ? 'trend-down' : 'trend-up')">
-                                <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
+                            <div t-att-class="'trend-indicator ' + (currentTrend.startsWith('+') ? 'trend-up' : (currentTrend.startsWith('-') ? 'trend-down' : 'trend-neutral'))">
+                                <span class="trend-icon" t-esc="currentTrend.startsWith('+') ? '▲' : (currentTrend.startsWith('-') ? '▼' : '●')"/>
                                 <span t-esc="currentTrend"/>
                             </div>
                             <div class="trend-period" t-esc="_t('(year-over-year)')"/>
@@ -68,8 +68,8 @@
                         </div>
                         <div class="metric-value" t-esc="monthlyValue"/>
                         <div class="trend-wrapper">
-                            <div t-att-class="'trend-indicator ' + (hasTrendDown ? 'trend-down' : 'trend-up')">
-                                <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
+                            <div t-att-class="'trend-indicator ' + (monthlyTrend.startsWith('+') ? 'trend-up' : (monthlyTrend.startsWith('-') ? 'trend-down' : 'trend-neutral'))">
+                                <span class="trend-icon" t-esc="monthlyTrend.startsWith('+') ? '▲' : (monthlyTrend.startsWith('-') ? '▼' : '●')"/>
                                 <span t-esc="monthlyTrend"/>
                             </div>
                             <div class="trend-period" t-esc="_t('(year-over-year)')"/>
