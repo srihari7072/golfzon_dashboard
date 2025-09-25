@@ -63,16 +63,26 @@
                                             <t t-esc="_t('30 days prior to the inquiry date')"/>
                                         </div>
                                     </span>
-                                    <div class="metric-card-value">1,000,000,000</div>
+                                    <div class="metric-card-value">
+                                        <t t-if="state.salesData and state.salesData.totals and state.salesData.totals.current_total">
+                                            <t t-esc="state.salesData.totals.current_total.toLocaleString()"/>
+                                        </t>
+                                        <t t-else="">0</t>
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="metric-card-right">
                                 <div class="metric-card-meta">
                                     <span class="metric-card-caption"><t t-esc="_t('Compared to the same period last year')"/></span>
-                                    <span class="trend-indicator trend-up">
-                                        <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
-                                        <span>+11%</span>
+                                    <span t-att-class="'trend-indicator ' + ((state.salesData and state.salesData.totals and state.salesData.totals.growth_percentage >= 0) ? 'trend-up' : 'trend-down')">
+                                        <span class="trend-icon" t-esc="(state.salesData and state.salesData.totals and state.salesData.totals.growth_percentage >= 0) ? '▲' : '▼'"/>
+                                        <span>
+                                            <t t-if="state.salesData and state.salesData.totals">
+                                                <t t-esc="state.salesData.totals.growth_percentage >= 0 ? '+' : ''"/><t t-esc="state.salesData.totals.growth_percentage"/>%
+                                            </t>
+                                            <t t-else="">0%</t>
+                                        </span>
                                     </span>
                                 </div>
                             </div>
@@ -93,7 +103,12 @@
                                             <t t-esc="_t('30 days prior to the inquiry date')"/>
                                         </div>
                                     </span>
-                                    <div class="metric-card-value">190,000</div>
+                                    <div class="metric-card-value">
+                                        <t t-if="state.salesData and state.salesData.totals and state.salesData.totals.average_unit_price">
+                                            <t t-esc="state.salesData.totals.average_unit_price.toLocaleString()"/>
+                                        </t>
+                                        <t t-else="">0</t>
+                                    </div>
                                 </div>
                             </div>
                             
