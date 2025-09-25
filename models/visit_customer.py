@@ -344,106 +344,6 @@ class VisitCustomer(models.Model):
             }
         }
     
-    def _get_enhanced_section_breakdown(self, start_date, end_date):
-        """Enhanced section breakdown with better logic and debugging"""
-        try:
-            _logger.info(f"📊 Getting section breakdown for {start_date} to {end_date}")
-            
-            # ✅ STEP 1: Check what hole_scd values actually exist
-            hole_check_query = """
-                SELECT 
-                    hole_scd,
-                    COUNT(*) as visitor_count
-                FROM visit_customers 
-                WHERE visit_date BETWEEN %s AND %s
-                    AND hole_scd IS NOT NULL
-                    AND TRIM(hole_scd) != ''
-                GROUP BY hole_scd
-                ORDER BY visitor_count DESC
-            """
-
-            self.env.cr.execute(hole_check_query, (
-                start_date.strftime('%Y-%m-%d'),
-                end_date.strftime('%Y-%m-%d')
-            ))
-            hole_results = self.env.cr.fetchall()
-
-            _logger.info(f"📊 Found {len(hole_results)} different hole_scd values:")
-            for result in hole_results:
-                _logger.info(f"    hole_scd: '{result[0]}' = {result[1]} visitors")
-
-            section_totals = {'part1': 0, 'part2': 0, 'part3': 0}
-            total_visitors = 0
-
-            if not hole_results:
-                _logger.warning("❌ No hole_scd data found, trying alternative distribution")
-                
-                # ✅ FALLBACK: If no hole_scd, distribute total visitors evenly
-                total_query = """
-                    SELECT COUNT(*) 
-                    FROM visit_customers 
-                    WHERE visit_date BETWEEN %s AND %s
-                """
-                
-                self.env.cr.execute(total_query, (
-                    start_date.strftime('%Y-%m-%d'),
-                    end_date.strftime('%Y-%m-%d')
-                ))
-                total_result = self.env.cr.fetchone()
-                total_visitors = total_result[0] if total_result else 0
-                
-                if total_visitors > 0:
-                    # Distribute evenly across sections
-                    section_totals['part1'] = total_visitors // 3
-                    section_totals['part2'] = total_visitors // 3  
-                    section_totals['part3'] = total_visitors - (2 * (total_visitors // 3))
-                    
-                    _logger.info(f"📊 Fallback distribution: Total={total_visitors}, Parts={section_totals}")
-            else:
-                # ✅ ENHANCED: Process actual hole_scd values with flexible mapping
-                for result in hole_results:
-                    hole_scd = str(result[0]).strip().lower() if result[0] else ''
-                    count = result[1]
-                    total_visitors += count
-                    
-                    _logger.info(f"📊 Processing: hole_scd='{hole_scd}', count={count}")
-                    
-                    # ✅ FLEXIBLE MAPPING: Handle various hole_scd formats
-                    if any(part1_id in hole_scd for part1_id in ['1', '01', 'part1', 'section1', 'area1']):
-                        section_totals['part1'] += count
-                        _logger.info(f"    → Mapped to Part 1")
-                    elif any(part2_id in hole_scd for part2_id in ['2', '02', 'part2', 'section2', 'area2']):
-                        section_totals['part2'] += count
-                        _logger.info(f"    → Mapped to Part 2")
-                    elif any(part3_id in hole_scd for part3_id in ['3', '03', 'part3', 'section3', 'area3']):
-                        section_totals['part3'] += count
-                        _logger.info(f"    → Mapped to Part 3")
-                    else:
-                        # ✅ SMART DISTRIBUTION: Distribute unknown values based on pattern
-                        if 'a' in hole_scd or '4' in hole_scd or '5' in hole_scd:
-                            section_totals['part1'] += count
-                            _logger.info(f"    → Pattern mapped to Part 1")
-                        elif 'b' in hole_scd or '6' in hole_scd or '7' in hole_scd:
-                            section_totals['part2'] += count 
-                            _logger.info(f"    → Pattern mapped to Part 2")
-                        elif 'c' in hole_scd or '8' in hole_scd or '9' in hole_scd:
-                            section_totals['part3'] += count
-                            _logger.info(f"    → Pattern mapped to Part 3")
-                        else:
-                            # Even distribution for completely unknown values
-                            section_totals['part1'] += count // 3
-                            section_totals['part2'] += count // 3
-                            section_totals['part3'] += count - (2 * (count // 3))
-                            _logger.info(f"    → Even distribution across all parts")
-
-            _logger.info(f"📊 Final section totals: {section_totals} (Total: {sum(section_totals.values())})")
-            return section_totals
-
-        except Exception as e:
-            _logger.error(f"❌ Enhanced section breakdown error: {str(e)}")
-            # Return equal distribution as fallback
-            return {'part1': 0, 'part2': 0, 'part3': 0}
-
     @api.model
     def get_gender_statistics_from_visitors(self):
         """Get gender statistics from visit_customers table - NEW METHOD"""
@@ -513,3 +413,113 @@ class VisitCustomer(models.Model):
             import traceback
             _logger.error(f"❌ Traceback: {traceback.format_exc()}")
             return self._get_sample_gender_statistics()
+
+    def _get_sample_gender_statistics(self):
+        """Sample gender data fallback for visitors"""
+        return {
+            'male_percentage': 74,
+            'female_percentage': 26,
+            'male_count': 740,
+            'female_count': 260,
+            'total_persons': 1000,
+            'has_data': True,
+            'is_sample': True,
+            'data_source': 'visit_customers'
+        }
+
+    def _get_enhanced_section_breakdown(self, start_date, end_date):
+        """Enhanced section breakdown with better logic and debugging"""
+        try:
+            _logger.info(f"📊 Getting section breakdown for {start_date} to {end_date}")
+            
+            # ✅ STEP 1: Check what hole_scd values actually exist
+            hole_check_query = """
+            SELECT 
+                hole_scd,
+                COUNT(*) as visitor_count
+            FROM visit_customers 
+            WHERE visit_date BETWEEN %s AND %s
+            AND hole_scd IS NOT NULL 
+            AND TRIM(hole_scd) != ''
+            GROUP BY hole_scd
+            ORDER BY visitor_count DESC
+            """
+            
+            self.env.cr.execute(hole_check_query, (
+                start_date.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            ))
+            hole_results = self.env.cr.fetchall()
+            
+            _logger.info(f"📊 Found {len(hole_results)} different hole_scd values:")
+            for result in hole_results:
+                _logger.info(f"  hole_scd: '{result[0]}' = {result[1]} visitors")
+            
+            section_totals = {'part1': 0, 'part2': 0, 'part3': 0}
+            total_visitors = 0
+            
+            if not hole_results:
+                _logger.warning("❌ No hole_scd data found, trying alternative distribution")
+                # ✅ FALLBACK: If no hole_scd, distribute total visitors evenly
+                total_query = """
+                SELECT COUNT(*)
+                FROM visit_customers 
+                WHERE visit_date BETWEEN %s AND %s
+                """
+                self.env.cr.execute(total_query, (
+                    start_date.strftime('%Y-%m-%d'),
+                    end_date.strftime('%Y-%m-%d')
+                ))
+                total_result = self.env.cr.fetchone()
+                total_visitors = total_result[0] if total_result else 0
+                
+                if total_visitors > 0:
+                    # Distribute evenly across sections
+                    section_totals['part1'] = total_visitors // 3
+                    section_totals['part2'] = total_visitors // 3  
+                    section_totals['part3'] = total_visitors - (2 * (total_visitors // 3))
+                    _logger.info(f"📊 Fallback distribution: Total={total_visitors}, Parts={section_totals}")
+            else:
+                # ✅ ENHANCED: Process actual hole_scd values with flexible mapping
+                for result in hole_results:
+                    hole_scd = str(result[0]).strip().lower() if result[0] else ''
+                    count = result[1]
+                    total_visitors += count
+                    
+                    _logger.info(f"📊 Processing: hole_scd='{hole_scd}', count={count}")
+                    
+                    # ✅ FLEXIBLE MAPPING: Handle various hole_scd formats
+                    if any(part1_id in hole_scd for part1_id in ['1', '01', 'part1', 'section1', 'area1']):
+                        section_totals['part1'] += count
+                        _logger.info(f"   → Mapped to Part 1")
+                    elif any(part2_id in hole_scd for part2_id in ['2', '02', 'part2', 'section2', 'area2']):
+                        section_totals['part2'] += count
+                        _logger.info(f"   → Mapped to Part 2")
+                    elif any(part3_id in hole_scd for part3_id in ['3', '03', 'part3', 'section3', 'area3']):
+                        section_totals['part3'] += count
+                        _logger.info(f"   → Mapped to Part 3")
+                    else:
+                        # ✅ SMART DISTRIBUTION: Distribute unknown values based on pattern
+                        if 'a' in hole_scd or '4' in hole_scd or '5' in hole_scd:
+                            section_totals['part1'] += count
+                            _logger.info(f"   → Pattern mapped to Part 1")
+                        elif 'b' in hole_scd or '6' in hole_scd or '7' in hole_scd:
+                            section_totals['part2'] += count
+                            _logger.info(f"   → Pattern mapped to Part 2")
+                        elif 'c' in hole_scd or '8' in hole_scd or '9' in hole_scd:
+                            section_totals['part3'] += count
+                            _logger.info(f"   → Pattern mapped to Part 3")
+                        else:
+                            # Even distribution for completely unknown values
+                            section_totals['part1'] += count // 3
+                            section_totals['part2'] += count // 3
+                            section_totals['part3'] += count - (2 * (count // 3))
+                            _logger.info(f"   → Even distribution across all parts")
+            
+            _logger.info(f"📊 Final section totals: {section_totals} (Total: {sum(section_totals.values())})")
+            return section_totals
+            
+        except Exception as e:
+            _logger.error(f"❌ Enhanced section breakdown error: {str(e)}")
+            # Return equal distribution as fallback
+            return {'part1': 0, 'part2': 0, 'part3': 0}
