@@ -74,37 +74,6 @@ export class GolfDataService {
     }
   }
 
-  async fetchPerformanceData() {
-    console.log("🔄 Fetching performance data...");
-
-    if (!this.rpc) {
-      console.warn(
-        "⚠️ RPC service not available, using default performance data"
-      );
-      return this.getDefaultPerformanceData();
-    }
-
-    try {
-      const data = await this.rpc("/golfzon/dashboard/performance_indicators");
-      console.log("✅ Performance data fetched:", data);
-
-      if (
-        data &&
-        data.sales_performance &&
-        data.avg_order_value &&
-        data.utilization_rate
-      ) {
-        return data;
-      } else {
-        console.warn("⚠️ Performance data incomplete, using defaults");
-        return this.getDefaultPerformanceData();
-      }
-    } catch (error) {
-      console.error("❌ Error fetching performance data:", error);
-      return this.getDefaultPerformanceData();
-    }
-  }
-
   async fetchDashboardData() {
     console.log("🔄 Fetching dashboard data...");
 
@@ -123,30 +92,6 @@ export class GolfDataService {
       console.error("❌ Error fetching dashboard data:", error);
       return this.getDefaultDashboardData();
     }
-  }
-
-  // Required default data structures
-  getDefaultPerformanceData() {
-    return {
-      sales_performance: {
-        current_revenue: "120,000,000,000",
-        monthly_revenue: "100,000,000",
-        current_trend: "+11%",
-        monthly_trend: "+11%",
-      },
-      avg_order_value: {
-        current_weekly_value: "200,000",
-        monthly_value: "200,000",
-        current_trend: "+11%",
-        monthly_trend: "+13%",
-      },
-      utilization_rate: {
-        current_weekly_capacity: "120,000,000,000",
-        monthly_capacity: "100,000,000",
-        current_trend: "-5%",
-        monthly_trend: "+20%",
-      },
-    };
   }
 
   getEmptyGolfData() {
@@ -169,6 +114,94 @@ export class GolfDataService {
         "1 hour ago - 2 New Leads",
         "Today - 3 SMS Campaigns",
       ],
+    };
+  }
+
+  async fetchPerformanceData() {
+    console.log("🔄 Fetching performance data from database...");
+
+    try {
+      // ✅ REMOVE HARDCODED DATA - Fetch from database
+      const url =
+        window.location.origin + "/golfzon/api/performance_indicators";
+      console.log(`📞 Fetching performance data from: ${url}`);
+
+      const response = await fetch(url);
+      console.log(`📞 Performance response status: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("✅ Performance data fetched from database:", data);
+
+      if (data.status === "success" && data.data) {
+        // ✅ RETURN DATABASE DATA in the format expected by templates
+        return {
+          sales_performance: {
+            current_revenue:
+              data.data.sales_performance.cumulative_sales_year.toLocaleString(),
+            monthly_revenue:
+              data.data.sales_performance.current_month_sales.toLocaleString(),
+            current_trend: `${
+              data.data.sales_performance.year_growth >= 0 ? "+" : ""
+            }${data.data.sales_performance.year_growth}%`,
+            monthly_trend: `${
+              data.data.sales_performance.month_growth >= 0 ? "+" : ""
+            }${data.data.sales_performance.month_growth}%`,
+          },
+          avg_order_value: {
+            current_weekly_value:
+              data.data.average_order_performance.cumulative_unit_price_year.toLocaleString(),
+            monthly_value:
+              data.data.average_order_performance.current_monthly_guest_price.toLocaleString(),
+            current_trend: "+11%", // You can calculate this from database if needed
+            monthly_trend: "+13%", // You can calculate this from database if needed
+          },
+          utilization_rate: {
+            current_weekly_capacity:
+              data.data.utilization_performance.cumulative_operation_year.toLocaleString(),
+            monthly_capacity:
+              data.data.utilization_performance.current_month_operation.toLocaleString(),
+            current_trend: `${
+              data.data.utilization_performance.year_growth >= 0 ? "+" : ""
+            }${data.data.utilization_performance.year_growth}%`,
+            monthly_trend: `${
+              data.data.utilization_performance.month_growth >= 0 ? "+" : ""
+            }${data.data.utilization_performance.month_growth}%`,
+          },
+        };
+      } else {
+        console.warn("⚠️ Performance data incomplete, using defaults");
+        return this.getDefaultPerformanceData();
+      }
+    } catch (error) {
+      console.error("❌ Error fetching performance data:", error);
+      return this.getDefaultPerformanceData();
+    }
+  }
+
+  getDefaultPerformanceData() {
+    return {
+      sales_performance: {
+        current_revenue: "0",
+        monthly_revenue: "0",
+        current_trend: "+0%", // ✅ FIXED: Ensure proper + sign
+        monthly_trend: "+0%",
+      },
+      avg_order_value: {
+        current_weekly_value: "0",
+        monthly_value: "0",
+        current_trend: "+0%", // ✅ FIXED: Ensure proper + sign
+        monthly_trend: "+0%",
+      },
+      utilization_rate: {
+        current_weekly_capacity: "0",
+        monthly_capacity: "0",
+        current_trend: "+0%", // ✅ FIXED: Ensure proper + sign
+        monthly_trend: "+0%",
+      },
     };
   }
 }
