@@ -553,33 +553,33 @@ class GolfzonDashboardController(http.Controller):
         """Gender demographics endpoint - UPDATED to use visit_customers"""
         try:
             _logger.info("🔄 Gender Demographics API called - Using visit_customers table")
-
+            
             # ✅ CHANGED: Use visit.customer model instead of golfzon.person
             visitor_model = request.env['visit.customer']
             gender_data = visitor_model.get_gender_statistics_from_visitors()
-
+            
             _logger.info(f"📊 Gender API Response from visit_customers: Male={gender_data['male_percentage']}%, Female={gender_data['female_percentage']}%")
-
+            
             response_data = {
                 'status': 'success',
                 'data': gender_data
             }
-
+            
             return request.make_response(
                 json.dumps(response_data),
                 headers={
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+                    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS', 
                     'Access-Control-Allow-Headers': 'Content-Type'
                 }
             )
-
+            
         except Exception as e:
             _logger.error(f"❌ Gender Demographics API error: {str(e)}")
             import traceback
             _logger.error(f"❌ Traceback: {traceback.format_exc()}")
-
+            
             # Return sample data on error
             sample_data = {
                 'male_percentage': 74,
@@ -592,10 +592,10 @@ class GolfzonDashboardController(http.Controller):
                 'data_source': 'visit_customers',
                 'error': str(e)
             }
-
+            
             return request.make_response(
                 json.dumps({
-                    'status': 'success',  # Return success with sample data
+                    'status': 'success', # Return success with sample data
                     'data': sample_data
                 }),
                 headers={'Content-Type': 'application/json'}
