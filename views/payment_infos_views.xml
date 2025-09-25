@@ -1,0 +1,80 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_payment_infos_tree" model="ir.ui.view">
+        <field name="name">payment.infos.list</field>
+        <field name="model">payment.infos</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="pay_id"/>
+                <field name="order_no"/>
+                <field name="pay_date"/>
+                <field name="pay_amt"/>
+                <field name="customer_id"/>
+                <field name="account_id"/>
+                <field name="payment_cd_id"/>
+                <field name="cancel_yn"/>
+                <field name="store_cd_id"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_payment_infos_form" model="ir.ui.view">
+        <field name="name">payment.infos.form</field>
+        <field name="model">payment.infos</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="pay_id"/>
+                        <field name="order_no"/>
+                        <field name="pay_date"/>
+                        <field name="pay_amt"/>
+                        <field name="customer_id"/>
+                        <field name="account_id"/>
+                        <field name="payment_cd_id"/>
+                        <field name="cancel_yn"/>
+                        <field name="remark"/>
+                    </group>
+                    <group>
+                        <field name="tax_amt"/>
+                        <field name="free_amt"/>
+                        <field name="vat_amt"/>
+                        <field name="store_cd_id"/>
+                        <field name="sales_info_id"/>
+                        <field name="org_pay_id"/>
+                        <field name="cal_type_cd_id"/>
+                        <field name="kiosk_pay_type_scd"/>
+                    </group>
+                    <group>
+                        <field name="etc_info1"/>
+                        <field name="etc_info2"/>
+                        <field name="etc_info3"/>
+                        <field name="cancel_date"/>
+                        <field name="cancel_remark"/>
+                    </group>
+                    <group>
+                        <field name="created_at"/>
+                        <field name="updated_at"/>
+                        <field name="deleted_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_payment_infos" model="ir.actions.act_window">
+        <field name="name">Payment Infos</field>
+        <field name="res_model">payment.infos</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_payment_root" name="Payments"/>
+    <menuitem id="menu_payment_infos"
+              name="Payment Infos"
+              parent="menu_payment_root"
+              action="action_payment_infos"/>
+</odoo>

@@ -1,0 +1,66 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_person_tree" model="ir.ui.view">
+        <field name="name">golfzon.person.list</field>
+        <field name="model">golfzon.person</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="person_code"/>
+                <field name="member_name"/>
+                <field name="mobile_phone"/>
+                <field name="email"/>
+                <field name="birth_date"/>
+                <field name="gender_scd"/>
+                <field name="nation_scd"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_person_form" model="ir.ui.view">
+        <field name="name">golfzon.person.form</field>
+        <field name="model">golfzon.person</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="person_code"/>
+                        <field name="account_id"/>
+                        <field name="member_name"/>
+                        <field name="name_eng"/>
+                        <field name="name_chn"/>
+                        <field name="file_id"/>
+                        <field name="birth_date"/>
+                        <field name="gender_scd"/>
+                        <field name="nation_scd"/>
+                        <field name="nick_name"/>
+                        <field name="mobile_phone"/>
+                        <field name="email"/>
+                        <field name="home_addr"/>
+                        <field name="company_name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_persons" model="ir.actions.act_window">
+        <field name="name">Persons</field>
+        <field name="res_model">golfzon.person</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_person_root" name="Persons"/>
+    <menuitem id="menu_person_main" name="Person Records" parent="menu_person_root"/>
+    <menuitem id="menu_person_action" name="Manage Persons"
+              parent="menu_person_main" action="action_persons"/>
+
+    <!-- Sample Record -->
+    <record id="person_1" model="golfzon.person">
+        <field name="person_code">P001</field>
+        <field name="member_name">John Doe</field>
+        <field name="email">john@example.com</field>
+    </record>
+</odoo>
