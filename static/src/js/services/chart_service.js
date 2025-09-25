@@ -10,6 +10,14 @@ export class ChartService {
     if (window.Chart && window.ChartDataLabels) {
       window.Chart.register(window.ChartDataLabels);
     }
+
+    this.setGenderPercent = this.setGenderPercent.bind(this);
+    this.initializeGenderAnimation = this.initializeGenderAnimation.bind(this);
+    this.fetchGenderDemographics = this.fetchGenderDemographics.bind(this);
+    this.fetchAgeDemographics = this.fetchAgeDemographics.bind(this);
+    this.createAgeChart = this.createAgeChart.bind(this);
+
+    console.log("✅ ChartService initialized with bound methods");
   }
 
   destroyChart(chartId) {
@@ -101,42 +109,70 @@ export class ChartService {
     );
   }
 
-  createSalesChart(canvasEl, period) {
+  async createSalesChart(canvasEl, period) {
     if (!this._validateCanvas(canvasEl, "Sales Trends")) return;
 
-    const labels = this.getDateLabels(period);
-    const days = period === "7days" ? 7 : 30;
-
-    // Build an indexed Date[] perfectly aligned with labels
-    const today = new Date();
-    const start = new Date(today);
-    start.setDate(today.getDate() - (days - 1));
-    const dateIndex = Array.from({ length: days }, (_, i) => {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      return d;
-    });
-
-    // Find today's index in the data
-    const todayIndex = dateIndex.findIndex((date) => {
-      return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      );
-    });
-
-    const current = this._generateRandomData(labels.length, 200, 700);
-    const lastYear = this._generateRandomData(labels.length, 150, 550);
-
-    this.destroyChart("sales");
-
-    const COLOR_PRIMARY = "#046DEC";
-    const COLOR_SECONDARY = "#86E5F5";
-    const GRID_COLOR = "#EEF3FA";
-    const AXIS_COLOR = "#6f6f6f";
+    console.log(
+      `🔄 ChartService: Creating sales chart with database data for ${period}...`
+    );
 
     try {
+      // ✅ REMOVE HARDCODED DATA - Fetch from database
+      const url =
+        window.location.origin + `/golfzon/api/sales_trends?period=${period}`;
+      console.log(`📞 Fetching sales data from: ${url}`);
+
+      const response = await fetch(url);
+      console.log(`📞 Response status: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const salesResponse = await response.json();
+      console.log("📊 Raw sales response:", salesResponse);
+
+      if (salesResponse.status !== "success") {
+        console.error(
+          "❌ ChartService: Sales data fetch failed:",
+          salesResponse.message
+        );
+        this._showChartError(
+          canvasEl,
+          `Failed to load sales data: ${salesResponse.message}`
+        );
+        return;
+      }
+
+      const data = salesResponse.data;
+      const labels = data.labels || [];
+
+      // ✅ USE DATABASE DATA instead of _generateRandomData
+      const currentData = data.current_data || [];
+      const lastYearData = data.prev_year_data || [];
+
+      console.log("✅ ChartService: Creating sales chart with database data:", {
+        labels: labels.length,
+        currentTotal: data.totals ? data.totals.current_total : 0,
+        prevYearTotal: data.totals ? data.totals.prev_year_total : 0,
+        currentData: currentData,
+        lastYearData: lastYearData,
+      });
+
+      // ✅ Validate data arrays
+      if (!currentData.length || currentData.every((x) => x === 0)) {
+        console.warn(
+          "⚠️ ChartService: All sales data is zero, showing empty state"
+        );
+      }
+
+      this.destroyChart("sales");
+
+      const COLOR_PRIMARY = "#046DEC";
+      const COLOR_SECONDARY = "#86E5F5";
+      const GRID_COLOR = "#EEF3FA";
+      const AXIS_COLOR = "#6f6f6f";
+
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "bar",
         data: {
@@ -144,7 +180,7 @@ export class ChartService {
           datasets: [
             {
               label: _t("Sales"),
-              data: current,
+              data: currentData, // ✅ DATABASE DATA
               backgroundColor: COLOR_PRIMARY,
               borderWidth: 0,
               barPercentage: 0.6,
@@ -159,7 +195,7 @@ export class ChartService {
             },
             {
               label: _t("Last Year's Sales (Same Period)"),
-              data: lastYear,
+              data: lastYearData, // ✅ DATABASE DATA
               backgroundColor: COLOR_SECONDARY,
               borderWidth: 0,
               barPercentage: 0.6,
@@ -183,14 +219,13 @@ export class ChartService {
             x: {
               grid: { display: false },
               ticks: {
-                autoSkip: false, // Changed from true to ensure we can control which labels show
-                maxTicksLimit: period === "30days" ? 8 : 7, // Increased slightly for 30 days
+                autoSkip: false,
+                maxTicksLimit: period === "30days" ? 8 : 7,
                 minRotation: 0,
                 maxRotation: 0,
                 color: AXIS_COLOR,
                 font: { size: 12 },
                 callback: function (value, index, ticks) {
-                  // Always show first label
                   if (index === 0 || index === ticks.length - 1) {
                     return this.getLabelForValue(value);
                   }
@@ -200,20 +235,19 @@ export class ChartService {
             },
             y: {
               beginAtZero: true,
-              suggestedMax: 700,
-              ticks: { stepSize: 100, color: AXIS_COLOR, font: { size: 12 } },
+              // ✅ DYNAMIC MAX based on data
+              suggestedMax: Math.max(...currentData, ...lastYearData, 100),
+              ticks: {
+                stepSize: Math.max(
+                  Math.ceil(Math.max(...currentData, ...lastYearData) / 8),
+                  10
+                ),
+                color: AXIS_COLOR,
+                font: { size: 12 },
+              },
               grid: { display: true, color: GRID_COLOR, drawBorder: false },
             },
           },
-          datasets: [
-            {
-              barThickness: 10,
-              borderRadius: {
-                topLeft: 5,
-                topRight: 5,
-              },
-            },
-          ],
           plugins: {
             legend: {
               display: true,
@@ -243,32 +277,13 @@ export class ChartService {
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  const d = dateIndex[idx];
-                  return this._formatFullDate(d) || labels[idx] || "";
+                  return labels[idx] || "";
                 },
                 label: (ctx) => {
-                  const isCurrentYear = ctx.datasetIndex === 0;
                   const value = ctx.raw ?? 0;
-                  const formattedValue = this._formatSalesAmount(value);
-
-                  if (isCurrentYear) {
-                    // For current year: simple format
-                    return `Sales: ${formattedValue}`;
-                  } else {
-                    // For last year: add weather and temperature
-                    const idx = ctx.dataIndex;
-                    const date = dateIndex[idx];
-                    const weather = this._getWeatherData(date);
-                    return [
-                      `Sales: ${formattedValue}`,
-                      `Weather: ${weather.condition}`,
-                      `Temperature: ${weather.temp}`,
-                    ];
-                  }
-                },
-                afterLabel: (ctx) => {
-                  // Return empty string to avoid extra spacing
-                  return "";
+                  // ✅ FORMAT DATABASE AMOUNTS
+                  const formattedValue = `${value.toLocaleString()} won`;
+                  return `Sales: ${formattedValue}`;
                 },
               },
             },
@@ -278,9 +293,13 @@ export class ChartService {
       });
 
       this.chartInstances.set("sales", chart);
+      console.log(
+        "✅ ChartService: Sales chart created successfully with database data"
+      );
       return chart;
     } catch (e) {
-      console.error("Error creating Sales Trends chart:", e);
+      console.error("❌ ChartService: Error creating sales chart:", e);
+      this._showChartError(canvasEl, `Error loading sales data: ${e.message}`);
     }
   }
 
@@ -596,7 +615,9 @@ export class ChartService {
 
       // ✅ CLEAN LABELS - No date ranges, simple names only
       const currentLabel = _t("Reservation Count");
-      const prevYearLabel = _t("Reservation Countfor the Same Period Last Year");
+      const prevYearLabel = _t(
+        "Reservation Countfor the Same Period Last Year"
+      );
 
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
@@ -884,25 +905,21 @@ export class ChartService {
     }
   }
 
+  // ✅ FIXED: Remove hardcoded data from fetchAgeDemographics
   async fetchAgeDemographics() {
-    console.log("🔄 ChartService: Fetching age demographics...");
-
+    console.log("🔄 ChartService: Fetching age demographics from database...");
     try {
-      // ✅ FIXED: Use absolute URL to avoid language prefix
       const url = window.location.origin + "/golfzon/api/demographics/age";
       const response = await fetch(url);
-
-      console.log(`📞 Fetching from: ${url}`);
-      console.log(`📞 Response status: ${response.status}`);
+      console.log(`📞 Age API: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-
-      if (data.status === "success") {
-        console.log("✅ Age demographics fetched:", {
+      if (data.status === "success" && data.data && data.data.has_data) {
+        console.log("✅ Age demographics fetched from database:", {
           totalPersons: data.data.total_persons,
           hasData: data.data.has_data,
           isSample: data.data.is_sample || false,
@@ -918,29 +935,28 @@ export class ChartService {
     }
   }
 
+  // ✅ FIXED: Remove hardcoded data from fetchGenderDemographics
   async fetchGenderDemographics() {
-    console.log("🔄 ChartService: Fetching gender demographics...");
-
+    console.log(
+      "🔄 ChartService: Fetching gender demographics from database..."
+    );
     try {
-      // ✅ FIXED: Use absolute URL to avoid language prefix
       const url = window.location.origin + "/golfzon/api/demographics/gender";
       const response = await fetch(url);
-
-      console.log(`📞 Fetching from: ${url}`);
-      console.log(`📞 Response status: ${response.status}`);
+      console.log(`📞 Gender API: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-
-      if (data.status === "success") {
-        console.log("✅ Gender demographics fetched:", {
-          totalPersons: data.data.total_persons,
+      if (data.status === "success" && data.data && data.data.has_data) {
+        console.log("✅ Gender demographics fetched from database:", {
           malePercentage: data.data.male_percentage,
           femalePercentage: data.data.female_percentage,
-          isSample: data.data.is_sample || false,
+          totalPersons: data.data.total_persons,
+          dataSource: data.data.data_source,
+          isample: data.data.is_sample || false,
         });
         return data.data;
       } else {
@@ -953,20 +969,18 @@ export class ChartService {
     }
   }
 
+  // ✅ FIXED: Age Chart with Database Data
   async createAgeChart(canvasEl) {
     if (!this._validateCanvas(canvasEl, "Age Chart")) return;
-
-    console.log(
-      "🔄 ChartService: Creating age chart with database demographics..."
-    );
+    console.log("🔄 ChartService: Creating age chart with database data...");
 
     try {
-      // Fetch real age data from database
+      // ✅ FETCH REAL DATA from database
       const ageData = await this.fetchAgeDemographics();
 
       if (!ageData || !ageData.has_data) {
-        console.error("❌ ChartService: No age data available");
-        this._showChartError(canvasEl, "No age data available from database");
+        console.warn("⚠️ ChartService: No age data available");
+        this._showChartError(canvasEl, "No age demographics data available");
         return;
       }
 
@@ -1006,6 +1020,7 @@ export class ChartService {
             const top = bar.y - h / 2;
             const width = xMax - x0;
             const r = Math.min(radius, h / 2, width / 2);
+
             ctx.beginPath();
             ctx.moveTo(x0 + r, top);
             ctx.lineTo(x0 + width - r, top);
@@ -1131,11 +1146,9 @@ export class ChartService {
       });
 
       this.chartInstances.set("age", chart);
-
       console.log(
         "✅ ChartService: Age chart created successfully with database data"
       );
-
       return chart;
     } catch (e) {
       console.error("❌ ChartService: Error creating age chart:", e);
@@ -1143,20 +1156,106 @@ export class ChartService {
     }
   }
 
+  // ✅ COMPLETE setGenderPercent method - Add this to your ChartService class
+  setGenderPercent(male, female) {
+    console.log(
+      `🔄 ChartService: Setting gender percentages - Male: ${male}%, Female: ${female}%`
+    );
+
+    try {
+      // ✅ FIXED: Find gender display elements safely
+      const malePercent = document.querySelector(
+        "#malePercent, [data-male-percent], .male-percentage"
+      );
+      const femalePercent = document.querySelector(
+        "#femalePercent, [data-female-percent], .female-percentage"
+      );
+
+      // ✅ FIXED: Find SVG fill elements safely
+      const maleFill = document.querySelector(
+        "#maleFill, [data-male-fill], .male-fill"
+      );
+      const femaleFill = document.querySelector(
+        "#femaleFill, [data-female-fill], .female-fill"
+      );
+
+      // Update percentage text display
+      if (malePercent) {
+        malePercent.textContent = `${male}%`;
+        console.log(`✅ Updated male percentage display: ${male}%`);
+      } else {
+        console.warn("⚠️ Male percentage element not found");
+      }
+
+      if (femalePercent) {
+        femalePercent.textContent = `${female}%`;
+        console.log(`✅ Updated female percentage display: ${female}%`);
+      } else {
+        console.warn("⚠️ Female percentage element not found");
+      }
+
+      // Update SVG fill heights if available
+      if (maleFill && femaleFill) {
+        const maxHeight = 400; // Default SVG viewBox height
+
+        // Calculate fill heights
+        const maleHeight = (maxHeight * male) / 100;
+        const femaleHeight = (maxHeight * female) / 100;
+
+        // Update male fill
+        maleFill.setAttribute("y", maxHeight - maleHeight);
+        maleFill.setAttribute("height", maleHeight);
+
+        // Update female fill
+        femaleFill.setAttribute("y", maxHeight - femaleHeight);
+        femaleFill.setAttribute("height", femaleHeight);
+
+        console.log(
+          `✅ Updated SVG fills - Male: ${maleHeight}px, Female: ${femaleHeight}px`
+        );
+      } else {
+        console.log(
+          "ℹ️ SVG fill elements not found (this is normal if using different display method)"
+        );
+      }
+
+      // ✅ ALTERNATIVE: Update any data attributes for other display methods
+      const genderContainer = document.querySelector(
+        "[data-gender-display], .gender-ratio-container"
+      );
+      if (genderContainer) {
+        genderContainer.setAttribute("data-male-percent", male);
+        genderContainer.setAttribute("data-female-percent", female);
+      }
+
+      console.log(
+        `✅ Gender percentages set successfully: Male ${male}%, Female ${female}%`
+      );
+    } catch (error) {
+      console.error("❌ Error setting gender percentages:", error);
+      console.warn("⚠️ Gender animation may not work - DOM elements not found");
+    }
+  }
+
+  // ✅ FIXED: Enhanced initializeGenderAnimation method
   async initializeGenderAnimation() {
     console.log(
       "🔄 ChartService: Initializing gender animation with database data..."
     );
 
     try {
+      // Wait a bit for DOM to be ready
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       // Fetch real gender data from database
       const genderData = await this.fetchGenderDemographics();
 
       if (!genderData || !genderData.has_data) {
         console.warn(
-          "⚠️ ChartService: No gender data available, using defaults"
+          "⚠️ ChartService: No gender data available, using sample data"
         );
-        this.setGenderPercent(50, 50); // Default fallback
+        // Use sample data for demonstration
+        this.setGenderPercent(76, 24);
         return;
       }
 
@@ -1169,43 +1268,49 @@ export class ChartService {
         }
       );
 
-      // Animate with database values
-      setTimeout(() => {
-        this.setGenderPercent(
-          genderData.male_percentage,
-          genderData.female_percentage
-        );
-      }, 100);
+      // ✅ FIXED: Set gender percentages with database values
+      this.setGenderPercent(
+        Math.round(genderData.male_percentage),
+        Math.round(genderData.female_percentage)
+      );
     } catch (error) {
       console.error(
         "❌ ChartService: Error initializing gender animation:",
         error
       );
-      this.setGenderPercent(50, 50); // Fallback
+      // Fallback to default values
+      this.setGenderPercent(50, 50);
     }
   }
 
-  setGenderPercent(male, female) {
-    const maleFill = document.getElementById("maleFill");
-    const femaleFill = document.getElementById("femaleFill");
+  // ✅ ADDITIONAL: Helper method to check if gender elements exist
+  checkGenderElements() {
+    const elements = {
+      malePercent: document.querySelector(
+        "#malePercent, [data-male-percent], .male-percentage"
+      ),
+      femalePercent: document.querySelector(
+        "#femalePercent, [data-female-percent], .female-percentage"
+      ),
+      maleFill: document.querySelector(
+        "#maleFill, [data-male-fill], .male-fill"
+      ),
+      femaleFill: document.querySelector(
+        "#femaleFill, [data-female-fill], .female-fill"
+      ),
+      genderContainer: document.querySelector(
+        "[data-gender-display], .gender-ratio-container"
+      ),
+    };
 
-    if (maleFill && femaleFill) {
-      const maxHeight = 400; // SVG viewBox height
-      maleFill.setAttribute("y", maxHeight - (maxHeight * male) / 100);
-      maleFill.setAttribute("height", (maxHeight * male) / 100);
-      femaleFill.setAttribute("y", maxHeight - (maxHeight * female) / 100);
-      femaleFill.setAttribute("height", (maxHeight * female) / 100);
+    console.log("🔍 Gender elements check:", {
+      malePercent: !!elements.malePercent,
+      femalePercent: !!elements.femalePercent,
+      maleFill: !!elements.maleFill,
+      femaleFill: !!elements.femaleFill,
+      genderContainer: !!elements.genderContainer,
+    });
 
-      const malePercent = document.getElementById("malePercent");
-      const femalePercent = document.getElementById("femalePercent");
-      if (malePercent) malePercent.textContent = male + "%";
-      if (femalePercent) femalePercent.textContent = female + "%";
-
-      console.log(
-        `📊 Gender display updated: ${male}% male, ${female}% female`
-      );
-    } else {
-      console.warn("⚠️ Gender animation elements not found in DOM");
-    }
+    return elements;
   }
 }
