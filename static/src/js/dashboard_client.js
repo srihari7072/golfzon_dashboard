@@ -94,10 +94,22 @@ class GolfzonDashboard extends Component {
         sectionTotals: { part1: 0, part2: 0, part3: 0 },
         isGrowthPositive: true,
       },
+      salesData: {
+        totals: {
+          current_total: 0,
+          growth_percentage: 0,
+          average_unit_price: 0,
+        },
+        current_data: [],
+        prev_year_data: [],
+        labels: [],
+      },
       hasTrendDown: false,
 
       ...DateUtils.generatePeriodLabels(),
     });
+
+    this.setPeriod = this.setPeriod.bind(this);
 
     onMounted(() => this.onMounted());
   }
@@ -156,6 +168,7 @@ class GolfzonDashboard extends Component {
     this.state.hasTrendDown = false;
 
     await this.loadHeatmapData();
+    await this.loadSalesData(this.state.selectedPeriod);
 
     // Initialize all data
     await Promise.all([
@@ -217,12 +230,78 @@ class GolfzonDashboard extends Component {
   }
 
   async loadPerformanceData() {
+    console.log("🔄 Loading performance data...");
+
     try {
-      const data = await this.golfDataService.fetchPerformanceData();
-      this.state.performanceData = data;
+      const url =
+        window.location.origin + "/golfzon/api/performance_indicators";
+      const response = await fetch(url);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === "success" && data.data) {
+          // ✅ ENHANCED: Process trend values to ensure correct +/- symbols
+          const processedData = {
+            sales_performance: {
+              current_revenue:
+                data.data.sales_performance.cumulative_sales_year.toLocaleString(),
+              monthly_revenue:
+                data.data.sales_performance.current_month_sales.toLocaleString(),
+              current_trend: this.formatTrendValue(
+                data.data.sales_performance.year_growth
+              ),
+              monthly_trend: this.formatTrendValue(
+                data.data.sales_performance.month_growth
+              ),
+            },
+            avg_order_value: {
+              current_weekly_value:
+                data.data.average_order_performance.cumulative_unit_price_year.toLocaleString(),
+              monthly_value:
+                data.data.average_order_performance.current_monthly_guest_price.toLocaleString(),
+              current_trend: "+11%", // You can calculate from database if available
+              monthly_trend: "+13%", // You can calculate from database if available
+            },
+            utilization_rate: {
+              current_weekly_capacity: data.data.utilization_performance
+                ? data.data.utilization_performance.cumulative_operation_year.toLocaleString()
+                : "0",
+              monthly_capacity: data.data.utilization_performance
+                ? data.data.utilization_performance.current_month_operation.toLocaleString()
+                : "0",
+              current_trend: data.data.utilization_performance
+                ? this.formatTrendValue(
+                    data.data.utilization_performance.year_growth
+                  )
+                : "0%",
+              monthly_trend: data.data.utilization_performance
+                ? this.formatTrendValue(
+                    data.data.utilization_performance.month_growth
+                  )
+                : "0%",
+            },
+          };
+
+          this.state.performanceData = processedData;
+          console.log(
+            "✅ Performance data loaded:",
+            this.state.performanceData
+          );
+        }
+      }
     } catch (error) {
-      console.error("Error loading performance data:", error);
+      console.error("❌ Error loading performance data:", error);
+      // Keep default values with proper formatting
     }
+  }
+
+  // ✅ NEW: Helper method to format trend values correctly
+  formatTrendValue(value) {
+    if (typeof value !== "number") return "0%";
+
+    // Ensure proper sign display
+    const sign = value >= 0 ? "+" : ""; // Negative numbers already have minus sign
+    return `${sign}${value}%`;
   }
 
   async initializeAllCharts() {
@@ -252,14 +331,45 @@ class GolfzonDashboard extends Component {
     await this.updateAllCharts();
 
     if (this.ageRef.el) {
-      await this.chartService.createAgeChart(this.ageRef.el);
+      try {
+        console.log("🔄 Creating age chart with database data...");
+        await this.chartService.createAgeChart(this.ageRef.el);
+      } catch (error) {
+        console.error("❌ Error creating age chart:", error);
+      }
+    } else {
+      console.warn("❌ Age chart canvas not found");
     }
 
     this.initializePieCharts();
 
     setTimeout(async () => {
-      await this.chartService.initializeGenderAnimation();
-    }, 200);
+      try {
+        console.log("🔄 Initializing gender animation with database data...");
+
+        // Check if chart service is available
+        if (!this.chartService) {
+          console.error("❌ ChartService not available for gender animation");
+          return;
+        }
+
+        // Check if the method exists
+        if (typeof this.chartService.initializeGenderAnimation !== "function") {
+          console.error(
+            "❌ initializeGenderAnimation method not found in ChartService"
+          );
+          return;
+        }
+
+        await this.chartService.initializeGenderAnimation();
+      } catch (error) {
+        console.error("❌ Error initializing gender animation:", error);
+        console.log(
+          "📋 Available chartService methods:",
+          Object.getOwnPropertyNames(Object.getPrototypeOf(this.chartService))
+        );
+      }
+    }, 500);
   }
 
   initializePieCharts() {
@@ -301,6 +411,77 @@ class GolfzonDashboard extends Component {
         );
       }
     });
+  }
+
+  // ✅ ADD/UPDATE this method in your GolfzonDashboard class:
+
+  async loadSalesData(period = "30days") {
+    console.log(`🔄 Loading sales data for period: ${period}`);
+
+    try {
+      const url =
+        window.location.origin + `/golfzon/api/sales_trends?period=${period}`;
+      console.log(`📞 Fetching sales data from: ${url}`);
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const salesResponse = await response.json();
+      console.log("📊 Sales response received:", salesResponse);
+
+      if (salesResponse.status === "success" && salesResponse.data) {
+        // ✅ UPDATE SALES DATA in state
+        this.state.salesData = {
+          totals: {
+            current_total: salesResponse.data.totals.current_total || 0,
+            growth_percentage: salesResponse.data.totals.growth_percentage || 0,
+            average_unit_price:
+              salesResponse.data.totals.average_unit_price || 0,
+          },
+          current_data: salesResponse.data.current_data || [],
+          prev_year_data: salesResponse.data.prev_year_data || [],
+          labels: salesResponse.data.labels || [],
+        };
+
+        console.log("✅ Sales data loaded successfully:", {
+          totalSales: this.state.salesData.totals.current_total,
+          growth: this.state.salesData.totals.growth_percentage,
+          avgPrice: this.state.salesData.totals.average_unit_price,
+        });
+
+        // Update forecast data for period display
+        const periodText =
+          period === "7days"
+            ? _t("Last 7 Days Data Analysis")
+            : _t("Last 30 Days Data Analysis");
+
+        this.state.forecastData.analysis_period = periodText;
+      } else {
+        console.error(
+          "❌ Sales data fetch failed:",
+          salesResponse.message || "Unknown error"
+        );
+        // Keep default zero values
+      }
+    } catch (error) {
+      console.error("❌ Error loading sales data:", error);
+      // Keep default zero values
+    }
+  }
+
+  async setPeriod(period) {
+    console.log(`🔄 Setting period to: ${period}`);
+    if (this.state.selectedPeriod !== period) {
+      this.state.selectedPeriod = period;
+
+      // ✅ Reload sales data for new period
+      await this.loadSalesData(period);
+
+      // Update charts and visitor data
+      await this.updateAllCharts();
+    }
   }
 
   async updateAllCharts() {
@@ -394,7 +575,7 @@ class GolfzonDashboard extends Component {
           sectionTotals: { part1: 0, part2: 0, part3: 0 },
           isGrowthPositive: true,
         };
-        this.state.hasTrendDown = false; // ✅ Default value
+        this.state.hasTrendDown = false;
       }
     } catch (error) {
       console.error("❌ Dashboard: Error updating visitor cards:", error);
@@ -405,7 +586,7 @@ class GolfzonDashboard extends Component {
         sectionTotals: { part1: 0, part2: 0, part3: 0 },
         isGrowthPositive: true,
       };
-      this.state.hasTrendDown = false; // ✅ Default value
+      this.state.hasTrendDown = false;
     }
   }
 
