@@ -65,7 +65,7 @@
                             </span>
                         </span>
                         <!-- ✅ DYNAMIC: Total visitors from database -->
-                        <span class="trend-card-title" t-esc="state.visitorData.totalVisitors"/>
+                        <span class="trend-card-numbers" t-esc="state.visitorData.totalVisitors"/>
                     </div>
                     <div class="trend-wrapper sales-numbers">
                         <span class="trend-card-title">
