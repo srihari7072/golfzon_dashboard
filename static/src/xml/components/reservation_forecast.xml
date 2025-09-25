@@ -196,7 +196,6 @@
                                 </p>
                             </div>
                         </div>
-                        
                         <!-- Selected box details -->
                         <div class="sidebar-selected-content" t-if="state.selectedHeatmapBox.isVisible">
                             <!-- Alert Messages -->
@@ -214,7 +213,6 @@
                                     </span>
                                 </div>
                             </div>
-                            
                             <!-- Sidebar Header (no duplicate day, no timeslot) -->
                             <div class="sidebar-header-section">
                                 <h2 class="sidebar-title" t-esc="state.selectedHeatmapBox.displayDay"/>
@@ -222,7 +220,6 @@
                                     <t t-esc="_t('Number of reservations by time zone')"/>
                                 </p>
                             </div>
-                            
                             <!-- Hourly Breakdown in Columns -->
                             <div class="hourly-breakdown-section">
                                 <div class="hourly-columns-row">
@@ -245,7 +242,6 @@
             <t t-call="golfzon_dashboard.PieChartsCard"/>
         </div>
     </t>
-
     <!-- Pie Charts Section -->
     <t t-name="golfzon_dashboard.PieChartsCard">
         <div class="pie-charts-card">
@@ -257,14 +253,16 @@
             <div class="pie-charts-grid">
                 <!-- Member Type Chart -->
                 <div class="pie-chart-item">
-                    <div class="chart-title-wrapper">
-                        <div class="chart-title">
-                            <t t-esc="_t('Reservation Proportion by Type')"/>
-                        </div>
-                    </div>
                     <div class="chart-and-legend">
-                        <div class="pie-chart-wrapper">
-                            <canvas t-ref="memberTypeChart"/>
+                        <div class="pie-chart-and-title-wrapper">
+                            <div class="chart-title-wrapper">
+                                <div class="chart-title">
+                                    <t t-esc="_t('Reservation Proportion by Type')"/>
+                                </div>
+                            </div>
+                            <div class="pie-chart-wrapper">
+                                <canvas t-ref="memberTypeChart"/>
+                            </div>
                         </div>
                         <div class="chart-legend">
                             <div class="legend-entry">
@@ -298,17 +296,18 @@
                         </div>
                     </div>
                 </div>
-                
                 <!-- Advance Booking Chart -->
                 <div class="pie-chart-item">
-                    <div class="chart-title-wrapper">
-                        <div class="chart-title">
-                            <t t-esc="_t('Reservation Proportion by Time')"/>
-                        </div>
-                    </div>
                     <div class="chart-and-legend">
-                        <div class="pie-chart-wrapper">
-                            <canvas t-ref="advanceBookingChart"/>
+                        <div class="pie-chart-and-title-wrapper">
+                            <div class="chart-title-wrapper">
+                                <div class="chart-title">
+                                    <t t-esc="_t('Reservation Proportion by Time')"/>
+                                </div>
+                            </div>
+                            <div class="pie-chart-wrapper">
+                                <canvas t-ref="advanceBookingChart"/>
+                            </div>
                         </div>
                         <div class="chart-legend">
                             <div class="legend-entry">
@@ -356,17 +355,18 @@
                         </div>
                     </div>
                 </div>
-                
                 <!-- Regional Distribution Chart -->
                 <div class="pie-chart-item">
-                    <div class="chart-title-wrapper">
-                        <div class="chart-title">
-                            <t t-esc="_t('Reservation Proportion by Channel')"/>
-                        </div>
-                    </div>
                     <div class="chart-and-legend">
-                        <div class="pie-chart-wrapper">
-                            <canvas t-ref="regionalChart"/>
+                        <div class="pie-chart-and-title-wrapper">
+                            <div class="chart-title-wrapper">
+                                <div class="chart-title">
+                                    <t t-esc="_t('Reservation Proportion by Channel')"/>
+                                </div>
+                            </div>
+                            <div class="pie-chart-wrapper">
+                                <canvas t-ref="regionalChart"/>
+                            </div>
                         </div>
                         <div class="chart-legend">
                             <div class="legend-entry">
