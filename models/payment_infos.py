@@ -41,8 +41,6 @@ class PaymentInfos(models.Model):
     deleted_id = fields.Integer("Deleted By")
     deleted_at = fields.Datetime("Deleted At")
 
-
-        # ✅ NEW: Get actual database date ranges
     @api.model
     def get_database_date_ranges(self):
         """Get actual min/max dates from database"""
@@ -85,7 +83,6 @@ class PaymentInfos(models.Model):
             _logger.error(f"❌ Error getting database date ranges: {str(e)}")
             return None
 
-    # ✅ UPDATED: Smart sales trends based on actual data
     @api.model
     def get_sales_trends_data(self, days=30):
         """Get sales trends data using database-driven date ranges"""
@@ -186,7 +183,6 @@ class PaymentInfos(models.Model):
             _logger.error(f"❌ Sales trends error: {str(e)}")
             return self._get_empty_sales_data(days)
 
-    # ✅ UPDATED: Smart performance indicators based on actual data
     @api.model 
     def get_performance_indicators(self):
         """Get performance indicators using database-driven date ranges"""
@@ -196,87 +192,92 @@ class PaymentInfos(models.Model):
             if not date_info:
                 return self._get_empty_performance_data()
             
-            max_date = date_info['max_date']  # 2025-08-26
-            max_year = max_date.year  # 2025
-            max_month = max_date.month  # 8 (August)
+            max_date = date_info['max_date']
+            max_year = max_date.year
+            max_month = max_date.month
             
             _logger.info(f"📊 Performance indicators for year {max_year}, month {max_month}")
             
-            # Cumulative sales this year up to max_date
-            year_sales_query = """
-                SELECT SUM(CAST(pay_amt AS DECIMAL(15,2))) as year_sales
+            # Define date ranges for year (cumulative YTD)
+            current_year_start = date(max_year, 1, 1)
+            current_year_end = max_date
+            prev_year_start = current_year_start.replace(year=max_year - 1)
+            prev_year_end = max_date.replace(year=max_year - 1)
+            
+            # Sum query for sales
+            sum_query = """
+                SELECT SUM(CAST(pay_amt AS DECIMAL(15,2)))
                 FROM payment_infos 
                 WHERE cancel_yn = 'N' 
-                  AND EXTRACT(YEAR FROM pay_date) = %s
-                  AND pay_date <= %s
-                  AND pay_amt > 0
+                AND pay_date >= %s AND pay_date <= %s
+                AND pay_amt > 0
             """
             
-            self.env.cr.execute(year_sales_query, (max_year, max_date))
+            self.env.cr.execute(sum_query, (current_year_start, current_year_end))
             cumulative_sales_year = self.env.cr.fetchone()[0] or 0
             
-            # Previous year same period for comparison
-            prev_year_end = max_date.replace(year=max_year - 1)
-            self.env.cr.execute(year_sales_query, (max_year - 1, prev_year_end))
+            self.env.cr.execute(sum_query, (prev_year_start, prev_year_end))
             prev_year_sales = self.env.cr.fetchone()[0] or 0
             
-            # Year growth
             year_growth = 0
             if prev_year_sales > 0:
                 year_growth = round(((cumulative_sales_year - prev_year_sales) / prev_year_sales) * 100, 1)
                 year_growth = max(-100, min(100, year_growth))
             
-            # Current month sales (last month with data)
-            month_sales_query = """
-                SELECT SUM(CAST(pay_amt AS DECIMAL(15,2))) as month_sales
-                FROM payment_infos 
-                WHERE cancel_yn = 'N' 
-                  AND EXTRACT(YEAR FROM pay_date) = %s
-                  AND EXTRACT(MONTH FROM pay_date) = %s
-                  AND pay_amt > 0
-            """
+            # Define date ranges for month (partial current month based on max_date)
+            current_month_start = max_date.replace(day=1)
+            current_month_end = max_date
+            prev_month_start = current_month_start.replace(year=max_year - 1)
+            prev_month_end = max_date.replace(year=max_year - 1)
             
-            self.env.cr.execute(month_sales_query, (max_year, max_month))
+            self.env.cr.execute(sum_query, (current_month_start, current_month_end))
             current_month_sales = self.env.cr.fetchone()[0] or 0
             
-            # Previous month for comparison
-            if max_month > 1:
-                prev_month = max_month - 1
-                prev_month_year = max_year
-            else:
-                prev_month = 12
-                prev_month_year = max_year - 1
-            
-            self.env.cr.execute(month_sales_query, (prev_month_year, prev_month))
+            self.env.cr.execute(sum_query, (prev_month_start, prev_month_end))
             prev_month_sales = self.env.cr.fetchone()[0] or 0
             
-            # Month growth
             month_growth = 0
             if prev_month_sales > 0:
                 month_growth = round(((current_month_sales - prev_month_sales) / prev_month_sales) * 100, 1)
                 month_growth = max(-100, min(100, month_growth))
             
-            # Average order values for this year
-            year_avg_query = """
-                SELECT AVG(CAST(pay_amt AS DECIMAL(15,2))) as year_avg
+            # Average query
+            avg_query = """
+                SELECT AVG(CAST(pay_amt AS DECIMAL(15,2)))
                 FROM payment_infos 
                 WHERE cancel_yn = 'N' 
-                  AND EXTRACT(YEAR FROM pay_date) = %s
-                  AND pay_date <= %s
-                  AND pay_amt > 0
+                AND pay_date >= %s AND pay_date <= %s
+                AND pay_amt > 0
             """
             
-            self.env.cr.execute(year_avg_query, (max_year, max_date))
+            # Year average
+            self.env.cr.execute(avg_query, (current_year_start, current_year_end))
             year_avg_price = self.env.cr.fetchone()[0] or 0
             
-            # Monthly average
-            self.env.cr.execute(month_sales_query.replace('SUM', 'AVG'), (max_year, max_month))
+            self.env.cr.execute(avg_query, (prev_year_start, prev_year_end))
+            prev_year_avg = self.env.cr.fetchone()[0] or 0
+            
+            year_avg_growth = 0
+            if prev_year_avg > 0:
+                year_avg_growth = round(((year_avg_price - prev_year_avg) / prev_year_avg) * 100, 1)
+                year_avg_growth = max(-100, min(100, year_avg_growth))
+            
+            # Month average
+            self.env.cr.execute(avg_query, (current_month_start, current_month_end))
             month_avg_price = self.env.cr.fetchone()[0] or 0
+            
+            self.env.cr.execute(avg_query, (prev_month_start, prev_month_end))
+            prev_month_avg = self.env.cr.fetchone()[0] or 0
+            
+            month_avg_growth = 0
+            if prev_month_avg > 0:
+                month_avg_growth = round(((month_avg_price - prev_month_avg) / prev_month_avg) * 100, 1)
+                month_avg_growth = max(-100, min(100, month_avg_growth))
             
             _logger.info(f"📊 Performance results:")
             _logger.info(f"    Year sales: {cumulative_sales_year:,.0f} (growth: {year_growth}%)")
             _logger.info(f"    Month sales: {current_month_sales:,.0f} (growth: {month_growth}%)")
-            _logger.info(f"    Year avg: {year_avg_price:,.0f}, Month avg: {month_avg_price:,.0f}")
+            _logger.info(f"    Year avg: {year_avg_price:,.0f} (growth: {year_avg_growth}%), Month avg: {month_avg_price:,.0f} (growth: {month_avg_growth}%)")
             
             return {
                 'sales_performance': {
@@ -287,7 +288,9 @@ class PaymentInfos(models.Model):
                 },
                 'average_order_performance': {
                     'cumulative_unit_price_year': int(year_avg_price),
-                    'current_monthly_guest_price': int(month_avg_price)
+                    'year_growth': year_avg_growth,
+                    'current_monthly_guest_price': int(month_avg_price),
+                    'month_growth': month_avg_growth
                 },
                 'data_info': {
                     'max_date': max_date.strftime('%Y-%m-%d'),
@@ -300,7 +303,7 @@ class PaymentInfos(models.Model):
         except Exception as e:
             _logger.error(f"❌ Performance indicators error: {str(e)}")
             return self._get_empty_performance_data()
-
+        
     def _process_daily_data(self, results, start_date, days):
         """Process daily sales data into array"""
         date_amounts = {}
@@ -362,3 +365,4 @@ class PaymentInfos(models.Model):
                 'current_monthly_guest_price': 0
             }
         }
+    
