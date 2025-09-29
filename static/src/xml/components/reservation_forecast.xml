@@ -203,13 +203,13 @@
                                 <div class="alert-message highest" t-if="state.selectedHeatmapBox.isHighest">
                                     <span class="alert-badge">⚠</span>
                                     <span class="alert-text">
-                                        <t t-esc="_t('Its the time with the most reservations.')"/>
+                                        <t t-esc="_t('This is the time slot with the most bookings')"/>
                                     </span>
                                 </div>
                                 <div class="alert-message lowest" t-if="state.selectedHeatmapBox.isLowest">
                                     <span class="alert-badge">ⓘ</span>
                                     <span class="alert-text">
-                                        <t t-esc="_t('Its the time with the least reservations.')"/>
+                                        <t t-esc="_t('This is the time slot with the fewest bookings')"/>
                                     </span>
                                 </div>
                             </div>
@@ -400,7 +400,7 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot other"></span>
-                                    <span>Other</span>
+                                    <span>Others</span>
                                 </div>
                                 <span class="legend-value">18%</span>
                             </div>
