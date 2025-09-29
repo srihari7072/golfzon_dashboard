@@ -56,32 +56,49 @@ export class ChartService {
     return "en-US";
   }
 
-  _formatFullDate(d) {
-    if (!(d instanceof Date)) return "";
+  getWeatherDataForDate(dateLabel) {
     try {
-      const locale = this._getStoredLocale();
-      return d.toLocaleDateString(locale, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        weekday: "long",
-      });
-    } catch (_) {
-      return "";
+      const date = new Date(dateLabel);
+
+      // Sample weather data based on date patterns
+      const weatherOptions = [
+        { condition: "Partly Cloudy", temp: "19°C / 24°C" },
+        { condition: "Rain, 30mm", temp: "18°C / 25°C" },
+        { condition: "Sunny", temp: "22°C / 28°C" },
+        { condition: "Cloudy", temp: "16°C / 23°C" },
+        { condition: "Clear", temp: "20°C / 26°C" },
+      ];
+
+      // Use date to generate consistent weather
+      const weatherIndex = date.getDate() % weatherOptions.length;
+      return weatherOptions[weatherIndex];
+    } catch (error) {
+      console.error("Error getting weather data:", error);
+      return { condition: "Partly Cloudy", temp: "19°C / 24°C" };
     }
   }
 
-  _getWeatherData(date) {
-    // Sample weather data - replace with actual API call if needed
-    const weatherOptions = [
-      { condition: "Rain, 30mm", temp: "18°C / 25°C" },
-      { condition: "Sunny", temp: "22°C / 28°C" },
-      { condition: "Cloudy", temp: "16°C / 23°C" },
-      { condition: "Clear", temp: "20°C / 26°C" },
-    ];
-    // Use date to generate consistent weather (in real app, this would be an API call)
-    const weatherIndex = date.getDate() % weatherOptions.length;
-    return weatherOptions[weatherIndex];
+  getWeatherDataForDate(dateLabel) {
+    try {
+      // Parse the date label
+      const date = new Date(dateLabel);
+
+      // Sample weather data - replace with actual API call or database lookup
+      const weatherOptions = [
+        { condition: "Rain, 30mm", temp: "18°C / 25°C" },
+        { condition: "Sunny", temp: "22°C / 28°C" },
+        { condition: "Cloudy", temp: "16°C / 23°C" },
+        { condition: "Clear", temp: "20°C / 26°C" },
+        { condition: "Partly Cloudy", temp: "19°C / 24°C" },
+      ];
+
+      // Use date to generate consistent weather (in real app, this would be an API call)
+      const weatherIndex = date.getDate() % weatherOptions.length;
+      return weatherOptions[weatherIndex];
+    } catch (error) {
+      console.error("Error getting weather data:", error);
+      return { condition: "Clear", temp: "20°C / 25°C" };
+    }
   }
 
   _formatSalesAmount(value) {
@@ -268,22 +285,74 @@ export class ChartService {
               backgroundColor: "#3C3F44",
               titleColor: "#fff",
               bodyColor: "#fff",
-              padding: 12,
-              cornerRadius: 8,
-              caretSize: 6,
-              titleFont: { size: 14, weight: "600" },
-              bodyFont: { size: 13 },
+              padding: 16,
+              cornerRadius: 12,
+              caretSize: 8,
+              titleFont: { size: 16, weight: "600" },
+              bodyFont: { size: 14 },
               callbacks: {
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  return labels[idx] || "";
+                  const datasetIndex = items[0].datasetIndex;
+
+                  const labelDate = labels[idx];
+                  const date = new Date(labelDate);
+
+                  let displayYear = date.getFullYear();
+                  if (datasetIndex === 1) {
+                    displayYear = displayYear - 1;
+                  }
+
+                  const weekdays = [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                  ];
+                  const months = [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ];
+
+                  return `${weekdays[date.getDay()]}, ${
+                    months[date.getMonth()]
+                  } ${date.getDate()}, ${displayYear}`;
                 },
+
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
-                  // ✅ FORMAT DATABASE AMOUNTS
-                  const formattedValue = `${value.toLocaleString()} won`;
+                  const formattedValue = value.toLocaleString() + " won";
                   return `Sales: ${formattedValue}`;
+                },
+
+                afterLabel: (ctx) => {
+                  const datasetIndex = ctx.datasetIndex;
+
+                  if (datasetIndex === 1) {
+                    const idx = ctx.dataIndex;
+                    const weatherData = this.getWeatherDataForDate(labels[idx]);
+
+                    return [
+                      `Weather: ${weatherData.condition}`,
+                      `Temperature: ${weatherData.temp}`,
+                    ];
+                  }
+
+                  return [];
                 },
               },
             },
@@ -464,20 +533,73 @@ export class ChartService {
               backgroundColor: "#3C3F44",
               titleColor: "#fff",
               bodyColor: "#fff",
-              padding: 12,
-              cornerRadius: 8,
-              caretSize: 6,
-              titleFont: { size: 14, weight: "600" },
-              bodyFont: { size: 13 },
+              padding: 16,
+              cornerRadius: 12,
+              caretSize: 8,
+              titleFont: { size: 16, weight: "600" },
+              bodyFont: { size: 14 },
               callbacks: {
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  return labels[idx] || "";
+                  const datasetIndex = items[0].datasetIndex;
+
+                  const labelDate = labels[idx];
+                  const date = new Date(labelDate);
+
+                  let displayYear = date.getFullYear();
+                  if (datasetIndex === 1) {
+                    displayYear = displayYear - 1;
+                  }
+
+                  const weekdays = [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                  ];
+                  const months = [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ];
+
+                  return `${weekdays[date.getDay()]}, ${
+                    months[date.getMonth()]
+                  } ${date.getDate()}, ${displayYear}`;
                 },
+
                 label: (ctx) => {
-                  const value = parseInt(ctx.raw) || 0; // ✅ FIXED: Ensure integer display
-                  return `Visitors: ${value.toLocaleString()}`;
+                  const value = parseInt(ctx.raw) || 0;
+                  return `Number of guests: ${value.toLocaleString()}`;
+                },
+
+                afterLabel: (ctx) => {
+                  const datasetIndex = ctx.datasetIndex;
+
+                  if (datasetIndex === 1) {
+                    const idx = ctx.dataIndex;
+                    const weatherData = this.getWeatherDataForDate(labels[idx]);
+
+                    return [
+                      `Weather: ${weatherData.condition}`,
+                      `Temperature: ${weatherData.temp}`,
+                    ];
+                  }
+
+                  return [];
                 },
               },
             },
@@ -728,19 +850,75 @@ export class ChartService {
               backgroundColor: "#333",
               titleColor: "#fff",
               bodyColor: "#fff",
-              padding: 10,
-              cornerRadius: 6,
-              titleFont: { size: 13, weight: "600" },
-              bodyFont: { size: 12 },
+              padding: 16,
+              cornerRadius: 12,
+              caretSize: 8,
+              titleFont: { size: 16, weight: "600" },
+              bodyFont: { size: 14 },
               callbacks: {
                 title: (items) => {
-                  const index = items[0]?.dataIndex;
-                  return labels[index] || "";
+                  if (!items || !items[0]) return "";
+                  const idx = items[0].dataIndex;
+                  const datasetIndex = items[0].datasetIndex;
+
+                  const labelDate = labels[idx];
+                  const date = new Date(labelDate);
+
+                  // ✅ ENHANCED: Different year based on dataset
+                  let displayYear = date.getFullYear();
+                  if (datasetIndex === 1) {
+                    displayYear = displayYear - 1; // Previous year data
+                  }
+
+                  const weekdays = [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                  ];
+                  const months = [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December",
+                  ];
+
+                  return `${weekdays[date.getDay()]}, ${
+                    months[date.getMonth()]
+                  } ${date.getDate()}, ${displayYear}`;
                 },
+
                 label: (ctx) => {
-                  const isPrevYear = ctx.datasetIndex === 1;
-                  const prefix = isPrevYear ? "This Year" : "Last Year"; // This year / Last year
-                  return `${prefix}: ${ctx.parsed.y} reservations`; // English: cases/reservations
+                  const value = parseInt(ctx.parsed.y) || 0;
+                  return `Reservations: ${value.toLocaleString()}`;
+                },
+
+                afterLabel: (ctx) => {
+                  const datasetIndex = ctx.datasetIndex;
+
+                  // ✅ Only show weather for previous year (dataset 1)
+                  if (datasetIndex === 1) {
+                    const idx = ctx.dataIndex;
+                    const weatherData = this.getWeatherDataForDate(labels[idx]);
+
+                    return [
+                      `Weather: ${weatherData.condition}`,
+                      `Temperature: ${weatherData.temp}`,
+                    ];
+                  }
+
+                  return [];
                 },
               },
             },
@@ -905,7 +1083,6 @@ export class ChartService {
     }
   }
 
-  // ✅ FIXED: Remove hardcoded data from fetchAgeDemographics
   async fetchAgeDemographics() {
     console.log("🔄 ChartService: Fetching age demographics from database...");
     try {
@@ -935,41 +1112,6 @@ export class ChartService {
     }
   }
 
-  // ✅ FIXED: Remove hardcoded data from fetchGenderDemographics
-  async fetchGenderDemographics() {
-    console.log(
-      "🔄 ChartService: Fetching gender demographics from database..."
-    );
-    try {
-      const url = window.location.origin + "/golfzon/api/demographics/gender";
-      const response = await fetch(url);
-      console.log(`📞 Gender API: ${response.status} ${response.statusText}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      if (data.status === "success" && data.data && data.data.has_data) {
-        console.log("✅ Gender demographics fetched from database:", {
-          malePercentage: data.data.male_percentage,
-          femalePercentage: data.data.female_percentage,
-          totalPersons: data.data.total_persons,
-          dataSource: data.data.data_source,
-          isample: data.data.is_sample || false,
-        });
-        return data.data;
-      } else {
-        console.error("❌ Gender demographics fetch failed:", data.message);
-        return null;
-      }
-    } catch (error) {
-      console.error("❌ Error fetching gender demographics:", error);
-      return null;
-    }
-  }
-
-  // ✅ FIXED: Age Chart with Database Data
   async createAgeChart(canvasEl) {
     if (!this._validateCanvas(canvasEl, "Age Chart")) return;
     console.log("🔄 ChartService: Creating age chart with database data...");
@@ -1156,134 +1298,6 @@ export class ChartService {
     }
   }
 
-  // ✅ COMPLETE setGenderPercent method - Add this to your ChartService class
-  setGenderPercent(male, female) {
-    console.log(
-      `🔄 ChartService: Setting gender percentages - Male: ${male}%, Female: ${female}%`
-    );
-
-    try {
-      // ✅ FIXED: Find gender display elements safely
-      const malePercent = document.querySelector(
-        "#malePercent, [data-male-percent], .male-percentage"
-      );
-      const femalePercent = document.querySelector(
-        "#femalePercent, [data-female-percent], .female-percentage"
-      );
-
-      // ✅ FIXED: Find SVG fill elements safely
-      const maleFill = document.querySelector(
-        "#maleFill, [data-male-fill], .male-fill"
-      );
-      const femaleFill = document.querySelector(
-        "#femaleFill, [data-female-fill], .female-fill"
-      );
-
-      // Update percentage text display
-      if (malePercent) {
-        malePercent.textContent = `${male}%`;
-        console.log(`✅ Updated male percentage display: ${male}%`);
-      } else {
-        console.warn("⚠️ Male percentage element not found");
-      }
-
-      if (femalePercent) {
-        femalePercent.textContent = `${female}%`;
-        console.log(`✅ Updated female percentage display: ${female}%`);
-      } else {
-        console.warn("⚠️ Female percentage element not found");
-      }
-
-      // Update SVG fill heights if available
-      if (maleFill && femaleFill) {
-        const maxHeight = 400; // Default SVG viewBox height
-
-        // Calculate fill heights
-        const maleHeight = (maxHeight * male) / 100;
-        const femaleHeight = (maxHeight * female) / 100;
-
-        // Update male fill
-        maleFill.setAttribute("y", maxHeight - maleHeight);
-        maleFill.setAttribute("height", maleHeight);
-
-        // Update female fill
-        femaleFill.setAttribute("y", maxHeight - femaleHeight);
-        femaleFill.setAttribute("height", femaleHeight);
-
-        console.log(
-          `✅ Updated SVG fills - Male: ${maleHeight}px, Female: ${femaleHeight}px`
-        );
-      } else {
-        console.log(
-          "ℹ️ SVG fill elements not found (this is normal if using different display method)"
-        );
-      }
-
-      // ✅ ALTERNATIVE: Update any data attributes for other display methods
-      const genderContainer = document.querySelector(
-        "[data-gender-display], .gender-ratio-container"
-      );
-      if (genderContainer) {
-        genderContainer.setAttribute("data-male-percent", male);
-        genderContainer.setAttribute("data-female-percent", female);
-      }
-
-      console.log(
-        `✅ Gender percentages set successfully: Male ${male}%, Female ${female}%`
-      );
-    } catch (error) {
-      console.error("❌ Error setting gender percentages:", error);
-      console.warn("⚠️ Gender animation may not work - DOM elements not found");
-    }
-  }
-
-  // ✅ FIXED: Enhanced initializeGenderAnimation method
-  async initializeGenderAnimation() {
-    console.log(
-      "🔄 ChartService: Initializing gender animation with database data..."
-    );
-
-    try {
-      // Wait a bit for DOM to be ready
-      await new Promise((resolve) => setTimeout(resolve, 200));
-
-      // Fetch real gender data from database
-      const genderData = await this.fetchGenderDemographics();
-
-      if (!genderData || !genderData.has_data) {
-        console.warn(
-          "⚠️ ChartService: No gender data available, using sample data"
-        );
-        // Use sample data for demonstration
-        this.setGenderPercent(76, 24);
-        return;
-      }
-
-      console.log(
-        "✅ ChartService: Setting gender animation with database data:",
-        {
-          male: genderData.male_percentage,
-          female: genderData.female_percentage,
-          totalPersons: genderData.total_persons,
-        }
-      );
-
-      // ✅ FIXED: Set gender percentages with database values
-      this.setGenderPercent(
-        Math.round(genderData.male_percentage),
-        Math.round(genderData.female_percentage)
-      );
-    } catch (error) {
-      console.error(
-        "❌ ChartService: Error initializing gender animation:",
-        error
-      );
-      // Fallback to default values
-      this.setGenderPercent(50, 50);
-    }
-  }
-
-  // ✅ ADDITIONAL: Helper method to check if gender elements exist
   checkGenderElements() {
     const elements = {
       malePercent: document.querySelector(
@@ -1312,5 +1326,186 @@ export class ChartService {
     });
 
     return elements;
+  }
+
+  async fetchGenderDemographics() {
+    console.log(
+      "📊 ChartService: Fetching gender demographics from database..."
+    );
+    try {
+      const url = `${window.location.origin}/golfzon/api/demographics/gender`;
+      const response = await fetch(url);
+
+      console.log(
+        "📊 Gender API response.status:",
+        response.status,
+        response.statusText
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === "success" && data.data && data.data.has_data) {
+        console.log("📊 Gender demographics fetched from database:", {
+          malePercentage: data.data.male_percentage,
+          femalePercentage: data.data.female_percentage,
+          totalPersons: data.data.total_persons,
+          dateRange: data.data.date_range,
+          dataSource: data.data.data_source,
+          isSample: data.data.is_sample,
+        });
+        return data.data;
+      } else {
+        console.warn("📊 No gender data available from database");
+        return null; // ✅ CHANGED: Return null instead of sample data
+      }
+    } catch (error) {
+      console.error("❌ Error fetching gender demographics:", error);
+      return null; // ✅ CHANGED: Return null instead of sample data
+    }
+  }
+
+  async initializeGenderAnimation() {
+    console.log(
+      "📊 ChartService: Initializing gender animation with database data..."
+    );
+    try {
+      // Wait for DOM to be ready
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // ✅ FETCH REAL DATA from database
+      const genderData = await this.fetchGenderDemographics();
+
+      if (!genderData || !genderData.has_data) {
+        console.warn(
+          "📊 ChartService: No gender data available - showing empty state"
+        );
+        // ✅ SHOW EMPTY STATE instead of sample data
+        this.setGenderPercent(0, 0);
+        return;
+      }
+
+      console.log(
+        "📊 ChartService: Setting gender animation with database data:",
+        {
+          male: Math.round(genderData.male_percentage),
+          female: Math.round(genderData.female_percentage),
+          totalPersons: genderData.total_persons,
+        }
+      );
+
+      // ✅ SET REAL DATA from database
+      this.setGenderPercent(
+        Math.round(genderData.male_percentage),
+        Math.round(genderData.female_percentage)
+      );
+    } catch (error) {
+      console.error(
+        "❌ ChartService: Error initializing gender animation:",
+        error
+      );
+      // ✅ EMPTY STATE on error
+      this.setGenderPercent(0, 0);
+    }
+  }
+
+  setGenderPercent(male, female) {
+    console.log(
+      `📊 ChartService: Setting gender percentages - Male: ${male}%, Female: ${female}%`
+    );
+    try {
+      // Find gender display elements
+      const malePercent = document.querySelector(
+        "#malePercent, [data-male-percent], .male-percentage"
+      );
+      const femalePercent = document.querySelector(
+        "#femalePercent, [data-female-percent], .female-percentage"
+      );
+
+      // Find SVG fill elements
+      const maleFill = document.querySelector(
+        "#maleFill, [data-male-fill], .male-fill"
+      );
+      const femaleFill = document.querySelector(
+        "#femaleFill, [data-female-fill], .female-fill"
+      );
+
+      // ✅ HANDLE EMPTY STATE
+      if (male === 0 && female === 0) {
+        if (malePercent) malePercent.textContent = "0%";
+        if (femalePercent) femalePercent.textContent = "0%";
+
+        if (maleFill) {
+          maleFill.setAttribute("height", "0");
+          maleFill.setAttribute("y", "400");
+        }
+        if (femaleFill) {
+          femaleFill.setAttribute("height", "0");
+          femaleFill.setAttribute("y", "400");
+        }
+
+        console.log("📊 Gender display set to empty state");
+        return;
+      }
+
+      // Update percentage text display
+      if (malePercent) {
+        malePercent.textContent = `${male}%`;
+        console.log("✅ Updated male percentage display:", `${male}%`);
+      } else {
+        console.warn("⚠️ Male percentage element not found");
+      }
+
+      if (femalePercent) {
+        femalePercent.textContent = `${female}%`;
+        console.log("✅ Updated female percentage display:", `${female}%`);
+      } else {
+        console.warn("⚠️ Female percentage element not found");
+      }
+
+      // Update SVG fill heights if available
+      if (maleFill && femaleFill) {
+        const maxHeight = 400; // Default SVG viewBox height
+
+        // Calculate fill heights based on percentages
+        const maleHeight = (maxHeight * male) / 100;
+        const femaleHeight = (maxHeight * female) / 100;
+
+        // Update male fill
+        maleFill.setAttribute("y", maxHeight - maleHeight);
+        maleFill.setAttribute("height", maleHeight);
+
+        // Update female fill
+        femaleFill.setAttribute("y", maxHeight - femaleHeight);
+        femaleFill.setAttribute("height", femaleHeight);
+
+        console.log(
+          `✅ Updated SVG fills - Male: ${maleHeight}px, Female: ${femaleHeight}px`
+        );
+      } else {
+        console.log(
+          "ℹ️ SVG fill elements not found (this is normal if using different display method)"
+        );
+      }
+
+      // Update data attributes for other display methods
+      const genderContainer = document.querySelector(
+        "[data-gender-display], .gender-ratio-container"
+      );
+      if (genderContainer) {
+        genderContainer.setAttribute("data-male-percent", male);
+        genderContainer.setAttribute("data-female-percent", female);
+      }
+
+      console.log(
+        `✅ Gender percentages set successfully - Male: ${male}%, Female: ${female}%`
+      );
+    } catch (error) {
+      console.error("❌ Error setting gender percentages:", error);
+      console.warn("⚠️ Gender animation may not work - DOM elements not found");
+    }
   }
 }
