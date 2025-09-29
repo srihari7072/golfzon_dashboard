@@ -121,7 +121,7 @@
         <div class="info-section dropdown-section">
             <button class="weather-details-btn" t-on-click="toggleWeatherDetails">
                 <span>
-                    <t t-esc="_t('Weather &amp; Round Details')"/>
+                    <t t-esc="_t('Close Weather &amp; Round')"/>
                 </span>
                 <span class="dropdown-arrow" t-att-class="state.showWeatherDetails ? 'open' : ''">
                     <img src="/golfzon_dashboard/static/src/img/dropdown-arrow.svg" alt="Dropdown Arrow"/>
@@ -198,7 +198,7 @@
                         <t t-esc="_t('Tee Time')"/>
                     </th>
                     <th>
-                        <t t-esc="_t('Rounds')"/>
+                        <t t-esc="_t('Number of Rounds')"/>
                     </th>
                 </tr>
             </thead>
