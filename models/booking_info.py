@@ -1,7 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime, date, timedelta
 import logging
-from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
@@ -99,8 +98,9 @@ class BookingInfo(models.Model):
             
             booking_list = []
             for booking in bookings:
+                booking_id = int(booking.bookg_info_id) if booking.bookg_info_id else 0
                 booking_data = {
-                    'id': booking.bookg_no or f'B{booking.bookg_info_id}',
+                    'id': booking_id,
                     'person': booking.contact_name or booking.bookg_name or 'Unknown',
                     'date': booking.created_at.strftime('%Y-%m-%d') if booking.created_at else '',
                     'teeTime': self._calculate_tee_time_from_db(booking),
@@ -482,23 +482,23 @@ class BookingInfo(models.Model):
         
         # Define structure
         time_slots = [
-            _("Early Morning(5 AM -7 AM)"),
-            _("Morning(8 AM -12 PM)"),
-            _("Afternoon(1 PM -4 PM)"),
-            _("Night(5 PM -7 PM)")
+            ("Early Morning(5 AM -7 AM)"),
+            ("Morning(8 AM -12 PM)"),
+            ("Afternoon(1 PM -4 PM)"),
+            ("Night(5 PM -7 PM)")
         ]
         
         hour_ranges = {
-            _("Early Morning(5 AM -7 AM)"): list(range(5, 8)),
-            _("Morning(8 AM -12 PM)"): list(range(8, 13)),
-            _("Afternoon(1 PM -4 PM)"): list(range(13, 17)),
-            _("Night(5 PM -7 PM)"): list(range(17, 20))
+            ("Early Morning(5 AM -7 AM)"): list(range(5, 8)),
+            ("Morning(8 AM -12 PM)"): list(range(8, 13)),
+            ("Afternoon(1 PM -4 PM)"): list(range(13, 17)),
+            ("Night(5 PM -7 PM)"): list(range(17, 20))
         }
         
         # Build heatmap grid and details
         rows = []
         cell_details = {}  # Pre-calculated details for instant access
-        day_names = [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")]
+        day_names = [("Sunday"), ("Monday"), ("Tuesday"), ("Wednesday"), ("Thursday"), ("Friday"), ("Saturday")]
         
         for time_index, time_slot in enumerate(time_slots):
             row_data = []
@@ -528,11 +528,11 @@ class BookingInfo(models.Model):
                     hour_display = self._format_hour_display(hour)
                     
                     if teams_count == 1:
-                        teams_text = _("1 team")
+                        teams_text = ("1 team")
                     elif teams_count == 0:
-                        teams_text = _("0 teams")
+                        teams_text = ("0 teams")
                     else:
-                        teams_text = f"{teams_count} {_('teams')}"
+                        teams_text = f"{teams_count} {('teams')}"
                     
                     hourly_breakdown.append({
                         'hour': hour_display,
@@ -560,7 +560,7 @@ class BookingInfo(models.Model):
         
         # Generate day headers
         day_headers = []
-        day_names_short = [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")]
+        day_names_short = [("Sunday"), ("Monday"), ("Tuesday"), ("Wednesday"), ("Thursday"), ("Friday"), ("Saturday")]
         
         for day_offset in range(7):
             current_date = start_date + timedelta(days=day_offset)
@@ -598,12 +598,12 @@ class BookingInfo(models.Model):
                 }
         
         return {
-            'headers': [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")],
+            'headers': [("Sunday"), ("Monday"), ("Tuesday"), ("Wednesday"), ("Thursday"), ("Friday"), ("Saturday")],
             'rows': [
-                {'label': _("Early Morning(5 AM -7 AM)"), 'data': [0, 0, 0, 0, 0, 0, 0]},
-                {'label': _("Morning(8 AM -12 PM)"), 'data': [0, 0, 0, 0, 0, 0, 0]},
-                {'label': _("Afternoon(1 PM -4 PM)"), 'data': [0, 0, 0, 0, 0, 0, 0]},
-                {'label': _("Night(5 PM -7 PM)"), 'data': [0, 0, 0, 0, 0, 0, 0]}
+                {'label': ("Early Morning(5 AM -7 AM)"), 'data': [0, 0, 0, 0, 0, 0, 0]},
+                {'label': ("Morning(8 AM -12 PM)"), 'data': [0, 0, 0, 0, 0, 0, 0]},
+                {'label': ("Afternoon(1 PM -4 PM)"), 'data': [0, 0, 0, 0, 0, 0, 0]},
+                {'label': ("Night(5 PM -7 PM)"), 'data': [0, 0, 0, 0, 0, 0, 0]}
             ],
             'cell_details': cell_details,
             'date_range': {'start_date': '', 'end_date': ''}
