@@ -121,13 +121,9 @@ export class GolfDataService {
     console.log("🔄 Fetching performance data from database...");
 
     try {
-      // ✅ REMOVE HARDCODED DATA - Fetch from database
       const url =
         window.location.origin + "/golfzon/api/performance_indicators";
-      console.log(`📞 Fetching performance data from: ${url}`);
-
       const response = await fetch(url);
-      console.log(`📞 Performance response status: ${response.status}`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -137,7 +133,6 @@ export class GolfDataService {
       console.log("✅ Performance data fetched from database:", data);
 
       if (data.status === "success" && data.data) {
-        // ✅ RETURN DATABASE DATA in the format expected by templates
         return {
           sales_performance: {
             current_revenue:
@@ -156,8 +151,12 @@ export class GolfDataService {
               data.data.average_order_performance.cumulative_unit_price_year.toLocaleString(),
             monthly_value:
               data.data.average_order_performance.current_monthly_guest_price.toLocaleString(),
-            current_trend: "+11%", // You can calculate this from database if needed
-            monthly_trend: "+13%", // You can calculate this from database if needed
+            current_trend: `${
+              data.data.average_order_performance.year_growth >= 0 ? "+" : ""
+            }${data.data.average_order_performance.year_growth}%`,
+            monthly_trend: `${
+              data.data.average_order_performance.month_growth >= 0 ? "+" : ""
+            }${data.data.average_order_performance.month_growth}%`,
           },
           utilization_rate: {
             current_weekly_capacity:
