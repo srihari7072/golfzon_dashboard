@@ -25,8 +25,6 @@ class DaySumGreenfees(models.Model):
     created_id = fields.Integer("Created By")
     created_at = fields.Datetime("Created At")
 
-
-    # ✅ NEW: Get actual database date ranges for greenfees
     @api.model
     def get_database_date_ranges(self):
         """Get actual min/max dates from greenfees database"""
@@ -69,7 +67,6 @@ class DaySumGreenfees(models.Model):
             _logger.error(f"❌ Error getting greenfee date ranges: {str(e)}")
             return None
 
-    # ✅ UPDATED: Smart utilization performance based on actual data
     @api.model
     def get_utilization_performance_data(self):
         """Get utilization performance data using database-driven date ranges"""
@@ -85,23 +82,27 @@ class DaySumGreenfees(models.Model):
             
             _logger.info(f"📊 Greenfee utilization for year {max_year}, month {max_month}")
             
-            # Cumulative operation rate this year up to max_date
-            year_operation_query = """
+            # Define date ranges for year (cumulative YTD)
+            current_year_start = date(max_year, 1, 1)
+            current_year_end = max_date
+            prev_year_start = current_year_start.replace(year=max_year - 1)
+            prev_year_end = max_date.replace(year=max_year - 1)
+            
+            # Year sum query
+            year_sum_query = """
                 SELECT 
                     SUM(CAST(tot_amt AS DECIMAL(15,2))) as year_operation_amount,
                     SUM(CAST(visit_cnt AS INTEGER)) as year_total_visits,
                     COUNT(DISTINCT hole_scd) as active_holes
                 FROM day_sum_greenfees 
-                WHERE EXTRACT(YEAR FROM visit_date) = %s
-                  AND visit_date <= %s
+                WHERE visit_date >= %s AND visit_date <= %s
+                AND tot_amt > 0
             """
             
-            self.env.cr.execute(year_operation_query, (max_year, max_date))
+            self.env.cr.execute(year_sum_query, (current_year_start, current_year_end))
             year_stats = self.env.cr.fetchone()
             
-            # Previous year for comparison
-            prev_year_end = max_date.replace(year=max_year - 1)
-            self.env.cr.execute(year_operation_query, (max_year - 1, prev_year_end))
+            self.env.cr.execute(year_sum_query, (prev_year_start, prev_year_end))
             prev_year_stats = self.env.cr.fetchone()
             
             # Calculate year growth
@@ -113,28 +114,26 @@ class DaySumGreenfees(models.Model):
                 year_growth = round(((current_year_amount - prev_year_amount) / prev_year_amount) * 100, 1)
                 year_growth = max(-100, min(100, year_growth))
             
-            # Current month operation
-            month_operation_query = """
+            # Define date ranges for month (partial current month based on max_date)
+            current_month_start = max_date.replace(day=1)
+            current_month_end = max_date
+            prev_month_start = current_month_start.replace(year=max_year - 1)
+            prev_month_end = max_date.replace(year=max_year - 1)
+            
+            # Month sum query (no active_holes for month)
+            month_sum_query = """
                 SELECT 
                     SUM(CAST(tot_amt AS DECIMAL(15,2))) as month_operation_amount,
                     SUM(CAST(visit_cnt AS INTEGER)) as month_total_visits
                 FROM day_sum_greenfees 
-                WHERE EXTRACT(YEAR FROM visit_date) = %s
-                  AND EXTRACT(MONTH FROM visit_date) = %s
+                WHERE visit_date >= %s AND visit_date <= %s
+                AND tot_amt > 0
             """
             
-            self.env.cr.execute(month_operation_query, (max_year, max_month))
+            self.env.cr.execute(month_sum_query, (current_month_start, current_month_end))
             month_stats = self.env.cr.fetchone()
             
-            # Previous month for comparison
-            if max_month > 1:
-                prev_month = max_month - 1
-                prev_month_year = max_year
-            else:
-                prev_month = 12
-                prev_month_year = max_year - 1
-            
-            self.env.cr.execute(month_operation_query, (prev_month_year, prev_month))
+            self.env.cr.execute(month_sum_query, (prev_month_start, prev_month_end))
             prev_month_stats = self.env.cr.fetchone()
             
             # Calculate month growth
@@ -184,3 +183,4 @@ class DaySumGreenfees(models.Model):
                 'active_holes': 0
             }
         }
+    
