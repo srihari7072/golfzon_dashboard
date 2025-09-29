@@ -451,11 +451,30 @@ class GolfzonDashboard extends Component {
           avgPrice: this.state.salesData.totals.average_unit_price,
         });
 
-        // Update forecast data for period display
+        // ✅ REPLACE WITH THIS CODE:
+        const currentDate = new Date();
+        const days = period === "7days" ? 7 : 30;
+        const endDate = new Date(currentDate);
+        const startDate = new Date(currentDate);
+        startDate.setDate(currentDate.getDate() - (days - 1));
+
+        // Format dates: "August 29, 2025 – September 27, 2025"
+        const startFormatted = startDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+        const endFormatted = endDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
         const periodText =
           period === "7days"
-            ? _t("Last 7 Days Data Analysis")
-            : _t("Last 30 Days Data Analysis");
+            ? this._t(`Analysis Period: Last 7 days (${startFormatted} – ${endFormatted})`)
+            : this._t(`Analysis Period: Last 30 days (${startFormatted} – ${endFormatted})`);
 
         this.state.forecastData.analysis_period = periodText;
       } else {
@@ -634,7 +653,7 @@ class GolfzonDashboard extends Component {
   }
 
   logout() {
-    window.location.href = "/web/session/logout";
+    window.location.href = "/custom/logout";
   }
 
   getHeatmapCellClass(value) {
