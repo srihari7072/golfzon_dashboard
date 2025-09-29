@@ -82,7 +82,6 @@ class GolfzonDashboardController(http.Controller):
                 headers={'Content-Type': 'application/json'}
             )
         
-    # In your controllers/main.py - wherever you handle reservation data
     @http.route('/golfzon/api/reservation_data', type='http', auth='user', methods=['GET'], csrf=False, website=True)
     def get_reservation_data_http(self, period='30days', **kwargs):
         """Reservation data endpoint - FIXED for cross-system compatibility"""
@@ -297,7 +296,7 @@ class GolfzonDashboardController(http.Controller):
             booking_model = request.env['booking.info']
             heatmap_data = booking_model.get_heatmap_data_with_details()
             
-            _logger.info(f"📊 Heatmap API Success with pre-calculated details:")
+            _logger.info(_(f"📊 Heatmap API Success with pre-calculated details:"))
             _logger.info(f"    Date Range: {heatmap_data['date_range']}")
             _logger.info(f"    Pre-calculated cells: {len(heatmap_data['cell_details'])}")
             
@@ -312,7 +311,7 @@ class GolfzonDashboardController(http.Controller):
             )
             
         except Exception as e:
-            _logger.error(f"❌ Heatmap API error: {str(e)}")
+            _logger.error(_(f"❌ Heatmap API error: {str(e)}"))
             # Return empty but valid structure
             booking_model = request.env['booking.info']
             empty_data = booking_model._get_empty_heatmap_with_details()
@@ -431,17 +430,16 @@ class GolfzonDashboardController(http.Controller):
 
     @http.route('/golfzon/api/visitor_data', type='http', auth='user', methods=['GET'], csrf=False, website=True)
     def get_visitor_data_http(self, period='30days', **kwargs):
-        """HTTP endpoint for visitor chart data - SAME PATTERN AS RESERVATION"""
+        """HTTP endpoint for visitor chart data - DYNAMIC DATE RANGE"""
         try:
-            # ✅ COPY EXACT PATTERN from your working reservation chart
             visitor_model = request.env['visit.customer']
             days = 7 if period == '7days' else 30
             
-            # Get data summary first (same as reservation)
+            # Get data summary first
             data_summary = visitor_model.get_visitor_data_summary()
-            _logger.info(f"📊 HTTP Visitor API - Database Summary: {data_summary}")
             
             if not data_summary['has_data']:
+                # Return empty structure if no data
                 response_data = {
                     'status': 'success',
                     'chart_type': 'visitor',
@@ -462,9 +460,8 @@ class GolfzonDashboardController(http.Controller):
                     }
                 }
             else:
-                # ✅ COPY EXACT PATTERN: Get chart data
+                # Get chart data with dynamic date range
                 chart_data = visitor_model.get_visitor_chart_data(days)
-                _logger.info(f"📊 HTTP Visitor API - Success: Period {chart_data['date_info']['current_start']} to {chart_data['date_info']['current_end']}")
                 
                 response_data = {
                     'status': 'success',
@@ -550,15 +547,19 @@ class GolfzonDashboardController(http.Controller):
 
     @http.route('/golfzon/api/demographics/gender', type='http', auth='user', methods=['GET'], csrf=False, website=True)
     def get_gender_demographics_http(self, **kwargs):
-        """Gender demographics endpoint - UPDATED to use visit_customers"""
+        """Gender demographics endpoint - CLEANED to use ONLY database data"""
         try:
-            _logger.info("🔄 Gender Demographics API called - Using visit_customers table")
+            _logger.info("📊 Gender Demographics API called - Using visit_customers table")
             
-            # ✅ CHANGED: Use visit.customer model instead of golfzon.person
             visitor_model = request.env['visit.customer']
             gender_data = visitor_model.get_gender_statistics_from_visitors()
             
-            _logger.info(f"📊 Gender API Response from visit_customers: Male={gender_data['male_percentage']}%, Female={gender_data['female_percentage']}%")
+            _logger.info(f"📊 Gender API Response from visit_customers:")
+            _logger.info(f"   Male: {gender_data['male_percentage']}%")
+            _logger.info(f"   Female: {gender_data['female_percentage']}%")
+            _logger.info(f"   Total persons: {gender_data['total_persons']}")
+            _logger.info(f"   Has data: {gender_data['has_data']}")
+            _logger.info(f"   Is sample: {gender_data['is_sample']}")
             
             response_data = {
                 'status': 'success',
@@ -570,7 +571,7 @@ class GolfzonDashboardController(http.Controller):
                 headers={
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS', 
+                    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
                     'Access-Control-Allow-Headers': 'Content-Type'
                 }
             )
@@ -580,23 +581,23 @@ class GolfzonDashboardController(http.Controller):
             import traceback
             _logger.error(f"❌ Traceback: {traceback.format_exc()}")
             
-            # Return sample data on error
-            sample_data = {
-                'male_percentage': 74,
-                'female_percentage': 26,
-                'male_count': 740,
-                'female_count': 260,
-                'total_persons': 1000,
-                'has_data': True,
-                'is_sample': True,
+            # ✅ REMOVED: No more sample data fallback
+            error_data = {
+                'male_percentage': 0.0,
+                'female_percentage': 0.0,
+                'male_count': 0,
+                'female_count': 0,
+                'total_persons': 0,
+                'has_data': False,
+                'is_sample': False,
                 'data_source': 'visit_customers',
                 'error': str(e)
             }
             
             return request.make_response(
                 json.dumps({
-                    'status': 'success', # Return success with sample data
-                    'data': sample_data
+                    'status': 'error', 
+                    'data': error_data
                 }),
                 headers={'Content-Type': 'application/json'}
             )
@@ -719,7 +720,6 @@ class GolfzonDashboardController(http.Controller):
                 }),
                 headers={'Content-Type': 'application/json'}
             )
-
     
     @http.route('/golfzon/api/performance_indicators', type='http', auth='user', methods=['GET'], csrf=False)
     def get_performance_indicators_http(self, **kwargs):
