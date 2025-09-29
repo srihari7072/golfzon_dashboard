@@ -130,7 +130,7 @@ class Person(models.Model):
                         # Format: 1980-09-24 00:00:00 (your database format)
                         if ' ' in birth_date_str and ':' in birth_date_str:
                             birth_date = datetime.strptime(birth_date_str.split(' ')[0], '%Y-%m-%d').date()
-                            _logger.info(f"📊 Parsed timestamp format: {birth_date_str} → {birth_date}")
+                            # _logger.info(f"📊 Parsed timestamp format: {birth_date_str} → {birth_date}")
                         else:
                             # Try other formats
                             formats = ['%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%Y/%m/%d']
