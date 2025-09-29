@@ -14,7 +14,7 @@ class VisitCustomer(models.Model):
     visit_team_id = fields.Char(string="Visit Team ID")
     bookg_info_id = fields.Char(string="Booking Info ID")
     account_id = fields.Char(string="Account ID")
-    visit_date = fields.Char(string="Visit Date")
+    visit_date = fields.Date(string="Visit Date")
     visit_name = fields.Char(string="Visit Name")
     person_code = fields.Char(string="Person Code")
     member_cd_id = fields.Char(string="Member Code ID")
@@ -106,111 +106,89 @@ class VisitCustomer(models.Model):
 
     @api.model
     def get_visitor_chart_data(self, days=30):
-        """Get visitor chart data - FIXED for cross-system compatibility"""
+        """Get visitor chart data with dynamic date range based on latest available data"""
         try:
-            _logger.info(f"📊 Getting visitor chart data for {days} days...")
-
-            # Get data summary first
+            _logger.info(f"📊 Getting visitor chart data for {days} days with dynamic date range...")
+            
+            # Get data summary first to find latest available date
             data_summary = self.get_visitor_data_summary()
-
+            
             if not data_summary['has_data']:
                 _logger.warning(f"❌ No visitor data: {data_summary['message']}")
                 return self._get_empty_visitor_chart_data(days)
-
-            # Use string date from summary
+            
+            # ✅ KEY FIX: Use latest available date from database as end date
             latest_date = datetime.strptime(data_summary['latest_date'], '%Y-%m-%d').date()
-            current_end_date = latest_date  # 2021-10-21
-            current_start_date = current_end_date - timedelta(days=days-1)
-
-            # Previous year dates
-            prev_year_end_date = current_end_date.replace(year=current_end_date.year - 1)
-            prev_year_start_date = current_start_date.replace(year=current_start_date.year - 1)
-
-            _logger.info(f"📊 Visitor periods:")
-            _logger.info(f"    Current: {current_start_date} to {current_end_date}")
-            _logger.info(f"    Previous year: {prev_year_start_date} to {prev_year_end_date}")
-
-            # ✅ FIXED: Cross-system compatible queries
+            current_end_date = latest_date  # 2021-10-21 (dynamic based on DB)
+            current_start_date = current_end_date - timedelta(days=days-1)  # 2021-09-22 for 30 days
+            
+            # Previous year dates - same date range but previous year
+            prev_year_end_date = current_end_date.replace(year=current_end_date.year - 1)  # 2020-10-21
+            prev_year_start_date = current_start_date.replace(year=current_start_date.year - 1)  # 2020-09-22
+            
+            _logger.info(f"📊 Dynamic Visitor periods:")
+            _logger.info(f"   Current: {current_start_date} to {current_end_date}")
+            _logger.info(f"   Previous year: {prev_year_start_date} to {prev_year_end_date}")
+            
+            # Fetch current period data
             current_query = """
-                SELECT 
-                    CAST(visit_date AS DATE) as visit_date,
-                    CAST(COUNT(*) AS INTEGER) as visitor_count
-                FROM visit_customers 
-                WHERE CAST(visit_date AS DATE) BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
-                GROUP BY CAST(visit_date AS DATE)
-                ORDER BY CAST(visit_date AS DATE)
+            SELECT
+                CAST(visit_date AS DATE) as visit_date,
+                CAST(COUNT(*) AS INTEGER) as visitor_count
+            FROM visit_customers
+            WHERE CAST(visit_date AS DATE) BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
+            GROUP BY CAST(visit_date AS DATE)
+            ORDER BY CAST(visit_date AS DATE)
             """
-
+            
             self.env.cr.execute(current_query, (
                 current_start_date.strftime('%Y-%m-%d'),
                 current_end_date.strftime('%Y-%m-%d')
             ))
             current_results = self.env.cr.fetchall()
-
-            _logger.info(f"📊 Current period: Found {len(current_results)} date groups")
-            total_current = 0
-            for result in current_results:
-                count = int(result[1])  # Ensure integer
-                total_current += count
-                _logger.info(f"    {result[0]}: {count} visitors")
-
-            # Previous year query with same casting
+            
+            # Fetch previous year data
             prev_year_query = """
-                SELECT 
-                    CAST(visit_date AS DATE) as visit_date,
-                    CAST(COUNT(*) AS INTEGER) as visitor_count
-                FROM visit_customers 
-                WHERE CAST(visit_date AS DATE) BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
-                GROUP BY CAST(visit_date AS DATE)
-                ORDER BY CAST(visit_date AS DATE)
+            SELECT
+                CAST(visit_date AS DATE) as visit_date,
+                CAST(COUNT(*) AS INTEGER) as visitor_count
+            FROM visit_customers
+            WHERE CAST(visit_date AS DATE) BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
+            GROUP BY CAST(visit_date AS DATE)
+            ORDER BY CAST(visit_date AS DATE)
             """
-
+            
             self.env.cr.execute(prev_year_query, (
                 prev_year_start_date.strftime('%Y-%m-%d'),
                 prev_year_end_date.strftime('%Y-%m-%d')
             ))
             prev_year_results = self.env.cr.fetchall()
-
-            _logger.info(f"📊 Previous year: Found {len(prev_year_results)} date groups")
-            total_prev_year = 0
-            for result in prev_year_results:
-                count = int(result[1])  # Ensure integer
-                total_prev_year += count
-
-            # ✅ FIXED: Process data with explicit type conversion
+            
+            # Process data into daily arrays
             current_data = self._process_daily_data_cross_system(current_results, current_start_date, days)
             prev_year_data = self._process_daily_data_cross_system(prev_year_results, prev_year_start_date, days)
-
-            # Calculate totals with explicit integers
+            
+            # Calculate totals
             current_total = int(sum(current_data))
             prev_year_total = int(sum(prev_year_data))
-
-            _logger.info(f"📊 Final totals: Current={current_total}, Previous={prev_year_total}")
-            _logger.info(f"📊 Current data array: {current_data}")
-
-            # ✅ FIXED: Better growth calculation with caps
+            
+            # Calculate growth percentage
             if prev_year_total > 0:
                 raw_growth = ((current_total - prev_year_total) / prev_year_total) * 100
-                if raw_growth > 100:
-                    growth_percentage = 100.0
-                elif raw_growth < -100:
-                    growth_percentage = -100.0
-                else:
-                    growth_percentage = round(raw_growth, 1)
+                growth_percentage = max(-100.0, min(100.0, round(raw_growth, 1)))
             else:
                 growth_percentage = 100.0 if current_total > 0 else 0.0
-
+            
             # Enhanced section breakdown
             section_totals = self._get_enhanced_section_breakdown(current_start_date, current_end_date)
-
+            
             # Generate labels
             labels = self._generate_labels(current_start_date, days)
-
-            # ✅ FIXED: Ensure all values are proper types for JSON
+            
             return {
-                'current_data': [int(x) for x in current_data],  # Ensure integers
-                'prev_year_data': [int(x) for x in prev_year_data],  # Ensure integers
-                'labels': [str(x) for x in labels],  # Ensure strings
+                'current_data': [int(x) for x in current_data],
+                'prev_year_data': [int(x) for x in prev_year_data],
+                'labels': [str(x) for x in labels],
                 'totals': {
                     'current_total': int(current_total),
                     'prev_year_total': int(prev_year_total),
@@ -226,14 +204,13 @@ class VisitCustomer(models.Model):
                     'current_end': current_end_date.strftime('%Y-%m-%d'),
                     'prev_year_start': prev_year_start_date.strftime('%Y-%m-%d'),
                     'prev_year_end': prev_year_end_date.strftime('%Y-%m-%d'),
-                    'data_summary': data_summary
+                    'data_summary': data_summary,
+                    'message': f'Data from {current_start_date.strftime("%Y-%m-%d")} to {current_end_date.strftime("%Y-%m-%d")} (based on latest available: {latest_date.strftime("%Y-%m-%d")})'
                 }
             }
-
+            
         except Exception as e:
             _logger.error(f"❌ Visitor chart data error: {str(e)}")
-            import traceback
-            _logger.error(f"❌ Traceback: {traceback.format_exc()}")
             return self._get_empty_visitor_chart_data(days)
 
     def _process_daily_data_cross_system(self, results, start_date, days):
@@ -344,89 +321,6 @@ class VisitCustomer(models.Model):
             }
         }
     
-    @api.model
-    def get_gender_statistics_from_visitors(self):
-        """Get gender statistics from visit_customers table - NEW METHOD"""
-        try:
-            _logger.info("📊 Starting visitor gender analysis from visit_customers...")
-
-            # ✅ NEW: Query visit_customers table instead of golfzon_person
-            gender_query = """
-                SELECT 
-                    LOWER(TRIM(gender_scd)) as gender,
-                    COUNT(*) as count
-                FROM visit_customers 
-                WHERE gender_scd IS NOT NULL
-                    AND TRIM(gender_scd) != ''
-                GROUP BY LOWER(TRIM(gender_scd))
-                ORDER BY count DESC
-            """
-
-            self.env.cr.execute(gender_query)
-            results = self.env.cr.fetchall()
-
-            _logger.info(f"📊 Visitor gender query results from visit_customers:")
-            for result in results:
-                _logger.info(f"    '{result[0]}': {result[1]} visitors")
-
-            if not results:
-                _logger.warning("❌ No gender data found in visit_customers")
-                return self._get_sample_gender_statistics()
-
-            male_count = 0
-            female_count = 0
-
-            for result in results:
-                gender = str(result[0]).lower().strip() if result[0] else ''
-                count = result[1]
-                
-                # ✅ FLEXIBLE GENDER MAPPING for visit_customers
-                if gender in ['m', 'male', '1', 'man']:
-                    male_count += count
-                elif gender in ['f', 'female', '2', 'woman']:
-                    female_count += count
-                else:
-                    # Log unknown values for debugging
-                    _logger.info(f"📊 Unknown gender value: '{gender}' = {count} visitors")
-
-            total = male_count + female_count
-            _logger.info(f"📊 Visitor gender totals: Male={male_count}, Female={female_count}, Total={total}")
-
-            if total == 0:
-                return self._get_sample_gender_statistics()
-
-            male_pct = round((male_count / total) * 100)
-            female_pct = 100 - male_pct  # Ensure 100% total
-
-            return {
-                'male_percentage': male_pct,
-                'female_percentage': female_pct,
-                'male_count': male_count,
-                'female_count': female_count,
-                'total_persons': total,
-                'has_data': True,
-                'data_source': 'visit_customers'  # ✅ NEW: Track data source
-            }
-
-        except Exception as e:
-            _logger.error(f"❌ Visitor gender statistics error: {str(e)}")
-            import traceback
-            _logger.error(f"❌ Traceback: {traceback.format_exc()}")
-            return self._get_sample_gender_statistics()
-
-    def _get_sample_gender_statistics(self):
-        """Sample gender data fallback for visitors"""
-        return {
-            'male_percentage': 74,
-            'female_percentage': 26,
-            'male_count': 740,
-            'female_count': 260,
-            'total_persons': 1000,
-            'has_data': True,
-            'is_sample': True,
-            'data_source': 'visit_customers'
-        }
-
     def _get_enhanced_section_breakdown(self, start_date, end_date):
         """Enhanced section breakdown with better logic and debugging"""
         try:
@@ -523,3 +417,135 @@ class VisitCustomer(models.Model):
             _logger.error(f"❌ Enhanced section breakdown error: {str(e)}")
             # Return equal distribution as fallback
             return {'part1': 0, 'part2': 0, 'part3': 0}
+
+    @api.model
+    def get_gender_statistics_from_visitors(self):
+        """Get gender statistics from visit_customers table - UPDATED VERSION"""
+        try:
+            _logger.info("📊 Getting gender statistics from visit_customers...")
+            
+            # ✅ IMPROVED: Get latest date range for more relevant data
+            data_summary = self.get_visitor_data_summary()
+            if not data_summary['has_data']:
+                _logger.warning("❌ No visitor data available")
+                return self._get_empty_gender_statistics()
+            
+            latest_date = datetime.strptime(data_summary['latest_date'], '%Y-%m-%d').date()
+            # Get data from last 30 days from latest available date
+            start_date = latest_date - timedelta(days=29)  # 30 days total
+            
+            _logger.info(f"📊 Gender analysis period: {start_date} to {latest_date}")
+            
+            # ✅ IMPROVED: More comprehensive gender query
+            gender_query = """
+            SELECT 
+                LOWER(TRIM(gender_scd)) as gender, 
+                COUNT(*) as count
+            FROM visit_customers 
+            WHERE visit_date BETWEEN %s AND %s
+            AND gender_scd IS NOT NULL 
+            AND TRIM(gender_scd) != ''
+            GROUP BY LOWER(TRIM(gender_scd))
+            ORDER BY count DESC
+            """
+            
+            self.env.cr.execute(gender_query, (start_date, latest_date))
+            results = self.env.cr.fetchall()
+            
+            _logger.info(f"📊 Gender query results from visit_customers:")
+            for result in results:
+                _logger.info(f"   {result[0]}: {result[1]} visitors")
+            
+            if not results:
+                _logger.warning("❌ No gender data found in date range")
+                return self._get_empty_gender_statistics()
+            
+            male_count = 0
+            female_count = 0
+            unknown_count = 0
+            
+            # ✅ ENHANCED: Flexible gender mapping for various formats
+            for result in results:
+                gender = str(result[0]).lower().strip() if result[0] else ''
+                count = result[1]
+                
+                # Male variations
+                if gender in ['m', 'male', '1', 'man', 'masculine', '남성', 'male_scd']:
+                    male_count += count
+                # Female variations  
+                elif gender in ['f', 'female', '2', 'woman', 'feminine', '여성', 'female_scd']:
+                    female_count += count
+                else:
+                    _logger.info(f"📊 Unknown gender value: '{gender}' ({count} visitors)")
+                    unknown_count += count
+            
+            total = male_count + female_count + unknown_count
+            
+            # ✅ SMART: Distribute unknown values proportionally
+            if unknown_count > 0 and total > 0:
+                if male_count > 0 or female_count > 0:
+                    # Distribute proportionally based on known data
+                    known_total = male_count + female_count
+                    if known_total > 0:
+                        male_ratio = male_count / known_total
+                        additional_male = int(unknown_count * male_ratio)
+                        additional_female = unknown_count - additional_male
+                        male_count += additional_male
+                        female_count += additional_female
+                    else:
+                        # If no known data, distribute 50/50
+                        male_count = unknown_count // 2
+                        female_count = unknown_count - male_count
+                else:
+                    # All data is unknown, distribute 50/50
+                    male_count = unknown_count // 2
+                    female_count = unknown_count - male_count
+            
+            # Recalculate total after distribution
+            total = male_count + female_count
+            
+            _logger.info(f"📊 Final gender totals: Male={male_count}, Female={female_count}, Total={total}")
+            
+            if total == 0:
+                return self._get_empty_gender_statistics()
+            
+            # Calculate percentages
+            male_pct = round((male_count / total) * 100, 1)
+            female_pct = round((female_count / total) * 100, 1)
+            
+            # Ensure percentages add up to 100%
+            if male_pct + female_pct != 100.0:
+                female_pct = 100.0 - male_pct
+            
+            return {
+                'male_percentage': float(male_pct),
+                'female_percentage': float(female_pct),
+                'male_count': int(male_count),
+                'female_count': int(female_count),
+                'total_persons': int(total),
+                'has_data': True,
+                'is_sample': False,
+                'data_source': 'visit_customers',
+                'date_range': f"{start_date} to {latest_date}",
+                'unknown_count_original': int(unknown_count)
+            }
+            
+        except Exception as e:
+            _logger.error(f"❌ Gender statistics error: {str(e)}")
+            import traceback
+            _logger.error(f"❌ Traceback: {traceback.format_exc()}")
+            return self._get_empty_gender_statistics()
+
+    def _get_empty_gender_statistics(self):
+        """Return empty gender statistics structure"""
+        return {
+            'male_percentage': 0.0,
+            'female_percentage': 0.0,
+            'male_count': 0,
+            'female_count': 0,
+            'total_persons': 0,
+            'has_data': False,
+            'is_sample': False,
+            'data_source': 'visit_customers',
+            'message': 'No gender data available'
+        }
