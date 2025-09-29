@@ -64,7 +64,7 @@
             "golfzon_dashboard/static/src/xml/components/chart_widgets.xml",
             "golfzon_dashboard/static/src/xml/components/reservation_forecast.xml",
             "golfzon_dashboard/static/src/xml/components/visitor_status.xml",
-            "golfzon_dashboard/static/src/xml/components/sales_status.xml",
+            "golfzon_dashboard/static/src/xml/components/sales_status.xml",            
             
             # JavaScript Utilities
             "golfzon_dashboard/static/src/js/utils/date_utils.js",
