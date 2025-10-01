@@ -17,3 +17,5 @@ access_payment_infos,access_payment_infos,model_payment_infos,base.group_user,1,
 access_sales_infos,access_sales_infos,model_sales_infos,base.group_user,1,1,1,1
 access_day_sum_payments,access_day_sum_payments,model_day_sum_payments,base.group_user,1,1,1,1
 access_day_sum_greenfees,access_day_sum_greenfees,model_day_sum_greenfees,base.group_user,1,1,1,1
+access_bookg_info_his,access.bookg.info.his,model_bookg_info_his,,1,1,1,1
+access_members,access.members.members,model_members_members,,1,1,1,1

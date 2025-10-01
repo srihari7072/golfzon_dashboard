@@ -46,6 +46,9 @@
         "views/sales_infos_views.xml",
         "views/day_sum_payments_views.xml",
         "views/day_sum_greenfees_views.xml",
+        # "views/login.xml",
+        "views/bookg_info_his.xml",
+        "views/members.xml"
     ],
 
     "assets": {
@@ -77,6 +80,7 @@
             
             # Main JavaScript Component
             "golfzon_dashboard/static/src/js/dashboard_client.js",
+            
         ],
     },
     "installable": True,

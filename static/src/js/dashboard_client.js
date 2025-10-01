@@ -18,6 +18,8 @@ class GolfzonDashboard extends Component {
   static template = "golfzon_dashboard.Dashboard";
 
   setup() {
+
+    this._t = _t;
     // Initialize services
     try {
       this.rpc = useService("rpc");
@@ -29,9 +31,6 @@ class GolfzonDashboard extends Component {
     this.weatherService = new WeatherService(this.rpc);
     this.golfDataService = new GolfDataService(this.rpc);
     this.chartService = new ChartService();
-
-    // Expose _t to the template context
-    this._t = _t;
 
     // Chart references
     this.canvasRef = useRef("salesChart");
@@ -123,20 +122,15 @@ class GolfzonDashboard extends Component {
         this._t("Wednesday"),
         this._t("Thursday"),
         this._t("Friday"),
-        this._t("Saturday"),
+        this._t("Saturday")
       ],
       rows: [
-        {
-          label: this._t("Early Morning(5 AM -7 AM)"),
-          data: [0, 0, 0, 0, 0, 0, 0],
-        },
-        { label: this._t("Morning(8 AM -12 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
-        {
-          label: this._t("Afternoon(1 PM -4 PM)"),
-          data: [0, 0, 0, 0, 0, 0, 0],
-        },
-        { label: this._t("Night(5 PM -7 PM)"), data: [0, 0, 0, 0, 0, 0, 0] },
+        { "label": this._t("Early Morning(5 AM -7 AM)"), "data": [0, 0, 0, 0, 0, 0, 0] },
+        { "label": this._t("Morning(8 AM -12 PM)"), "data": [0, 0, 0, 0, 0, 0, 0] },
+        { "label": this._t("Afternoon(1 PM -4 PM)"), "data": [0, 0, 0, 0, 0, 0, 0] },
+        { "label": this._t("Night(5 PM -7 PM)"), "data": [0, 0, 0, 0, 0, 0, 0] }
       ],
+      date_range: this._t("No data available")
     };
   }
 
@@ -271,13 +265,13 @@ class GolfzonDashboard extends Component {
                 : "0",
               current_trend: data.data.utilization_performance
                 ? this.formatTrendValue(
-                    data.data.utilization_performance.year_growth
-                  )
+                  data.data.utilization_performance.year_growth
+                )
                 : "0%",
               monthly_trend: data.data.utilization_performance
                 ? this.formatTrendValue(
-                    data.data.utilization_performance.month_growth
-                  )
+                  data.data.utilization_performance.month_growth
+                )
                 : "0%",
             },
           };
@@ -453,28 +447,32 @@ class GolfzonDashboard extends Component {
 
         // ✅ REPLACE WITH THIS CODE:
         const currentDate = new Date();
-        const days = period === "7days" ? 7 : 30;
+        const days = period === '7days' ? 7 : 30;
         const endDate = new Date(currentDate);
         const startDate = new Date(currentDate);
-        startDate.setDate(currentDate.getDate() - (days - 1));
+        startDate.setDate(currentDate.getDate() - days - 1);
+
+        const currentLang = this.state.currentLanguage || 'en_US';
+        const locale = currentLang === 'ko_KR' ? 'ko-KR' : 'en-US';
 
         // Format dates: "August 29, 2025 – September 27, 2025"
-        const startFormatted = startDate.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+        const startFormatted = startDate.toLocaleDateString(locale, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
         });
 
-        const endFormatted = endDate.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+        const endFormatted = endDate.toLocaleDateString(locale, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
         });
 
-        const periodText =
-          period === "7days"
-            ? this._t(`Analysis Period: Last 7 days (${startFormatted} – ${endFormatted})`)
-            : this._t(`Analysis Period: Last 30 days (${startFormatted} – ${endFormatted})`);
+        const daysLabel = period === '7days' ? '7' : '30';
+        const periodPrefix = this._t("Analysis period: The Last");
+        const daysSuffix = this._t(" days");
+
+        const periodText = `${periodPrefix} ${daysLabel} ${daysSuffix} (${startFormatted} – ${endFormatted})`;
 
         this.state.forecastData.analysis_period = periodText;
       } else {
@@ -696,109 +694,164 @@ class GolfzonDashboard extends Component {
   }
 
   async loadHeatmapData() {
-    console.log("🔄 Loading heatmap data with pre-calculated details...");
-
+    console.log("🔄 Loading heatmap data with Korean translation support...");
     try {
-      const response = await fetch("/golfzon/api/heatmap_data");
+      const response = await fetch('/golfzon/api/heatmap_data');
       const data = await response.json();
 
-      if (data.status === "success") {
-        console.log("✅ Heatmap data with details loaded:", {
-          dateRange: data.data.date_range,
-          headers: data.data.headers,
-          rowsCount: data.data.rows.length,
-          preCalculatedCells: Object.keys(data.data.cell_details).length,
+      console.log('📊 Heatmap API response:', {
+        status: data.status,
+        hasData: data.data ? true : false,
+        headersCount: data.data?.headers?.length,
+        rowsCount: data.data?.rows?.length,
+        cellDetailsCount: Object.keys(data.data?.cell_details || {}).length
+      });
+
+      // ✅ CRITICAL: Log the raw data from backend
+      if (data.data && data.data.rows) {
+        console.log('📊 Raw heatmap data from backend:');
+        data.data.rows.forEach((row, idx) => {
+          console.log(`   Row ${idx} (${row.label}):`, row.data);
+        });
+      }
+
+      if (data.status === 'success' && data.data) {
+        // ✅ FIX: Apply Korean translations to headers WITHOUT breaking data
+        const translatedHeaders = (data.data.headers || []).map(header => {
+          const translations = {
+            'Sunday': this._t("Sunday"),
+            'Monday': this._t("Monday"),
+            'Tuesday': this._t("Tuesday"),
+            'Wednesday': this._t("Wednesday"),
+            'Thursday': this._t("Thursday"),
+            'Friday': this._t("Friday"),
+            'Saturday': this._t("Saturday")
+          };
+          return translations[header] || header;
         });
 
-        // Store both heatmap data AND pre-calculated details
+        // ✅ FIX: Apply Korean translations to time slot labels WITHOUT breaking data
+        const translatedRows = (data.data.rows || []).map(row => {
+          const labelTranslations = {
+            'Early Morning (5 AM - 7 AM)': this._t("Early Morning(5 AM -7 AM)"),
+            'Morning (8 AM - 12 PM)': this._t("Morning(8 AM -12 PM)"),
+            'Afternoon (1 PM - 4 PM)': this._t("Afternoon(1 PM -4 PM)"),
+            'Night (5 PM - 7 PM)': this._t("Night(5 PM -7 PM)")
+          };
+
+          // ✅ CRITICAL: Preserve original data array exactly as received
+          return {
+            label: labelTranslations[row.label] || row.label,
+            data: Array.isArray(row.data) ? [...row.data] : [0, 0, 0, 0, 0, 0, 0]
+          };
+        });
+
+        // ✅ CRITICAL: Verify data preservation
+        console.log('📊 Translated data verification:');
+        translatedRows.forEach((row, idx) => {
+          console.log(`   Row ${idx} (${row.label}):`, row.data);
+        });
+
+        // ✅ FIX: Store translated data with original numeric values preserved
         this.state.heatmapData = {
-          headers: data.data.headers,
-          rows: data.data.rows,
-          date_range: data.data.date_range,
+          headers: translatedHeaders,
+          rows: translatedRows,
+          date_range: data.data.date_range || "No data available"
         };
 
-        // ✅ STORE PRE-CALCULATED DETAILS for instant access
-        this.heatmapCellDetails = data.data.cell_details;
+        // ✅ FIX: STORE PRE-CALCULATED DETAILS for instant access
+        this.heatmapCellDetails = data.data.cell_details || {};
 
-        console.log("📊 Heatmap ready for instant interactions");
+        console.log('✅ Heatmap data loaded successfully!', {
+          headers: translatedHeaders,
+          rowsCount: translatedRows.length,
+          totalCells: translatedRows.reduce((sum, row) => sum + row.data.reduce((a, b) => a + b, 0), 0),
+          cellDetailsKeys: Object.keys(this.heatmapCellDetails).length
+        });
       } else {
-        console.error("❌ Failed to load heatmap data:", data.message);
-        // Even on error, we have empty but valid structure
-        if (data.data && data.data.cell_details) {
-          this.heatmapCellDetails = data.data.cell_details;
-        }
+        console.error('❌ Failed to load heatmap data:', data.message);
+        this.state.heatmapData = this.getInitialHeatmapData();
+        this.heatmapCellDetails = {};
       }
     } catch (error) {
-      console.error("❌ Error loading heatmap data:", error);
-      // Initialize empty details to prevent errors
+      console.error('❌ Error loading heatmap data:', error);
+      this.state.heatmapData = this.getInitialHeatmapData();
       this.heatmapCellDetails = {};
     }
   }
 
-  selectHeatmapBox(box, event) {
-    event.stopPropagation();
 
-    console.log("🔄 Box clicked - instant response:", {
-      day: box.day,
-      dayIndex: box.dayIndex,
-      timeIndex: box.timeIndex,
-      boxValue: box.value,
-    });
+  selectHeatmapBox(boxData, event) {
+    console.log("🎯 Heatmap box selected:", boxData);
 
-    // Visual selection
-    document.querySelectorAll(".heatmap-box.selected").forEach((el) => {
-      el.classList.remove("selected");
-    });
-    event.target.closest(".heatmap-box").classList.add("selected");
+    if (event) {
+      event.stopPropagation();
+    }
 
-    // ✅ INSTANT ACCESS to pre-calculated details
-    const cellKey = `${box.dayIndex}_${box.timeIndex}`;
+    const cellKey = `${boxData.dayIndex}_${boxData.timeIndex}`;
     const cellDetails = this.heatmapCellDetails[cellKey];
 
-    if (cellDetails) {
-      console.log("✅ Instant cell details:", {
-        dayName: cellDetails.day_name,
-        date: cellDetails.date,
-        totalTeams: cellDetails.total_teams,
-        hourlyItems: cellDetails.hourly_breakdown.length,
+    let hourlyBreakdown = [];
+
+    if (cellDetails && cellDetails.hourly_breakdown) {
+      // ✅ FIX: Apply translations
+      hourlyBreakdown = cellDetails.hourly_breakdown.map(item => {
+        let hourText = item.hour;
+        let teamsText = item.teams;
+
+        // Translate AM/PM → 오전/오후
+        if (hourText.includes('AM')) {
+          hourText = hourText.replace('AM', this._t('AM'));
+        } else if (hourText.includes('PM')) {
+          hourText = hourText.replace('PM', this._t('PM'));
+        }
+
+        // Translate teams → 팀
+        teamsText = teamsText.replace('teams', this._t('teams'))
+          .replace('team', this._t('team'));
+
+        return {
+          hour: hourText,
+          teams: teamsText
+        };
       });
-
-      // Determine if highest/lowest
-      const allValues = this.getAllHeatmapValues();
-      const maxValue = Math.max(...allValues);
-      const minValue = Math.min(...allValues.filter((v) => v > 0));
-
-      // ✅ INSTANT UPDATE - no waiting, no loading
-      this.state.selectedHeatmapBox = {
-        ...box,
-        displayDay: cellDetails.day_name,
-        date: cellDetails.date,
-        hourlyBreakdown: cellDetails.hourly_breakdown,
-        isHighest: box.value === maxValue && box.value > 0,
-        isLowest:
-          box.value === minValue &&
-          box.value > 0 &&
-          allValues.filter((v) => v > 0).length > 1,
-        isVisible: true,
-        hasData: cellDetails.has_data,
-      };
-
-      console.log("📊 Sidebar updated instantly!");
-    } else {
-      console.warn("⚠️ No pre-calculated details found for cell:", cellKey);
-
-      // Show basic info
-      this.state.selectedHeatmapBox = {
-        ...box,
-        displayDay: this.formatDayDisplayOnly(box.day),
-        hourlyBreakdown: [{ hour: "No data", teams: this._t("teams") }],
-        isHighest: false,
-        isLowest: false,
-        isVisible: true,
-        hasData: false,
-      };
     }
+
+    // ✅ FIX: Translate day name
+    const dayTranslations = {
+      'Sunday': this._t('Sunday'),
+      'Monday': this._t('Monday'),
+      'Tuesday': this._t('Tuesday'),
+      'Wednesday': this._t('Wednesday'),
+      'Thursday': this._t('Thursday'),
+      'Friday': this._t('Friday'),
+      'Saturday': this._t('Saturday')
+    };
+
+    const displayDay = dayTranslations[boxData.day] || boxData.day;
+
+    // Find highest/lowest
+    const allValues = this.state.heatmapData.rows
+      .flatMap(row => row.data)
+      .filter(val => val > 0);
+
+    const maxValue = Math.max(...allValues);
+    const minValue = Math.min(...allValues);
+
+    this.state.selectedHeatmapBox = {
+      isVisible: true,
+      dayIndex: boxData.dayIndex,
+      timeIndex: boxData.timeIndex,
+      value: boxData.value,
+      day: boxData.day,
+      displayDay: displayDay,  // ✅ Translated day
+      timeSlot: boxData.timeSlot,
+      hourlyBreakdown: hourlyBreakdown,  // ✅ Translated breakdown
+      isHighest: boxData.value === maxValue && boxData.value > 0,
+      isLowest: boxData.value === minValue && boxData.value > 0
+    };
   }
+
 
   formatDayDisplayOnly(day) {
     const dayMap = {

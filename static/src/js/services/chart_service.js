@@ -78,29 +78,6 @@ export class ChartService {
     }
   }
 
-  getWeatherDataForDate(dateLabel) {
-    try {
-      // Parse the date label
-      const date = new Date(dateLabel);
-
-      // Sample weather data - replace with actual API call or database lookup
-      const weatherOptions = [
-        { condition: "Rain, 30mm", temp: "18°C / 25°C" },
-        { condition: "Sunny", temp: "22°C / 28°C" },
-        { condition: "Cloudy", temp: "16°C / 23°C" },
-        { condition: "Clear", temp: "20°C / 26°C" },
-        { condition: "Partly Cloudy", temp: "19°C / 24°C" },
-      ];
-
-      // Use date to generate consistent weather (in real app, this would be an API call)
-      const weatherIndex = date.getDate() % weatherOptions.length;
-      return weatherOptions[weatherIndex];
-    } catch (error) {
-      console.error("Error getting weather data:", error);
-      return { condition: "Clear", temp: "20°C / 25°C" };
-    }
-  }
-
   _formatSalesAmount(value) {
     return `${(value * 10000).toLocaleString()} won`;
   }
@@ -343,12 +320,10 @@ export class ChartService {
                   const datasetIndex = ctx.datasetIndex;
 
                   if (datasetIndex === 1) {
-                    const idx = ctx.dataIndex;
-                    const weatherData = this.getWeatherDataForDate(labels[idx]);
-
+                    // ✅ SAFE: Use static data until weather integration is fixed
                     return [
-                      `Weather: ${weatherData.condition}`,
-                      `Temperature: ${weatherData.temp}`,
+                      "Weather: Partly Cloudy",
+                      "Temperature: 19°C / 24°C",
                     ];
                   }
 
@@ -590,12 +565,10 @@ export class ChartService {
                   const datasetIndex = ctx.datasetIndex;
 
                   if (datasetIndex === 1) {
-                    const idx = ctx.dataIndex;
-                    const weatherData = this.getWeatherDataForDate(labels[idx]);
-
+                    // ✅ SAFE: Use static data until weather integration is fixed
                     return [
-                      `Weather: ${weatherData.condition}`,
-                      `Temperature: ${weatherData.temp}`,
+                      "Weather: Partly Cloudy",
+                      "Temperature: 19°C / 24°C",
                     ];
                   }
 
@@ -907,14 +880,11 @@ export class ChartService {
                 afterLabel: (ctx) => {
                   const datasetIndex = ctx.datasetIndex;
 
-                  // ✅ Only show weather for previous year (dataset 1)
                   if (datasetIndex === 1) {
-                    const idx = ctx.dataIndex;
-                    const weatherData = this.getWeatherDataForDate(labels[idx]);
-
+                    // ✅ SAFE: Use static data until weather integration is fixed
                     return [
-                      `Weather: ${weatherData.condition}`,
-                      `Temperature: ${weatherData.temp}`,
+                      "Weather: Partly Cloudy",
+                      "Temperature: 19°C / 24°C",
                     ];
                   }
 

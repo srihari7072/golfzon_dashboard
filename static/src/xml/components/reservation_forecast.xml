@@ -14,10 +14,10 @@
             </div>
         </div>
     </t>
+
     <t t-name="golfzon_dashboard.ReservationTrendChart">
         <div class="forecast-left-side">
             <div class="line-chart-card">
-                <!-- 🔧 FIXED: Use direct markup instead of template call -->
                 <div class="chart-header">
                     <div class="chart-title-section">
                         <div class="title-with-tooltip">
@@ -35,10 +35,14 @@
                         </div>
                     </div>
                     <div class="time-period-buttons">
-                        <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">
+                        <button class="period-btn" 
+                                t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" 
+                                t-on-click="() => this.setPeriod('7days')">
                             <t t-esc="_t('Last 7 Days')"/>
                         </button>
-                        <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">
+                        <button class="period-btn" 
+                                t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" 
+                                t-on-click="() => this.setPeriod('30days')">
                             <t t-esc="_t('Last 30 Days')"/>
                         </button>
                     </div>
@@ -67,8 +71,10 @@
                             <span class="comparison-label">
                                 <t t-esc="_t('compared to same period last year')"/>
                             </span>
-                            <span class="trend-indicator" t-att-class="state.forecastData.summary_stats.growth_percentage >= 0 ? 'trend-up' : 'trend-down'">
-                                <span class="trend-icon" t-esc="state.forecastData.summary_stats.growth_percentage >= 0 ? '▲' : '▼'"/>
+                            <span class="trend-indicator" 
+                                  t-att-class="state.forecastData.summary_stats.growth_percentage >= 0 ? 'trend-up' : 'trend-down'">
+                                <span class="trend-icon" 
+                                      t-esc="state.forecastData.summary_stats.growth_percentage >= 0 ? '▲' : '▼'"/>
                                 <span t-esc="(state.forecastData.summary_stats.growth_percentage >= 0 ? '+' : '') + state.forecastData.summary_stats.growth_percentage + '%'"/>
                             </span>
                         </div>
@@ -86,17 +92,21 @@
                                     </div>
                                 </div>
                             </span>
-                            <div class="stat-value" t-esc="state.forecastData.summary_stats.utilization_rate + '%'"/>
+                            <div class="stat-value" 
+                                 t-esc="state.forecastData.summary_stats.utilization_rate + '%'"/>
                         </div>
                         <div class="stat-breakdown horizontal-parts">
                             <span>
-                                <t t-esc="_t('Part 1')"/> <t t-esc="state.forecastData.summary_stats.month_comparison.month1"/>%
+                                <t t-esc="_t('Part 1')"/> 
+                                <t t-esc="state.forecastData.summary_stats.month_comparison.month1"/>%
                             </span>
                             <span>
-                                <t t-esc="_t('Part 2')"/> <t t-esc="state.forecastData.summary_stats.month_comparison.month2"/>%
+                                <t t-esc="_t('Part 2')"/> 
+                                <t t-esc="state.forecastData.summary_stats.month_comparison.month2"/>%
                             </span>
                             <span>
-                                <t t-esc="_t('Part 3')"/> <t t-esc="state.forecastData.summary_stats.month_comparison.month3"/>%
+                                <t t-esc="_t('Part 3')"/> 
+                                <t t-esc="state.forecastData.summary_stats.month_comparison.month3"/>%
                             </span>
                         </div>
                     </div>
@@ -104,8 +114,8 @@
             </div>
         </div>
     </t>
-    
-    <!-- 🆕 FIXED: No-shift layout with always-visible sidebar -->
+
+    <!-- ✅ UPDATED: Dynamic heatmap data with original class names preserved -->
     <t t-name="golfzon_dashboard.FixedHeatmapLayout">
         <div class="forecast-right-side">
             <!-- Fixed Container with Heatmap and Sidebar -->
@@ -120,34 +130,37 @@
                                 <t t-esc="_t('Reservation Trend')"/>
                             </h3>
                         </div>
-                        
-                        <!-- Days Header -->
+
+                        <!-- Days Header - ✅ UPDATED: Uses dynamic translated headers -->
                         <div class="heatmap-days-header">
                             <div class="time-label-spacer"></div>
                             <t t-foreach="state.heatmapData.headers" t-as="day" t-key="day">
                                 <div class="day-header" t-esc="day"/>
                             </t>
                         </div>
-                        
-                        <!-- Heatmap Grid -->
+
+                        <!-- Heatmap Grid - ✅ UPDATED: Uses dynamic database data -->
                         <div class="heatmap-grid-container">
                             <t t-foreach="state.heatmapData.rows" t-as="timeRow" t-key="timeRow_index">
                                 <div class="heatmap-row">
+                                    <!-- ✅ UPDATED: Dynamic translated time slot label -->
                                     <div class="time-row-label" t-esc="timeRow.label"/>
                                     <div class="heatmap-boxes-row">
+                                        <!-- ✅ UPDATED: Dynamic database values from timeRow.data array -->
                                         <t t-foreach="timeRow.data" t-as="value" t-key="value_index">
                                             <div class="heatmap-box"
-                                                t-att-class="this.getHeatmapCellClass(value)"
-                                                t-att-data-day-index="value_index"
-                                                t-att-data-time-index="timeRow_index"
-                                                t-att-data-value="value"
-                                                t-on-click="(ev) => this.selectHeatmapBox({
-                                                    dayIndex: value_index,
-                                                    timeIndex: timeRow_index,
-                                                    value: value,
-                                                    day: state.heatmapData.headers[value_index],
-                                                    timeSlot: timeRow.label
-                                                }, ev)">
+                                                 t-att-class="this.getHeatmapCellClass(value)"
+                                                 t-att-data-day-index="value_index"
+                                                 t-att-data-time-index="timeRow_index"
+                                                 t-att-data-value="value"
+                                                 t-on-click="(ev) => this.selectHeatmapBox({
+                                                     dayIndex: value_index,
+                                                     timeIndex: timeRow_index,
+                                                     value: value,
+                                                     day: state.heatmapData.headers[value_index],
+                                                     timeSlot: timeRow.label
+                                                 }, ev)">
+                                                <!-- ✅ UPDATED: Display dynamic value from database -->
                                                 <span class="box-value" t-esc="value"/>
                                             </div>
                                         </t>
@@ -155,7 +168,7 @@
                                 </div>
                             </t>
                         </div>
-                        
+
                         <!-- Legend Section (below the 28 boxes) -->
                         <div class="heatmap-legend-section">
                             <div class="heatmap-legend">
@@ -182,7 +195,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Right: Details Sidebar -->
                     <div class="heatmap-details-sidebar">
                         <!-- Default content when no box is selected -->
@@ -213,7 +226,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <!-- Sidebar Header (no duplicate day, no timeslot) -->
+                            <!-- Sidebar Header -->
                             <div class="sidebar-header-section">
                                 <h2 class="sidebar-title" t-esc="state.selectedHeatmapBox.displayDay"/>
                                 <p class="sidebar-subtitle">
@@ -223,15 +236,29 @@
                             <!-- Hourly Breakdown in Columns -->
                             <div class="hourly-breakdown-section">
                                 <div class="hourly-columns-row">
-                                    <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown" t-as="hourSlot" t-key="hourSlot_index + '_col'">
-                                        <div class="hourly-column">
-                                            <div class="time-header" t-esc="_t(hourSlot.hour)"/>
-                                            <div class="team-value" t-esc="_t(hourSlot.teams)"/>
-                                        </div>
-                                        <t t-if="hourSlot_index !== state.selectedHeatmapBox.hourlyBreakdown.length - 1">
-                                            <div class="vertical-divider"></div>
+                                    <!-- Top Row: First 5 time slots -->
+                                    <div class="hourly-row-top">
+                                        <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown.slice(0, 5)" 
+                                        t-as="hourSlot" 
+                                        t-key="hourSlot_index + '_top'">
+                                            <div class="hourly-column">
+                                                <div class="time-header" t-esc="_t(hourSlot.hour)"/>
+                                                <div class="team-value" t-esc="_t(hourSlot.teams)"/>
+                                            </div>
                                         </t>
-                                    </t>
+                                    </div>
+                                    
+                                    <!-- Bottom Row: Next 5 time slots -->
+                                    <div class="hourly-row-bottom">
+                                        <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown.slice(5, 10)" 
+                                        t-as="hourSlot" 
+                                        t-key="hourSlot_index + '_bottom'">
+                                            <div class="hourly-column">
+                                                <div class="time-header" t-esc="_t(hourSlot.hour)"/>
+                                                <div class="team-value" t-esc="_t(hourSlot.teams)"/>
+                                            </div>
+                                        </t>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -242,6 +269,7 @@
             <t t-call="golfzon_dashboard.PieChartsCard"/>
         </div>
     </t>
+
     <!-- Pie Charts Section -->
     <t t-name="golfzon_dashboard.PieChartsCard">
         <div class="pie-charts-card">

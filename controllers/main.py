@@ -290,41 +290,49 @@ class GolfzonDashboardController(http.Controller):
             )
 
     @http.route('/golfzon/api/heatmap_data', type='http', auth='user', methods=['GET'], csrf=False)
-    def get_heatmap_data_http(self, **kwargs):
-        """HTTP endpoint for heatmap data WITH pre-calculated details"""
+    def get_heatmap_data(self, **kwargs):
+        """✅ CORRECTED: Get heatmap data with pre-calculated cell details"""
         try:
             booking_model = request.env['booking.info']
+
+            # Get heatmap data with pre-calculated details
             heatmap_data = booking_model.get_heatmap_data_with_details()
-            
-            _logger.info(_(f"📊 Heatmap API Success with pre-calculated details:"))
-            _logger.info(f"    Date Range: {heatmap_data['date_range']}")
-            _logger.info(f"    Pre-calculated cells: {len(heatmap_data['cell_details'])}")
-            
-            response_data = {
+
+            _logger.info(f"📊 Heatmap API Success with pre-calculated details: ")
+            _logger.info(f"    Date Range: {heatmap_data.get('date_range', 'N/A')}")
+            _logger.info(f"    Pre-calculated cells: {len(heatmap_data.get('cell_details', {}))}")
+
+            # Log actual data values for debugging
+            if heatmap_data.get('rows'):
+                for idx, row in enumerate(heatmap_data['rows']):
+                    _logger.info(f"    Row {idx} ({row['label']}): {row['data']}")
+
+            return request.make_json_response({
                 'status': 'success',
                 'data': heatmap_data
-            }
-            
-            return request.make_response(
-                json.dumps(response_data),
-                headers={'Content-Type': 'application/json'}
-            )
-            
+            })
+
         except Exception as e:
-            _logger.error(_(f"❌ Heatmap API error: {str(e)}"))
-            # Return empty but valid structure
-            booking_model = request.env['booking.info']
-            empty_data = booking_model._get_empty_heatmap_with_details()
-            
-            error_response = {
+            _logger.error(f"❌ Heatmap API error: {str(e)}")
+            import traceback
+            _logger.error(traceback.format_exc())
+
+            # Return empty but valid structure on error
+            return request.make_json_response({
                 'status': 'error',
                 'message': str(e),
-                'data': empty_data
-            }
-            return request.make_response(
-                json.dumps(error_response),
-                headers={'Content-Type': 'application/json'}
-            )
+                'data': {
+                    'headers': ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    'rows': [
+                        {"label": "Early Morning (5 AM - 7 AM)", "data": [0, 0, 0, 0, 0, 0, 0]},
+                        {"label": "Morning (8 AM - 12 PM)", "data": [0, 0, 0, 0, 0, 0, 0]},
+                        {"label": "Afternoon (1 PM - 4 PM)", "data": [0, 0, 0, 0, 0, 0, 0]},
+                        {"label": "Night (5 PM - 7 PM)", "data": [0, 0, 0, 0, 0, 0, 0]}
+                    ],
+                    'date_range': 'Error loading data',
+                    'cell_details': {}
+                }
+            })
 
     @http.route('/golfzon/api/demographics/age', type='http', auth='user', methods=['GET'], csrf=False, website=True)
     def get_age_demographics_http(self, **kwargs):

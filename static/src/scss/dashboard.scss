@@ -27,6 +27,10 @@ $laptop-md: 1365px;
 $laptop-lg: 1440px;
 $desktop: 1920px;
 
+.o_navbar {
+    display: none;
+  }
+
 // Responsive Mixins
 @mixin mobile-xs {
   @media (max-width: #{$mobile-xs}) {
@@ -2394,33 +2398,56 @@ $desktop: 1920px;
 
               // Hourly Breakdown Section (in columns)
               .hourly-breakdown-section {
-                // margin-top: 24px;
-                padding: 0 16px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
+                margin-top: 20px;
+                padding: 0;
+                background-color: transparent;
               }
 
               .hourly-columns-row {
                 display: flex;
-                align-items: stretch;
-                justify-content: center;
-                width: 100%;
+                flex-direction: column;
+                gap: 20px; // 15px row gap, 10px column gap
+              }
+
+              // ✅ Top row (first 5 items)
+              .hourly-row-top {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                gap: 15px;
+              }
+
+              // ✅ Bottom row (next 5 items)
+              .hourly-row-bottom {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                gap: 15px;
               }
 
               .hourly-column {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                min-width: 48px;
-                padding: 0 4px;
+                justify-content: center;
+                padding: 0;
+                background-color: transparent;
+                border: none;
+                box-shadow: none;
+
+                &:hover {
+                  border-color: none;
+                  box-shadow: none;
+                  transform: none;
+                }
               }
 
               .time-header {
-                font-size: 16px;
-                color: #6f6f6f;
-                font-weight: 500;
-                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #4a90e2;
+                margin-bottom: 4px;
+                white-space: nowrap;
 
                 @include laptop-sm {
                   font-size: 10px;
@@ -2431,9 +2458,10 @@ $desktop: 1920px;
               }
 
               .team-value {
-                font-size: 16px;
-                color: #1e88e5;
+                font-size: 15px;
                 font-weight: 600;
+                color: #333333;
+                white-space: nowrap;
 
                 @include laptop-sm {
                   font-size: 10px;
@@ -2444,12 +2472,7 @@ $desktop: 1920px;
               }
 
               .vertical-divider {
-                width: 1px;
-                height: 48px;
-                border-right: 1px solid #efefef;
-                margin: 0 8px;
-                align-self: stretch;
-                border-radius: 1px;
+                display: none;
               }
             }
           }
@@ -3920,4 +3943,3 @@ svg {
     }
   }
 }
-

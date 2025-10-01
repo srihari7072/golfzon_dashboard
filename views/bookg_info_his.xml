@@ -1,0 +1,58 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_bookg_info_his_tree" model="ir.ui.view">
+        <field name="name">bookg.info.his.tree</field>
+        <field name="model">bookg.info.his</field>
+        <field name="arch" type="xml">
+            <list string="Booking Info History">
+                <field name="bookg_info_his_id"/>
+                <field name="bookg_info_id"/>
+                <field name="table_nm"/>
+                <field name="table_pk"/>
+                <field name="field"/>
+                <field name="modify_scd"/>
+                <field name="before_value"/>
+                <field name="after_value"/>
+                <field name="created_id"/>
+                <field name="created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_bookg_info_his_form" model="ir.ui.view">
+        <field name="name">bookg.info.his.form</field>
+        <field name="model">bookg.info.his</field>
+        <field name="arch" type="xml">
+            <form string="Booking Info History">
+                <sheet>
+                    <group>
+                        <field name="bookg_info_his_id"/>
+                        <field name="bookg_info_id"/>
+                        <field name="table_nm"/>
+                        <field name="table_pk"/>
+                        <field name="field"/>
+                        <field name="modify_scd"/>
+                        <field name="before_value"/>
+                        <field name="after_value"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bookg_info_his" model="ir.actions.act_window">
+        <field name="name">Booking Info History</field>
+        <field name="res_model">bookg.info.his</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_bookg_info_his_root" name="Booking Info History"/>
+    <menuitem id="menu_bookg_info_his" name="Records"
+              parent="menu_bookg_info_his_root"
+              action="action_bookg_info_his"/>
+</odoo>

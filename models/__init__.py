@@ -11,3 +11,5 @@ from . import payment_infos
 from . import sales_infos
 from . import day_sum_payments
 from . import day_sum_greenfees
+from . import bookg_info_his
+from . import members
