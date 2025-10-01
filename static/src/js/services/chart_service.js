@@ -78,6 +78,29 @@ export class ChartService {
     }
   }
 
+  getWeatherDataForDate(dateLabel) {
+    try {
+      // Parse the date label
+      const date = new Date(dateLabel);
+
+      // Sample weather data - replace with actual API call or database lookup
+      const weatherOptions = [
+        { condition: "Rain, 30mm", temp: "18°C / 25°C" },
+        { condition: "Sunny", temp: "22°C / 28°C" },
+        { condition: "Cloudy", temp: "16°C / 23°C" },
+        { condition: "Clear", temp: "20°C / 26°C" },
+        { condition: "Partly Cloudy", temp: "19°C / 24°C" },
+      ];
+
+      // Use date to generate consistent weather (in real app, this would be an API call)
+      const weatherIndex = date.getDate() % weatherOptions.length;
+      return weatherOptions[weatherIndex];
+    } catch (error) {
+      console.error("Error getting weather data:", error);
+      return { condition: "Clear", temp: "20°C / 25°C" };
+    }
+  }
+
   _formatSalesAmount(value) {
     return `${(value * 10000).toLocaleString()} won`;
   }
@@ -220,6 +243,7 @@ export class ChartService {
                 color: AXIS_COLOR,
                 font: { size: 12 },
                 callback: function (value, index, ticks) {
+                  const totalTicks = ticks.length;
                   if (index === 0 || index === ticks.length - 1) {
                     return this.getLabelForValue(value);
                   }
@@ -320,10 +344,12 @@ export class ChartService {
                   const datasetIndex = ctx.datasetIndex;
 
                   if (datasetIndex === 1) {
-                    // ✅ SAFE: Use static data until weather integration is fixed
+                    const idx = ctx.dataIndex;
+                    const weatherData = this.getWeatherDataForDate(labels[idx]);
+
                     return [
-                      "Weather: Partly Cloudy",
-                      "Temperature: 19°C / 24°C",
+                      `Weather: ${weatherData.condition}`,
+                      `Temperature: ${weatherData.temp}`,
                     ];
                   }
 
@@ -487,7 +513,7 @@ export class ChartService {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: { mode: "nearest", intersect: false },
+          interaction: { mode: "nearest", intersect: true },
           plugins: {
             legend: {
               display: true,
@@ -565,10 +591,12 @@ export class ChartService {
                   const datasetIndex = ctx.datasetIndex;
 
                   if (datasetIndex === 1) {
-                    // ✅ SAFE: Use static data until weather integration is fixed
+                    const idx = ctx.dataIndex;
+                    const weatherData = this.getWeatherDataForDate(labels[idx]);
+
                     return [
-                      "Weather: Partly Cloudy",
-                      "Temperature: 19°C / 24°C",
+                      `Weather: ${weatherData.condition}`,
+                      `Temperature: ${weatherData.temp}`,
                     ];
                   }
 
@@ -580,12 +608,11 @@ export class ChartService {
           scales: {
             x: {
               ticks: {
+                autoSkip: false,
+                maxTicksLimit: period === "30days" ? 8 : 7,
                 callback: function (value, index, ticks) {
-                  if (
-                    period === "7days" ||
-                    index === 0 ||
-                    index === ticks.length - 1
-                  ) {
+                  const totalTicks = ticks.length;
+                  if ( index === 0 || index === ticks.length - 1) {
                     return this.getLabelForValue(value);
                   }
                   return "";
@@ -769,19 +796,11 @@ export class ChartService {
             x: {
               ticks: {
                 callback: function (value, index, ticks) {
-                  // Show fewer labels for cleaner look
                   const totalTicks = ticks.length;
-                  if (period === "7days") {
-                    // Show every other label for 7 days
-                    return index % 2 === 0 || index === totalTicks - 1
-                      ? this.getLabelForValue(value)
-                      : "";
-                  } else {
-                    // Show every 6th label for 30 days
-                    return index % 6 === 0 || index === totalTicks - 1
-                      ? this.getLabelForValue(value)
-                      : "";
-                  }
+                  if (period === "7days" || index === 0 || index === ticks.length - 1) {
+                    return this.getLabelForValue(value);
+                  } 
+                  return "";
                 },
                 font: { size: 11 },
                 color: "#666",
@@ -798,11 +817,11 @@ export class ChartService {
               labels: {
                 usePointStyle: true,
                 pointStyle: "circle",
-                boxWidth: 8,
-                boxHeight: 8,
-                padding: 20,
-                font: { size: 12, weight: "normal" }, // ✅ Normal weight, not bold
-                color: "#333",
+                boxWidth: 6,
+                boxHeight: 6,
+                padding: 16,
+                font: { size: 12, weight: "600" }, // ✅ Normal weight, not bold
+                color: "#1e1e1e",
                 generateLabels: function (chart) {
                   // ✅ CLEAN LEGEND - Simple labels only
                   return chart.data.datasets.map((dataset, i) => ({
@@ -837,7 +856,6 @@ export class ChartService {
                   const labelDate = labels[idx];
                   const date = new Date(labelDate);
 
-                  // ✅ ENHANCED: Different year based on dataset
                   let displayYear = date.getFullYear();
                   if (datasetIndex === 1) {
                     displayYear = displayYear - 1; // Previous year data
@@ -873,7 +891,7 @@ export class ChartService {
                 },
 
                 label: (ctx) => {
-                  const value = parseInt(ctx.parsed.y) || 0;
+                  const value = parseInt(ctx.raw) || 0;
                   return `Reservations: ${value.toLocaleString()}`;
                 },
 
@@ -881,25 +899,18 @@ export class ChartService {
                   const datasetIndex = ctx.datasetIndex;
 
                   if (datasetIndex === 1) {
-                    // ✅ SAFE: Use static data until weather integration is fixed
+                    const idx = ctx.dataIndex;
+                    const weatherData = this.getWeatherDataForDate(labels[idx]);
+
                     return [
-                      "Weather: Partly Cloudy",
-                      "Temperature: 19°C / 24°C",
+                      `Weather: ${weatherData.condition}`,
+                      `Temperature: ${weatherData.temp}`,
                     ];
                   }
 
                   return [];
                 },
               },
-            },
-          },
-          elements: {
-            line: {
-              borderWidth: 2,
-            },
-            point: {
-              radius: 4,
-              hoverRadius: 6,
             },
           },
         },

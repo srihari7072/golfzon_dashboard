@@ -1,8 +1,9 @@
 from odoo import models, fields, api
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 _logger = logging.getLogger(__name__)
+
 
 class VisitCustomer(models.Model):
     _name = "visit.customer"
@@ -51,7 +52,20 @@ class VisitCustomer(models.Model):
     cart_discount_amt = fields.Float(string="Cart Discount Amount")
     coupon_discount_amt = fields.Float(string="Coupon Discount Amount")
     spc_yn = fields.Char(string="Special Y/N")
-    
+
+    def _to_date(self, d):
+        return d if isinstance(d, date) else datetime.strptime(str(d), "%Y-%m-%d").date()
+
+    def _iso_labels(self, start: date, days: int):
+        return [(start + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(days)]
+
+    def _daily_array(self, rows_map, start: date, days: int, prev_year=False):
+        data = []
+        for i in range(days):
+            d = start + timedelta(days=i)
+            key = d if not prev_year else d
+            data.append(int(rows_map.get(key, 0)))
+        return data
 
     @api.model
     def get_visitor_data_summary(self):
@@ -74,160 +88,162 @@ class VisitCustomer(models.Model):
 
             if not result or result[0] == 0:
                 _logger.warning("❌ No visitor data found in visit_customers table")
-                return {'has_data': False, 'message': 'No visitor data in database'}
+                return {"has_data": False, "message": "No visitor data in database"}
 
             total_records = result[0]
             earliest_date_str = result[1]
             latest_date_str = result[2]
 
-            _logger.info(f"📊 Visitor Summary: {total_records} records, {earliest_date_str} to {latest_date_str}")
+            _logger.info(
+                f"📊 Visitor Summary: {total_records} records, {earliest_date_str} to {latest_date_str}"
+            )
 
             # ✅ FIXED: Convert to string for JSON serialization
             try:
-                latest_date = datetime.strptime(str(latest_date_str), '%Y-%m-%d').date()
-                latest_date_json = latest_date.strftime('%Y-%m-%d')  # Convert to string
+                latest_date = datetime.strptime(str(latest_date_str), "%Y-%m-%d").date()
+                latest_date_json = latest_date.strftime("%Y-%m-%d")  # Convert to string
             except ValueError:
-                return {'has_data': False, 'message': f'Invalid date format: {latest_date_str}'}
+                return {
+                    "has_data": False,
+                    "message": f"Invalid date format: {latest_date_str}",
+                }
 
             # ✅ FIXED: Return only JSON-serializable data
             return {
-                'has_data': True,
-                'latest_date': latest_date_json,  # String, not date object
-                'earliest_date': str(earliest_date_str),
-                'total_records': total_records,
-                'reference_date_str': latest_date_json  # String for JSON
+                "has_data": True,
+                "latest_date": latest_date_json,  # String, not date object
+                "earliest_date": str(earliest_date_str),
+                "total_records": total_records,
+                "reference_date_str": latest_date_json,  # String for JSON
             }
 
         except Exception as e:
             _logger.error(f"❌ Visitor summary error: {str(e)}")
             import traceback
+
             _logger.error(f"❌ Traceback: {traceback.format_exc()}")
-            return {'has_data': False, 'message': str(e)}
+            return {"has_data": False, "message": str(e)}
 
     @api.model
     def get_visitor_chart_data(self, days=30):
-        """Get visitor chart data with dynamic date range based on latest available data"""
+        """
+        Current-period vs same-period last year, aligned to ISO current-year labels.
+        """
         try:
-            _logger.info(f"📊 Getting visitor chart data for {days} days with dynamic date range...")
-            
-            # Get data summary first to find latest available date
-            data_summary = self.get_visitor_data_summary()
-            
-            if not data_summary['has_data']:
-                _logger.warning(f"❌ No visitor data: {data_summary['message']}")
-                return self._get_empty_visitor_chart_data(days)
-            
-            # ✅ KEY FIX: Use latest available date from database as end date
-            latest_date = datetime.strptime(data_summary['latest_date'], '%Y-%m-%d').date()
-            current_end_date = latest_date  # 2021-10-21 (dynamic based on DB)
-            current_start_date = current_end_date - timedelta(days=days-1)  # 2021-09-22 for 30 days
-            
-            # Previous year dates - same date range but previous year
-            prev_year_end_date = current_end_date.replace(year=current_end_date.year - 1)  # 2020-10-21
-            prev_year_start_date = current_start_date.replace(year=current_start_date.year - 1)  # 2020-09-22
-            
-            _logger.info(f"📊 Dynamic Visitor periods:")
-            _logger.info(f"   Current: {current_start_date} to {current_end_date}")
-            _logger.info(f"   Previous year: {prev_year_start_date} to {prev_year_end_date}")
-            
-            # Fetch current period data
-            current_query = """
-            SELECT
-                CAST(visit_date AS DATE) as visit_date,
-                CAST(COUNT(*) AS INTEGER) as visitor_count
-            FROM visit_customers
-            WHERE CAST(visit_date AS DATE) BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
-            GROUP BY CAST(visit_date AS DATE)
-            ORDER BY CAST(visit_date AS DATE)
-            """
-            
-            self.env.cr.execute(current_query, (
-                current_start_date.strftime('%Y-%m-%d'),
-                current_end_date.strftime('%Y-%m-%d')
-            ))
-            current_results = self.env.cr.fetchall()
-            
-            # Fetch previous year data
-            prev_year_query = """
-            SELECT
-                CAST(visit_date AS DATE) as visit_date,
-                CAST(COUNT(*) AS INTEGER) as visitor_count
-            FROM visit_customers
-            WHERE CAST(visit_date AS DATE) BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
-            GROUP BY CAST(visit_date AS DATE)
-            ORDER BY CAST(visit_date AS DATE)
-            """
-            
-            self.env.cr.execute(prev_year_query, (
-                prev_year_start_date.strftime('%Y-%m-%d'),
-                prev_year_end_date.strftime('%Y-%m-%d')
-            ))
-            prev_year_results = self.env.cr.fetchall()
-            
-            # Process data into daily arrays
-            current_data = self._process_daily_data_cross_system(current_results, current_start_date, days)
-            prev_year_data = self._process_daily_data_cross_system(prev_year_results, prev_year_start_date, days)
-            
-            # Calculate totals
-            current_total = int(sum(current_data))
-            prev_year_total = int(sum(prev_year_data))
-            
-            # Calculate growth percentage
-            if prev_year_total > 0:
-                raw_growth = ((current_total - prev_year_total) / prev_year_total) * 100
-                growth_percentage = max(-100.0, min(100.0, round(raw_growth, 1)))
-            else:
-                growth_percentage = 100.0 if current_total > 0 else 0.0
-            
-            # Enhanced section breakdown
-            section_totals = self._get_enhanced_section_breakdown(current_start_date, current_end_date)
-            
-            # Generate labels
-            labels = self._generate_labels(current_start_date, days)
-            
-            return {
-                'current_data': [int(x) for x in current_data],
-                'prev_year_data': [int(x) for x in prev_year_data],
-                'labels': [str(x) for x in labels],
-                'totals': {
-                    'current_total': int(current_total),
-                    'prev_year_total': int(prev_year_total),
-                    'growth_percentage': float(growth_percentage)
-                },
-                'section_totals': {
-                    'part1': int(section_totals.get('part1', 0)),
-                    'part2': int(section_totals.get('part2', 0)),
-                    'part3': int(section_totals.get('part3', 0))
-                },
-                'date_info': {
-                    'current_start': current_start_date.strftime('%Y-%m-%d'),
-                    'current_end': current_end_date.strftime('%Y-%m-%d'),
-                    'prev_year_start': prev_year_start_date.strftime('%Y-%m-%d'),
-                    'prev_year_end': prev_year_end_date.strftime('%Y-%m-%d'),
-                    'data_summary': data_summary,
-                    'message': f'Data from {current_start_date.strftime("%Y-%m-%d")} to {current_end_date.strftime("%Y-%m-%d")} (based on latest available: {latest_date.strftime("%Y-%m-%d")})'
+            self.env.cr.execute("SELECT MAX(CAST(visit_date AS date)) FROM visit_customers WHERE visit_date IS NOT NULL")
+            latest_s = self.env.cr.fetchone()[0]
+            if not latest_s:
+                return {
+                    "current_data": [0] * days,
+                    "prev_year_data": [0] * days,
+                    "labels": [],
+                    "totals": {"current_total": 0, "prev_year_total": 0, "growth_percentage": 0.0},
+                    "section_totals": {"part1": 0, "part2": 0, "part3": 0},
+                    "date_info": {},
                 }
+
+            latest = self._to_date(latest_s)
+            cur_end = latest
+            cur_start = cur_end - timedelta(days=days - 1)
+            prv_end = cur_end.replace(year=cur_end.year - 1)
+            prv_start = cur_start.replace(year=cur_start.year - 1)
+
+            q = """
+                SELECT CAST(visit_date AS date) AS d, COUNT(*)::int
+                FROM visit_customers
+                WHERE CAST(visit_date AS date) BETWEEN %s AND %s
+                GROUP BY 1 ORDER BY 1
+            """
+            self.env.cr.execute(q, (cur_start, cur_end))
+            cur_map = {r[0]: int(r[1]) for r in self.env.cr.fetchall() or []}
+
+            self.env.cr.execute(q, (prv_start, prv_end))
+            prv_map_raw = {r[0]: int(r[1]) for r in self.env.cr.fetchall() or []}
+
+            # Shift prev-year keys +1 year to align with current labels
+            prv_map = {}
+            for d_prev, cnt in prv_map_raw.items():
+                shifted = d_prev.replace(year=d_prev.year + 1)
+                prv_map[shifted] = cnt
+
+            labels = self._iso_labels(cur_start, days)
+            cur, prv = [], []
+            d_it = cur_start
+            for _ in range(days):
+                cur.append(int(cur_map.get(d_it, 0)))
+                prv.append(int(prv_map.get(d_it, 0)))
+                d_it += timedelta(days=1)
+
+            cur_total = int(sum(cur))
+            prv_total = int(sum(prv))
+            growth = 0.0 if prv_total == 0 else max(-100.0, min(100.0, round((cur_total - prv_total) * 100.0 / prv_total, 1)))
+
+            # Section totals by time of day (optional—kept simple)
+            try:
+                q2 = """
+                    SELECT
+                      CASE
+                        WHEN EXTRACT(HOUR FROM b.created_at) BETWEEN 6 AND 11 THEN 'part1'
+                        WHEN EXTRACT(HOUR FROM b.created_at) BETWEEN 12 AND 17 THEN 'part2'
+                        WHEN EXTRACT(HOUR FROM b.created_at) BETWEEN 18 AND 23 THEN 'part3'
+                        ELSE 'part1'
+                      END AS k,
+                      COUNT(*)::int
+                    FROM visit_customers v
+                    LEFT JOIN booking_info b ON b.bookg_info_id::text = v.bookg_info_id::text
+                    WHERE CAST(v.visit_date AS date) BETWEEN %s AND %s
+                    GROUP BY 1
+                """
+                self.env.cr.execute(q2, (cur_start, cur_end))
+                secs = dict(self.env.cr.fetchall() or [])
+                section_totals = {"part1": int(secs.get("part1", 0)), "part2": int(secs.get("part2", 0)), "part3": int(secs.get("part3", 0))}
+            except Exception as e:
+                _logger.warning(f"section totals skipped: {e}")
+                section_totals = {"part1": 0, "part2": 0, "part3": 0}
+
+            return {
+                "current_data": cur,
+                "prev_year_data": prv,
+                "labels": labels,
+                "totals": {"current_total": cur_total, "prev_year_total": prv_total, "growth_percentage": growth},
+                "section_totals": section_totals,
+                "date_info": {
+                    "current_start": cur_start.strftime("%Y-%m-%d"),
+                    "current_end": cur_end.strftime("%Y-%m-%d"),
+                    "prev_year_start": prv_start.strftime("%Y-%m-%d"),
+                    "prev_year_end": prv_end.strftime("%Y-%m-%d"),
+                },
             }
-            
         except Exception as e:
-            _logger.error(f"❌ Visitor chart data error: {str(e)}")
-            return self._get_empty_visitor_chart_data(days)
+            _logger.error(f"get_visitor_chart_data error: {e}")
+            return {
+                "current_data": [0] * days,
+                "prev_year_data": [0] * days,
+                "labels": [],
+                "totals": {"current_total": 0, "prev_year_total": 0, "growth_percentage": 0.0},
+                "section_totals": {"part1": 0, "part2": 0, "part3": 0},
+                "date_info": {},
+            }
 
     def _process_daily_data_cross_system(self, results, start_date, days):
         """Process data with cross-system compatibility - FIXED VERSION"""
         date_counts = {}
-        
+
         for result in results:
             visit_date_str = str(result[0])
             visitor_count = int(result[1])  # Explicitly convert to int
-            
+
             try:
                 # Handle different date formats across systems
-                if 'T' in visit_date_str:
-                    visit_date = datetime.fromisoformat(visit_date_str.split('T')[0]).date()
+                if "T" in visit_date_str:
+                    visit_date = datetime.fromisoformat(
+                        visit_date_str.split("T")[0]
+                    ).date()
                 else:
-                    visit_date = datetime.strptime(visit_date_str[:10], '%Y-%m-%d').date()
-                
+                    visit_date = datetime.strptime(
+                        visit_date_str[:10], "%Y-%m-%d"
+                    ).date()
+
                 date_counts[visit_date] = visitor_count
             except ValueError as e:
                 _logger.warning(f"📊 Date parsing error for '{visit_date_str}': {e}")
@@ -242,52 +258,32 @@ class VisitCustomer(models.Model):
 
         return daily_data
 
-    def _get_section_breakdown(self, start_date, end_date):
-        """Get section breakdown - FIXED table name"""
+    def get_section_breakdown_by_time(self, start: date, end: date):
         try:
-            # ✅ FIXED: Use correct table name (plural)
-            section_query = """
-                SELECT 
-                    hole_scd,
-                    COUNT(*) as visitor_count
-                FROM visit_customers 
-                WHERE visit_date BETWEEN %s AND %s
-                    AND hole_scd IS NOT NULL
-                GROUP BY hole_scd
+            q = """
+                SELECT
+                  CASE
+                    WHEN EXTRACT(HOUR FROM b.created_at) BETWEEN 6 AND 11 THEN 'part1'
+                    WHEN EXTRACT(HOUR FROM b.created_at) BETWEEN 12 AND 17 THEN 'part2'
+                    WHEN EXTRACT(HOUR FROM b.created_at) BETWEEN 18 AND 23 THEN 'part3'
+                    ELSE 'part1'
+                  END AS k,
+                  COUNT(*)::int
+                FROM visit_customers v
+                LEFT JOIN booking_info b ON b.bookg_info_id::text = v.bookg_info_id::text
+                WHERE CAST(v.visit_date AS date) BETWEEN %s AND %s
+                GROUP BY 1
             """
-
-            self.env.cr.execute(section_query, (
-                start_date.strftime('%Y-%m-%d'),
-                end_date.strftime('%Y-%m-%d')
-            ))
-            section_results = self.env.cr.fetchall()
-
-            section_totals = {'part1': 0, 'part2': 0, 'part3': 0}
-
-            for result in section_results:
-                hole_scd = str(result[0]).strip() if result[0] else ''
-                count = result[1]
-                _logger.info(f"📊 Section: hole_scd '{hole_scd}' = {count} visitors")
-
-                # Map hole_scd to sections
-                if hole_scd in ['1', '01', 'part1', 'PART1']:
-                    section_totals['part1'] += count
-                elif hole_scd in ['2', '02', 'part2', 'PART2']:
-                    section_totals['part2'] += count
-                elif hole_scd in ['3', '03', 'part3', 'PART3']:
-                    section_totals['part3'] += count
-                else:
-                    # Distribute unknown sections evenly
-                    section_totals['part1'] += count // 3
-                    section_totals['part2'] += count // 3
-                    section_totals['part3'] += count - (2 * (count // 3))
-
-            _logger.info(f"📊 Final section totals: {section_totals}")
-            return section_totals
-
+            self.env.cr.execute(q, (start, end))
+            d = dict(self.env.cr.fetchall() or [])
+            return {
+                "part1": int(d.get("part1", 0)),
+                "part2": int(d.get("part2", 0)),
+                "part3": int(d.get("part3", 0)),
+            }
         except Exception as e:
-            _logger.error(f"❌ Section breakdown error: {str(e)}")
-            return {'part1': 0, 'part2': 0, 'part3': 0}
+            _logger.error(f"get_section_breakdown_by_time error: {e}")
+            return {"part1": 0, "part2": 0, "part3": 0}
 
     def _generate_labels(self, start_date, days):
         """Generate labels"""
@@ -295,37 +291,31 @@ class VisitCustomer(models.Model):
         for i in range(days):
             current_date = start_date + timedelta(days=i)
             if days <= 7:
-                labels.append(current_date.strftime('%a'))  # Mon, Tue, etc.
+                labels.append(current_date.strftime("%a"))  # Mon, Tue, etc.
             else:
-                labels.append(current_date.strftime('%m/%d'))  # 10/21, etc.
+                labels.append(current_date.strftime("%m/%d"))  # 10/21, etc.
         return labels
 
     def _get_empty_visitor_chart_data(self, days):
         """Return empty data"""
         return {
-            'current_data': [0] * days,
-            'prev_year_data': [0] * days,
-            'labels': [f"Day {i+1}" for i in range(days)],
-            'totals': {
-                'current_total': 0,
-                'prev_year_total': 0,
-                'growth_percentage': 0
+            "current_data": [0] * days,
+            "prev_year_data": [0] * days,
+            "labels": [f"Day {i+1}" for i in range(days)],
+            "totals": {
+                "current_total": 0,
+                "prev_year_total": 0,
+                "growth_percentage": 0,
             },
-            'section_totals': {
-                'part1': 0,
-                'part2': 0,
-                'part3': 0
-            },
-            'date_info': {
-                'message': 'No visitor data available'
-            }
+            "section_totals": {"part1": 0, "part2": 0, "part3": 0},
+            "date_info": {"message": "No visitor data available"},
         }
-    
+
     def _get_enhanced_section_breakdown(self, start_date, end_date):
         """Enhanced section breakdown with better logic and debugging"""
         try:
             _logger.info(f"📊 Getting section breakdown for {start_date} to {end_date}")
-            
+
             # ✅ STEP 1: Check what hole_scd values actually exist
             hole_check_query = """
             SELECT 
@@ -338,104 +328,123 @@ class VisitCustomer(models.Model):
             GROUP BY hole_scd
             ORDER BY visitor_count DESC
             """
-            
-            self.env.cr.execute(hole_check_query, (
-                start_date.strftime('%Y-%m-%d'),
-                end_date.strftime('%Y-%m-%d')
-            ))
+
+            self.env.cr.execute(
+                hole_check_query,
+                (start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")),
+            )
             hole_results = self.env.cr.fetchall()
-            
+
             _logger.info(f"📊 Found {len(hole_results)} different hole_scd values:")
             for result in hole_results:
                 _logger.info(f"  hole_scd: '{result[0]}' = {result[1]} visitors")
-            
-            section_totals = {'part1': 0, 'part2': 0, 'part3': 0}
+
+            section_totals = {"part1": 0, "part2": 0, "part3": 0}
             total_visitors = 0
-            
+
             if not hole_results:
-                _logger.warning("❌ No hole_scd data found, trying alternative distribution")
+                _logger.warning(
+                    "❌ No hole_scd data found, trying alternative distribution"
+                )
                 # ✅ FALLBACK: If no hole_scd, distribute total visitors evenly
                 total_query = """
                 SELECT COUNT(*)
                 FROM visit_customers 
                 WHERE visit_date BETWEEN %s AND %s
                 """
-                self.env.cr.execute(total_query, (
-                    start_date.strftime('%Y-%m-%d'),
-                    end_date.strftime('%Y-%m-%d')
-                ))
+                self.env.cr.execute(
+                    total_query,
+                    (start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")),
+                )
                 total_result = self.env.cr.fetchone()
                 total_visitors = total_result[0] if total_result else 0
-                
+
                 if total_visitors > 0:
                     # Distribute evenly across sections
-                    section_totals['part1'] = total_visitors // 3
-                    section_totals['part2'] = total_visitors // 3  
-                    section_totals['part3'] = total_visitors - (2 * (total_visitors // 3))
-                    _logger.info(f"📊 Fallback distribution: Total={total_visitors}, Parts={section_totals}")
+                    section_totals["part1"] = total_visitors // 3
+                    section_totals["part2"] = total_visitors // 3
+                    section_totals["part3"] = total_visitors - (
+                        2 * (total_visitors // 3)
+                    )
+                    _logger.info(
+                        f"📊 Fallback distribution: Total={total_visitors}, Parts={section_totals}"
+                    )
             else:
                 # ✅ ENHANCED: Process actual hole_scd values with flexible mapping
                 for result in hole_results:
-                    hole_scd = str(result[0]).strip().lower() if result[0] else ''
+                    hole_scd = str(result[0]).strip().lower() if result[0] else ""
                     count = result[1]
                     total_visitors += count
-                    
+
                     _logger.info(f"📊 Processing: hole_scd='{hole_scd}', count={count}")
-                    
+
                     # ✅ FLEXIBLE MAPPING: Handle various hole_scd formats
-                    if any(part1_id in hole_scd for part1_id in ['1', '01', 'part1', 'section1', 'area1']):
-                        section_totals['part1'] += count
+                    if any(
+                        part1_id in hole_scd
+                        for part1_id in ["1", "01", "part1", "section1", "area1"]
+                    ):
+                        section_totals["part1"] += count
                         _logger.info(f"   → Mapped to Part 1")
-                    elif any(part2_id in hole_scd for part2_id in ['2', '02', 'part2', 'section2', 'area2']):
-                        section_totals['part2'] += count
+                    elif any(
+                        part2_id in hole_scd
+                        for part2_id in ["2", "02", "part2", "section2", "area2"]
+                    ):
+                        section_totals["part2"] += count
                         _logger.info(f"   → Mapped to Part 2")
-                    elif any(part3_id in hole_scd for part3_id in ['3', '03', 'part3', 'section3', 'area3']):
-                        section_totals['part3'] += count
+                    elif any(
+                        part3_id in hole_scd
+                        for part3_id in ["3", "03", "part3", "section3", "area3"]
+                    ):
+                        section_totals["part3"] += count
                         _logger.info(f"   → Mapped to Part 3")
                     else:
                         # ✅ SMART DISTRIBUTION: Distribute unknown values based on pattern
-                        if 'a' in hole_scd or '4' in hole_scd or '5' in hole_scd:
-                            section_totals['part1'] += count
+                        if "a" in hole_scd or "4" in hole_scd or "5" in hole_scd:
+                            section_totals["part1"] += count
                             _logger.info(f"   → Pattern mapped to Part 1")
-                        elif 'b' in hole_scd or '6' in hole_scd or '7' in hole_scd:
-                            section_totals['part2'] += count
+                        elif "b" in hole_scd or "6" in hole_scd or "7" in hole_scd:
+                            section_totals["part2"] += count
                             _logger.info(f"   → Pattern mapped to Part 2")
-                        elif 'c' in hole_scd or '8' in hole_scd or '9' in hole_scd:
-                            section_totals['part3'] += count
+                        elif "c" in hole_scd or "8" in hole_scd or "9" in hole_scd:
+                            section_totals["part3"] += count
                             _logger.info(f"   → Pattern mapped to Part 3")
                         else:
                             # Even distribution for completely unknown values
-                            section_totals['part1'] += count // 3
-                            section_totals['part2'] += count // 3
-                            section_totals['part3'] += count - (2 * (count // 3))
+                            section_totals["part1"] += count // 3
+                            section_totals["part2"] += count // 3
+                            section_totals["part3"] += count - (2 * (count // 3))
                             _logger.info(f"   → Even distribution across all parts")
-            
-            _logger.info(f"📊 Final section totals: {section_totals} (Total: {sum(section_totals.values())})")
+
+            _logger.info(
+                f"📊 Final section totals: {section_totals} (Total: {sum(section_totals.values())})"
+            )
             return section_totals
-            
+
         except Exception as e:
             _logger.error(f"❌ Enhanced section breakdown error: {str(e)}")
             # Return equal distribution as fallback
-            return {'part1': 0, 'part2': 0, 'part3': 0}
+            return {"part1": 0, "part2": 0, "part3": 0}
 
     @api.model
     def get_gender_statistics_from_visitors(self):
         """Get gender statistics from visit_customers table - UPDATED VERSION"""
         try:
             _logger.info("📊 Getting gender statistics from visit_customers...")
-            
+
             # ✅ IMPROVED: Get latest date range for more relevant data
             data_summary = self.get_visitor_data_summary()
-            if not data_summary['has_data']:
+            if not data_summary["has_data"]:
                 _logger.warning("❌ No visitor data available")
                 return self._get_empty_gender_statistics()
-            
-            latest_date = datetime.strptime(data_summary['latest_date'], '%Y-%m-%d').date()
+
+            latest_date = datetime.strptime(
+                data_summary["latest_date"], "%Y-%m-%d"
+            ).date()
             # Get data from last 30 days from latest available date
             start_date = latest_date - timedelta(days=29)  # 30 days total
-            
+
             _logger.info(f"📊 Gender analysis period: {start_date} to {latest_date}")
-            
+
             # ✅ IMPROVED: More comprehensive gender query
             gender_query = """
             SELECT 
@@ -448,39 +457,49 @@ class VisitCustomer(models.Model):
             GROUP BY LOWER(TRIM(gender_scd))
             ORDER BY count DESC
             """
-            
+
             self.env.cr.execute(gender_query, (start_date, latest_date))
             results = self.env.cr.fetchall()
-            
+
             _logger.info(f"📊 Gender query results from visit_customers:")
             for result in results:
                 _logger.info(f"   {result[0]}: {result[1]} visitors")
-            
+
             if not results:
                 _logger.warning("❌ No gender data found in date range")
                 return self._get_empty_gender_statistics()
-            
+
             male_count = 0
             female_count = 0
             unknown_count = 0
-            
+
             # ✅ ENHANCED: Flexible gender mapping for various formats
             for result in results:
-                gender = str(result[0]).lower().strip() if result[0] else ''
+                gender = str(result[0]).lower().strip() if result[0] else ""
                 count = result[1]
-                
+
                 # Male variations
-                if gender in ['m', 'male', '1', 'man', 'masculine', '남성', 'male_scd']:
+                if gender in ["m", "male", "1", "man", "masculine", "남성", "male_scd"]:
                     male_count += count
-                # Female variations  
-                elif gender in ['f', 'female', '2', 'woman', 'feminine', '여성', 'female_scd']:
+                # Female variations
+                elif gender in [
+                    "f",
+                    "female",
+                    "2",
+                    "woman",
+                    "feminine",
+                    "여성",
+                    "female_scd",
+                ]:
                     female_count += count
                 else:
-                    _logger.info(f"📊 Unknown gender value: '{gender}' ({count} visitors)")
+                    _logger.info(
+                        f"📊 Unknown gender value: '{gender}' ({count} visitors)"
+                    )
                     unknown_count += count
-            
+
             total = male_count + female_count + unknown_count
-            
+
             # ✅ SMART: Distribute unknown values proportionally
             if unknown_count > 0 and total > 0:
                 if male_count > 0 or female_count > 0:
@@ -500,52 +519,55 @@ class VisitCustomer(models.Model):
                     # All data is unknown, distribute 50/50
                     male_count = unknown_count // 2
                     female_count = unknown_count - male_count
-            
+
             # Recalculate total after distribution
             total = male_count + female_count
-            
-            _logger.info(f"📊 Final gender totals: Male={male_count}, Female={female_count}, Total={total}")
-            
+
+            _logger.info(
+                f"📊 Final gender totals: Male={male_count}, Female={female_count}, Total={total}"
+            )
+
             if total == 0:
                 return self._get_empty_gender_statistics()
-            
+
             # Calculate percentages
             male_pct = round((male_count / total) * 100, 1)
             female_pct = round((female_count / total) * 100, 1)
-            
+
             # Ensure percentages add up to 100%
             if male_pct + female_pct != 100.0:
                 female_pct = 100.0 - male_pct
-            
+
             return {
-                'male_percentage': float(male_pct),
-                'female_percentage': float(female_pct),
-                'male_count': int(male_count),
-                'female_count': int(female_count),
-                'total_persons': int(total),
-                'has_data': True,
-                'is_sample': False,
-                'data_source': 'visit_customers',
-                'date_range': f"{start_date} to {latest_date}",
-                'unknown_count_original': int(unknown_count)
+                "male_percentage": float(male_pct),
+                "female_percentage": float(female_pct),
+                "male_count": int(male_count),
+                "female_count": int(female_count),
+                "total_persons": int(total),
+                "has_data": True,
+                "is_sample": False,
+                "data_source": "visit_customers",
+                "date_range": f"{start_date} to {latest_date}",
+                "unknown_count_original": int(unknown_count),
             }
-            
+
         except Exception as e:
             _logger.error(f"❌ Gender statistics error: {str(e)}")
             import traceback
+
             _logger.error(f"❌ Traceback: {traceback.format_exc()}")
             return self._get_empty_gender_statistics()
 
     def _get_empty_gender_statistics(self):
         """Return empty gender statistics structure"""
         return {
-            'male_percentage': 0.0,
-            'female_percentage': 0.0,
-            'male_count': 0,
-            'female_count': 0,
-            'total_persons': 0,
-            'has_data': False,
-            'is_sample': False,
-            'data_source': 'visit_customers',
-            'message': 'No gender data available'
+            "male_percentage": 0.0,
+            "female_percentage": 0.0,
+            "male_count": 0,
+            "female_count": 0,
+            "total_persons": 0,
+            "has_data": False,
+            "is_sample": False,
+            "data_source": "visit_customers",
+            "message": "No gender data available",
         }

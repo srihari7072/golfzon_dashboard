@@ -60,7 +60,7 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="state.selectedPeriod === '7days' ? _t('7 days prior to latest visit date') : _t('30 days prior to latest visit date')"/>
+                                    <t t-esc="state.selectedPeriod === '7days' ? _t('30 days prior to the inquiry date') : _t('30 days prior to the inquiry date')"/>
                                 </div>
                             </span>
                         </span>
@@ -94,7 +94,7 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="state.selectedPeriod === '7days' ? _t('7 days section breakdown') : _t('30 days section breakdown')"/>
+                                    <t t-esc="state.selectedPeriod === '7days' ? _t('30 days prior to the inquiry date') : _t('30 days prior to the inquiry date')"/>
                                 </div>
                             </span>
                         </span>

@@ -18,21 +18,22 @@ class GolfzonDashboard extends Component {
   static template = "golfzon_dashboard.Dashboard";
 
   setup() {
-
     this._t = _t;
+
     // Initialize services
     try {
       this.rpc = useService("rpc");
       console.log("✅ RPC Service available");
     } catch (e) {
-      console.warn("⚠️ RPC Service not available, using HTTP fallback");
+      console.warn("⚠️ RPC Service not available");
       this.rpc = null;
     }
+
     this.weatherService = new WeatherService(this.rpc);
     this.golfDataService = new GolfDataService(this.rpc);
     this.chartService = new ChartService();
 
-    // Chart references
+    // Chart references (unchanged)
     this.canvasRef = useRef("salesChart");
     this.visitorRef = useRef("visitorChart");
     this.ageRef = useRef("ageChart");
@@ -49,8 +50,10 @@ class GolfzonDashboard extends Component {
       userName: "username",
       drawerOpen: false,
       showWeatherDetails: false,
-      currentDate: DateUtils.formatCurrentDate(), // e.g., "Tuesday, September 16, 2025"
+      currentDate: DateUtils.formatCurrentDate(),
       userLocation: null,
+
+      // ✅ UPDATED: Initialize with preloaded data if available
       weather: {
         temperature: 27,
         precipitation: 0,
@@ -58,32 +61,38 @@ class GolfzonDashboard extends Component {
         icon: "☀️",
         location: "Detecting location...",
       },
-      reservations: { current: 78, total: 80 },
+
+      reservations: { current: 0, total: 80 },
       teeTime: {
-        part1: { current: 40, total: 50 },
-        part2: { current: 25, total: 30 },
-        part3: { current: 7, total: 15 },
+        part1: { current: 0, total: 50 },
+        part2: { current: 0, total: 30 },
+        part3: { current: 0, total: 15 },
       },
+
       hourlyWeather: [],
       reservationDetails: [],
       performanceData: this.golfDataService.getDefaultPerformanceData(),
+
       activities: [],
       customer_growth: [],
+
       forecastData: {
         forecast_chart: [],
         calendar_data: [],
         pie_charts: {},
         summary_stats: {
-          total_reservations: 2926,
-          utilization_rate: 78.5,
-          month_comparison: { month1: 82.4, month2: 76.2, month3: 75.3 },
-          yearly_growth: 10,
+          total_reservations: 0,
+          utilization_rate: 0,
+          month_comparison: { month1: 0, month2: 0, month3: 0 },
+          yearly_growth: 0,
         },
         analysis_period: DateUtils.generateAnalysisPeriod(),
       },
+
       selectedPeriod: "30days",
       showReservationDetails: false,
       selectedSlot: { day: "", period: "", count: 0 },
+
       heatmapData: this.getInitialHeatmapData(),
       selectedHeatmapBox: this.getDefaultHeatmapBox(),
 
@@ -93,16 +102,14 @@ class GolfzonDashboard extends Component {
         sectionTotals: { part1: 0, part2: 0, part3: 0 },
         isGrowthPositive: true,
       },
+
       salesData: {
-        totals: {
-          current_total: 0,
-          growth_percentage: 0,
-          average_unit_price: 0,
-        },
+        totals: { current_total: 0, growth_percentage: 0, average_unit_price: 0 },
         current_data: [],
         prev_year_data: [],
         labels: [],
       },
+
       hasTrendDown: false,
 
       ...DateUtils.generatePeriodLabels(),
@@ -538,20 +545,21 @@ class GolfzonDashboard extends Component {
   }
 
   updateChartStatistics() {
-    // Update the statistics shown below the chart
     const stats = this.chartService.getChartStatistics();
     const breakdown = this.chartService.getOperationBreakdown();
 
-    // Update state for template display
+    // Keep numeric values for existing template bindings
     this.state.forecastData.summary_stats = {
       total_reservations: stats.current_total,
-      utilization_rate: stats.operation_rate,
+      utilization_rate: stats.operation_rate,          // stays a number or % as your template expects
       growth_percentage: stats.growth_percentage,
       month_comparison: {
         month1: breakdown.part1,
         month2: breakdown.part2,
         month3: breakdown.part3,
       },
+      // NEW: pretty text with spaces (use in XML where the cramped text shows)
+      month_comparison_text: `${this._t('Part 1')} ${breakdown.part1}%   ${this._t('Part 2')} ${breakdown.part2}%   ${this._t('Part 3')} ${breakdown.part3}%`,
     };
   }
 

@@ -43,144 +43,92 @@ class PaymentInfos(models.Model):
 
     @api.model
     def get_database_date_ranges(self):
-        """Get actual min/max dates from database"""
         try:
-            date_range_query = """
-                SELECT 
-                    MIN(pay_date) as min_date,
-                    MAX(pay_date) as max_date,
-                    COUNT(*) as total_records
-                FROM payment_infos 
+            q = """
+                SELECT MIN(pay_date) AS min_date, MAX(pay_date) AS max_date, COUNT(*) AS total_records
+                FROM payment_infos
                 WHERE cancel_yn = 'N' AND pay_amt > 0
             """
-            
-            self.env.cr.execute(date_range_query)
-            result = self.env.cr.fetchone()
-            
-            if result and result[0] and result[1]:
-                min_date = result[0]
-                max_date = result[1]
-                total_records = result[2]
-                
-                # Convert string dates to date objects if needed
-                if isinstance(min_date, str):
-                    min_date = datetime.strptime(min_date, '%Y-%m-%d').date()
-                if isinstance(max_date, str):
-                    max_date = datetime.strptime(max_date, '%Y-%m-%d').date()
-                
-                _logger.info(f"📊 Database date range: {min_date} to {max_date} ({total_records} records)")
-                
-                return {
-                    'min_date': min_date,
-                    'max_date': max_date,
-                    'total_records': total_records
-                }
-            else:
-                _logger.warning("❌ No payment data found in database")
+            self.env.cr.execute(q)
+            r = self.env.cr.fetchone()
+            if not r or not r[0] or not r[1]:
                 return None
-                
+            min_date = r[0] if isinstance(r[0], date) else datetime.strptime(str(r[0]), "%Y-%m-%d").date()
+            max_date = r[1] if isinstance(r[1], date) else datetime.strptime(str(r[1]), "%Y-%m-%d").date()
+            return {"min_date": min_date, "max_date": max_date, "total_records": int(r[2] or 0)}
         except Exception as e:
-            _logger.error(f"❌ Error getting database date ranges: {str(e)}")
+            _logger.error(f"get_database_date_ranges error: {e}")
             return None
+        
+    def _generate_iso_labels(self, start_date: date, days: int):
+        return [(start_date + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(days)]
 
     @api.model
     def get_sales_trends_data(self, days=30):
-        """Get sales trends data using database-driven date ranges"""
         try:
-            _logger.info(f"📊 Getting sales trends for {days} days...")
-            
-            # Get actual database date ranges
-            date_info = self.get_database_date_ranges()
-            if not date_info:
+            info = self.get_database_date_ranges()
+            if not info:
                 return self._get_empty_sales_data(days)
-            
-            # Use last available date as end date instead of today
-            end_date = date_info['max_date']  # 2025-08-26
-            start_date = end_date - timedelta(days=days-1)  # 2025-07-27 for 30 days
-            
-            # Previous year dates (same logic but one year back)
-            prev_year_end = end_date.replace(year=end_date.year - 1)  # 2024-08-26
-            prev_year_start = start_date.replace(year=start_date.year - 1)  # 2024-07-27
-            
-            _logger.info(f"📊 Using date ranges:")
-            _logger.info(f"    Current: {start_date} to {end_date}")
-            _logger.info(f"    Previous year: {prev_year_start} to {prev_year_end}")
-            
-            # Current period daily sales
-            current_query = """
-                SELECT 
-                    pay_date,
-                    SUM(CAST(pay_amt AS DECIMAL(15,2))) as daily_sales
-                FROM payment_infos 
-                WHERE cancel_yn = 'N' 
-                  AND pay_date BETWEEN %s AND %s
-                  AND pay_amt > 0
-                GROUP BY pay_date
-                ORDER BY pay_date
+
+            end_date = info["max_date"]
+            start_date = end_date - timedelta(days=days - 1)
+            prev_end = end_date.replace(year=end_date.year - 1)
+            prev_start = start_date.replace(year=start_date.year - 1)
+
+            q = """
+                SELECT pay_date::date, SUM(COALESCE(pay_amt,0))::numeric
+                FROM payment_infos
+                WHERE cancel_yn = 'N' AND pay_amt > 0 AND pay_date BETWEEN %s AND %s
+                GROUP BY 1 ORDER BY 1
             """
-            
-            self.env.cr.execute(current_query, (start_date, end_date))
-            current_results = self.env.cr.fetchall()
-            
-            # Previous year daily sales
-            self.env.cr.execute(current_query, (prev_year_start, prev_year_end))
-            prev_year_results = self.env.cr.fetchall()
-            
-            _logger.info(f"📊 Found {len(current_results)} current records, {len(prev_year_results)} previous year records")
-            
-            # Process data into arrays
-            current_data = self._process_daily_data(current_results, start_date, days)
-            prev_year_data = self._process_daily_data(prev_year_results, prev_year_start, days)
-            
-            # Calculate totals
-            current_total = sum(current_data)
-            prev_year_total = sum(prev_year_data)
-            
-            _logger.info(f"📊 Totals: Current={current_total:,.0f}, Previous={prev_year_total:,.0f}")
-            
-            # Calculate growth percentage
-            growth_percentage = 0
-            if prev_year_total > 0:
-                growth_percentage = round(((current_total - prev_year_total) / prev_year_total) * 100, 1)
-                growth_percentage = max(-100, min(100, growth_percentage))  # Cap at ±100%
-            
-            # Average unit price for current period
-            avg_price_query = """
-                SELECT AVG(CAST(pay_amt AS DECIMAL(15,2))) as avg_price
-                FROM payment_infos 
-                WHERE cancel_yn = 'N' 
-                  AND pay_date BETWEEN %s AND %s
-                  AND pay_amt > 0
+            self.env.cr.execute(q, (start_date, end_date))
+            cur_rows = {r[0]: float(r[1]) for r in self.env.cr.fetchall() or []}
+            self.env.cr.execute(q, (prev_start, prev_end))
+            prev_rows = {r[0]: float(r[1]) for r in self.env.cr.fetchall() or []}
+
+            cur = []
+            prv = []
+            d = start_date
+            for _ in range(days):
+                cur.append(cur_rows.get(d, 0.0))
+                prv.append(prev_rows.get(d.replace(year=d.year - 1), 0.0))
+                d += timedelta(days=1)
+
+            cur_total = int(round(sum(cur)))
+            prev_total = int(round(sum(prv)))
+            growth = 0.0 if prev_total == 0 else max(-100.0, min(100.0, round((cur_total - prev_total) * 100.0 / prev_total, 1)))
+
+            labels = self._generate_iso_labels(start_date, days)
+
+            avg_q = """
+                SELECT AVG(COALESCE(pay_amt,0))::numeric
+                FROM payment_infos
+                WHERE cancel_yn = 'N' AND pay_amt > 0 AND pay_date BETWEEN %s AND %s
             """
-            
-            self.env.cr.execute(avg_price_query, (start_date, end_date))
-            avg_unit_price = self.env.cr.fetchone()[0] or 0
-            
-            # Generate labels
-            labels = self._generate_date_labels(start_date, days)
-            
+            self.env.cr.execute(avg_q, (start_date, end_date))
+            avg_unit = int(float(self.env.cr.fetchone()[0] or 0))
+
             return {
-                'current_data': current_data,
-                'prev_year_data': prev_year_data,
-                'labels': labels,
-                'totals': {
-                    'current_total': int(current_total),
-                    'prev_year_total': int(prev_year_total),
-                    'growth_percentage': growth_percentage,
-                    'average_unit_price': int(avg_unit_price)
+                "current_data": cur,
+                "prev_year_data": prv,
+                "labels": labels,
+                "totals": {
+                    "current_total": cur_total,
+                    "prev_year_total": prev_total,
+                    "growth_percentage": growth,
+                    "average_unit_price": avg_unit,
                 },
-                'date_info': {
-                    'current_start': start_date.strftime('%Y-%m-%d'),
-                    'current_end': end_date.strftime('%Y-%m-%d'),
-                    'prev_year_start': prev_year_start.strftime('%Y-%m-%d'),
-                    'prev_year_end': prev_year_end.strftime('%Y-%m-%d'),
-                    'database_max_date': end_date.strftime('%Y-%m-%d'),
-                    'total_records': date_info['total_records']
-                }
+                "date_info": {
+                    "current_start": start_date.strftime("%Y-%m-%d"),
+                    "current_end": end_date.strftime("%Y-%m-%d"),
+                    "prev_year_start": prev_start.strftime("%Y-%m-%d"),
+                    "prev_year_end": prev_end.strftime("%Y-%m-%d"),
+                    "database_max_date": end_date.strftime("%Y-%m-%d"),
+                    "total_records": info["total_records"],
+                },
             }
-            
         except Exception as e:
-            _logger.error(f"❌ Sales trends error: {str(e)}")
+            _logger.error(f"get_sales_trends_data error: {e}")
             return self._get_empty_sales_data(days)
 
     @api.model 

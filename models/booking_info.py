@@ -4,6 +4,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
 class BookingInfo(models.Model):
     _name = "booking.info"
     _description = "Booking Information"
