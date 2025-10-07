@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_time_table_tree" model="ir.ui.view">
+        <field name="name">time.table.tree</field>
+        <field name="model">time.table</field>
+        <field name="arch" type="xml">
+            <list string="Time Table">
+                <field name="time_table_id"/>
+                <field name="work_calendar_id"/>
+                <field name="account_id"/>
+                <field name="bookg_date"/>
+                <field name="bookg_time"/>
+                <field name="course_cd_id"/>
+                <field name="hole_scd"/>
+                <field name="time_part_scd"/>
+                <field name="flag_scd"/>
+                <field name="round_scd"/>
+               
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_time_table_form" model="ir.ui.view">
+        <field name="name">time.table.form</field>
+        <field name="model">time.table</field>
+        <field name="arch" type="xml">
+            <form string="Time Table">
+                <sheet>
+                    <group>
+                        <field name="time_table_id"/>
+                        <field name="work_calendar_id"/>
+                        <field name="account_id"/>
+                        <field name="bookg_date"/>
+                        <field name="bookg_time"/>
+                        <field name="course_cd_id"/>
+                        <field name="hole_scd"/>
+                        <field name="time_part_scd"/>
+                        <field name="flag_scd"/>
+                        <field name="round_scd"/>
+                        <field name="time_scd"/>
+                        <field name="min_person"/>
+                        <field name="caddie_s_scd"/>
+                        <field name="prepay_time_yn"/>
+                        <field name="member_time_yn"/>
+                        <field name="green_fee_cd_id"/>
+                        <field name="green_fee_cd_id_2"/>
+                        <field name="green_fee_cd_id_3"/>
+                        <field name="green_fee_discount_id"/>
+                        <field name="course_cd_id_start"/>
+                        <field name="hole_scd_start"/>
+                        <field name="start_seq"/>
+                        <field name="remark"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                        <field name="updated_id"/>
+                        <field name="updated_at"/>
+                        <field name="deleted_id"/>
+                        <field name="deleted_at"/>
+                        <field name="reserving_id"/>
+                        <field name="reserving_at"/>
+                        <field name="time_base_amt_id"/>
+                        <field name="time_base_amt_id_old"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_time_table" model="ir.actions.act_window">
+        <field name="name">Time Table</field>
+        <field name="res_model">time.table</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_time_table_root" name="Time Table"/>
+    <menuitem id="menu_time_table"
+              name="Time Table Records"
+              parent="menu_time_table_root"
+              action="action_time_table"/>
+</odoo>

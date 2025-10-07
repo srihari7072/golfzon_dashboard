@@ -1,0 +1,113 @@
+<odoo>
+  <template id="custom_login_template" name="Dashboard Login" t-name="golfzon_dashboard.custom_login_template">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f6fa;
+        background-image: url('/golfzon_dashboard/static/src/img/golf.webp'); /* Replace with your image path */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .login-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        min-height: 100vh;
+        
+        
+      }
+      .login-card {
+        margin-right: 160px;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+      .login-logo img {
+        max-height: 60px;
+        margin-bottom: 1.5rem;
+      }
+      .alert {
+        background-color: #f8d7da;
+        color: #842029;
+        border-radius: 5px;
+        padding: 10px 15px;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      .form-group {
+        text-align: left;
+        margin-bottom: 1.25rem;
+      }
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+      .form-control {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        box-sizing: border-box;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+      .form-control:focus {
+        border-color: #495057;
+        box-shadow: 0 0 5px rgba(73, 80, 87, 0.25);
+        outline: none;
+      }
+      .btn-primary {
+        width: 100%;
+        background-color: #0056b3;
+        color: white;
+        padding: 0.6rem;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+      }
+      .btn-primary:hover {
+        background-color: #004494;
+      }
+    </style>
+
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-logo">
+          <img src="/golfzon_dashboard/static/src/img/golfzon-logo.png" alt="Golfzon Logo"/>
+        </div>
+        <t t-if="error">
+          <div class="alert" role="alert">
+            <t t-esc="error"/>
+          </div>
+        </t>
+        <form action="/custom/dashboard/login/submit" method="post">
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+          <div class="form-group">
+            <label for="login">Username</label>
+            <input type="text" class="form-control" id="login" name="login" required="required" placeholder="Enter username or email"/>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required="required" placeholder="Enter password"/>
+          </div>
+          <button type="submit" class="btn-primary">Log In</button>
+            
+
+        </form>
+      </div>
+    </div>
+  </template>
+</odoo>

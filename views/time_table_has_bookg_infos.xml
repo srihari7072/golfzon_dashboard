@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_time_table_has_bookg_infos_tree" model="ir.ui.view">
+        <field name="name">time.table.has.bookg.infos.tree</field>
+        <field name="model">time.table.has.bookg.infos</field>
+        <field name="arch" type="xml">
+            <list string="Time Table Booking Infos">
+                <field name="time_table_has_bookg_info_id"/>
+                <field name="time_table_id"/>
+                <field name="bookg_info_id"/>
+                <field name="green_fee_cd_id"/>
+                <field name="apply_greenfee_amt"/>
+                <field name="play_persons"/>
+                <field name="caddie_s_yn"/>
+                <field name="prepayed_amt"/>
+                <field name="rain_cancel_yn"/>
+                <field name="bookg_method_scd"/>
+                <field name="kiosk_pay_yn"/>
+                <field name="org_greenfee_amt"/>
+                <field name="agent_preamt"/>
+                <field name="sms_yn"/>
+                <field name="no_show_yn"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_time_table_has_bookg_infos_form" model="ir.ui.view">
+        <field name="name">time.table.has.bookg.infos.form</field>
+        <field name="model">time.table.has.bookg.infos</field>
+        <field name="arch" type="xml">
+            <form string="Time Table Booking Info">
+                <sheet>
+                    <group>
+                        <field name="time_table_has_bookg_info_id"/>
+                        <field name="time_table_id"/>
+                        <field name="bookg_info_id"/>
+                        <field name="green_fee_cd_id"/>
+                        <field name="green_fee_cd_id_2"/>
+                        <field name="green_fee_cd_id_3"/>
+                        <field name="greenfee_discount_id"/>
+                        <field name="apply_greenfee_amt"/>
+                        <field name="play_persons"/>
+                        <field name="caddie_s_yn"/>
+                        <field name="prepayed_amt"/>
+                        <field name="prepayments_id"/>
+                        <field name="package_id"/>
+                        <field name="rain_cancel_yn"/>
+                        <field name="bookg_method_scd"/>
+                        <field name="created_id"/>
+                        <field name="created_at"/>
+                        <field name="updated_id"/>
+                        <field name="updated_at"/>
+                        <field name="kiosk_pay_yn"/>
+                        <field name="org_greenfee_amt"/>
+                        <field name="agent_preamt"/>
+                        <field name="sms_yn"/>
+                        <field name="no_show_yn"/>
+                        <field name="member_has_packages_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_time_table_has_bookg_infos" model="ir.actions.act_window">
+        <field name="name">Time Table Booking Infos</field>
+        <field name="res_model">time.table.has.bookg.infos</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_time_table_root" name="Time Table has"/>
+
+    <menuitem id="menu_time_table_has_bookg_infos"
+              name="Booking Infos"
+              parent="menu_time_table_root"
+              action="action_time_table_has_bookg_infos"/>
+</odoo>

@@ -13,3 +13,5 @@ from . import day_sum_payments
 from . import day_sum_greenfees
 from . import bookg_info_his
 from . import members
+from . import time_table_has_bookg_infos
+from . import time_table
