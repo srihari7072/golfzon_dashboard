@@ -2,6 +2,7 @@
     "name": "Golfzon Dashboard",
     "version": "2.1.0",
     "category": "Custom/Dashboard",
+    "sequence" : "-1",
     "summary": "Professional Golfzon Dashboard with Fully Modular Architecture",
     "description": """
     Enhanced Golfzon Dashboard featuring:
@@ -46,15 +47,18 @@
         "views/sales_infos_views.xml",
         "views/day_sum_payments_views.xml",
         "views/day_sum_greenfees_views.xml",
-        # "views/login.xml",
+        "views/login.xml",
         "views/bookg_info_his.xml",
-        "views/members.xml"
+        "views/members.xml",
+        "views/time_table_has_bookg_infos.xml",
+        "views/time_table.xml"
     ],
 
     "assets": {
         "web.assets_backend": [
             # Main SCSS file (imports all components)
             "golfzon_dashboard/static/src/scss/dashboard.scss",
+            # "golfzon_dashboard/static/src/scss/custom_login.scss",
             
             # External Libraries
             "golfzon_dashboard/static/lib/chartjs/Chart.min.js",
@@ -77,7 +81,11 @@
             "golfzon_dashboard/static/src/js/services/weather_service.js",
             "golfzon_dashboard/static/src/js/services/golf_data_service.js",
             "golfzon_dashboard/static/src/js/services/chart_service.js",
-            
+            "golfzon_dashboard/static/src/js/services/sales_service.js",
+            "golfzon_dashboard/static/src/js/services/visitor_service.js",
+            "golfzon_dashboard/static/src/js/services/reservation_service.js",
+            "golfzon_dashboard/static/src/js/services/age_service.js",
+
             # Main JavaScript Component
             "golfzon_dashboard/static/src/js/dashboard_client.js",
             
