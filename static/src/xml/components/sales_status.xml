@@ -64,10 +64,7 @@
                                         </div>
                                     </span>
                                     <div class="metric-card-value">
-                                        <t t-if="state.salesData and state.salesData.totals and state.salesData.totals.current_total">
-                                            <t t-esc="state.salesData.totals.current_total.toLocaleString()"/>
-                                        </t>
-                                        <t t-else="">0</t>
+                                        <t t-esc="Math.round(state.salesData.total_sales || 0).toLocaleString()"/>
                                     </div>
                                 </div>
                             </div>
@@ -75,13 +72,12 @@
                             <div class="metric-card-right">
                                 <div class="metric-card-meta">
                                     <span class="metric-card-caption"><t t-esc="_t('Compared to the same period last year')"/></span>
-                                    <span t-att-class="'trend-indicator ' + ((state.salesData and state.salesData.totals and state.salesData.totals.growth_percentage >= 0) ? 'trend-up' : 'trend-down')">
-                                        <span class="trend-icon" t-esc="(state.salesData and state.salesData.totals and state.salesData.totals.growth_percentage >= 0) ? '▲' : '▼'"/>
+                                    <span t-att-class="'trend-indicator ' + (state.salesData.percentage_change >= 0 ? 'trend-up' : 'trend-down')">
+                                        <span class="trend-icon" t-esc="state.salesData.percentage_change >= 0 ? '▲' : '▼'"/>
                                         <span>
-                                            <t t-if="state.salesData and state.salesData.totals">
-                                                <t t-esc="state.salesData.totals.growth_percentage >= 0 ? '+' : ''"/><t t-esc="state.salesData.totals.growth_percentage"/>%
-                                            </t>
-                                            <t t-else="">0%</t>
+                                            <t t-if="state.salesData.percentage_change >= 0">+</t>
+                                            <t t-else="">-</t>
+                                            <t t-esc="Math.abs(state.salesData.percentage_change || 0).toFixed(1)"/>%
                                         </span>
                                     </span>
                                 </div>
@@ -89,7 +85,8 @@
                         </div>
                     </div>
 
-                    <!-- Second Card: Average Transaction Value -->
+
+                    <!-- Second Card: Average Unit Price -->
                     <div class="metric-card metric-card--total">
                         <div class="metric-card-content">
                             <div class="metric-card-left">
@@ -104,10 +101,7 @@
                                         </div>
                                     </span>
                                     <div class="metric-card-value">
-                                        <t t-if="state.salesData and state.salesData.totals and state.salesData.totals.average_unit_price">
-                                            <t t-esc="state.salesData.totals.average_unit_price.toLocaleString()"/>
-                                        </t>
-                                        <t t-else="">0</t>
+                                        <t t-esc="Math.round(state.salesData.average_unit_price || 0).toLocaleString()"/>
                                     </div>
                                 </div>
                             </div>
