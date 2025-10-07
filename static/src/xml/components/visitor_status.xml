@@ -37,7 +37,6 @@
             </div>
         </div>
     </t>
-    
     <t t-name="golfzon_dashboard.VisitorTrend">
         <div class="visitor-trend">
             <t t-call="golfzon_dashboard.ChartHeader">
@@ -60,26 +59,26 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="state.selectedPeriod === '7days' ? _t('30 days prior to the inquiry date') : _t('30 days prior to the inquiry date')"/>
+                                    <t t-esc="_t('30 days prior to the inquiry date')"/>
                                 </div>
                             </span>
                         </span>
-                        <!-- ✅ DYNAMIC: Total visitors from database -->
-                        <span class="trend-card-numbers" t-esc="state.visitorData.totalVisitors"/>
+                        <span class="trend-card-title">
+                            <t t-esc="state.visitorData.total_visitors.toLocaleString()"/>
+                        </span>
                     </div>
                     <div class="trend-wrapper sales-numbers">
                         <span class="trend-card-title">
                             <t t-esc="_t('Compared to last year')"/>
                         </span>
-                        <!-- ✅ FIXED: Use state.hasTrendDown property -->
-                        <span class="trend-indicator" t-att-class="state.hasTrendDown ? 'trend-down' : 'trend-up'">
-                            <span class="trend-icon" t-esc="state.hasTrendDown ? '▼' : '▲'"/>
+                        <span class="trend-indicator" t-att-class="state.visitorData.percentage_change >= 0 ? 'trend-up' : 'trend-down'">
+                            <span class="trend-icon" t-esc="state.visitorData.percentage_change >= 0 ? '▲' : '▼'"/>
                             <span>
-                                <t t-if="Math.abs(state.visitorData.growthPercentage) >= 100">
-                                    <t t-esc="state.hasTrendDown ? '100%' : '100%'"/>
+                                <t t-if="state.visitorData.percentage_change >= 0">
+                                    +<t t-esc="state.visitorData.percentage_change"/>%
                                 </t>
                                 <t t-else="">
-                                    <t t-esc="Math.abs(state.visitorData.growthPercentage) + '%'"/>
+                                    <t t-esc="state.visitorData.percentage_change"/>%
                                 </t>
                             </span>
                         </span>
@@ -94,20 +93,19 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="state.selectedPeriod === '7days' ? _t('30 days prior to the inquiry date') : _t('30 days prior to the inquiry date')"/>
+                                    <t t-esc="_t('30 days prior to the inquiry date')"/>
                                 </div>
                             </span>
                         </span>
-                        <!-- ✅ DYNAMIC: Section totals from database -->
                         <div class="trend-card-title">
                             <span>
-                                <t t-esc="_t('Part 1')"/> <t t-esc="state.visitorData.sectionTotals.part1 || 0"/>
+                                <t t-esc="_t('Part 1')"/> <t t-esc="state.visitorData.sections.part1.toLocaleString()"/>
                             </span>
                             <span>
-                                <t t-esc="_t('Part 2')"/> <t t-esc="state.visitorData.sectionTotals.part2 || 0"/>
+                                <t t-esc="_t('Part 2')"/> <t t-esc="state.visitorData.sections.part2.toLocaleString()"/>
                             </span>
                             <span>
-                                <t t-esc="_t('Part 3')"/> <t t-esc="state.visitorData.sectionTotals.part3 || 0"/>
+                                <t t-esc="_t('Part 3')"/> <t t-esc="state.visitorData.sections.part3.toLocaleString()"/>
                             </span>
                         </div>
                     </div>
@@ -115,7 +113,6 @@
             </div>
         </div>
     </t>
-
     <t t-name="golfzon_dashboard.VisitorInfo">
         <div class="visitor-info">
             <div class="age-trend-graph">
@@ -142,7 +139,9 @@
                 <div class="d-flex justify-content-center gap-5">
                     <!-- Male -->
                     <div class="figure">
-                        <div class="male-percentage" id="malePercent">62%</div>
+                        <div class="male-percentage" id="malePercent">
+                            <t t-esc="state.visitorData.gender_ratio.male_percentage"/>%
+                        </div>
                         <div class="svg-wrapper">
                             <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
                                 <!-- Grey silhouette -->
@@ -160,7 +159,9 @@
                     </div>
                     <!-- Female -->
                     <div class="figure">
-                        <div class="female-percentage" id="femalePercent">38%</div>
+                        <div class="female-percentage" id="femalePercent">
+                            <t t-esc="state.visitorData.gender_ratio.female_percentage"/>%
+                        </div>
                         <div class="svg-wrapper">
                             <svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
                                 <!-- Grey silhouette -->
