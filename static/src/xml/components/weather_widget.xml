@@ -144,7 +144,8 @@
         <div class="weather-half">
             <div class="horizontal-weather-container">
                 <div class="horizontal-weather-scroll">
-                    <t t-foreach="state.hourlyWeather" t-as="hour" t-key="hour.time">
+                    <!-- FIXED: Changed t-key from "hour.time" to "hour_index" to prevent duplicate key errors -->
+                    <t t-foreach="state.hourlyWeather" t-as="hour" t-key="hour_index">
                         <div class="weather-time-slot">
                             <div class="time-label" t-esc="hour.time"/>
                             <div class="weather-icon" t-esc="hour.icon"/>
@@ -203,7 +204,8 @@
                 </tr>
             </thead>
             <tbody>
-                <t t-foreach="reservations" t-as="reservation" t-key="reservation.id">
+                <!-- FIXED: Changed t-key from "reservation.id" to "reservation_index" to prevent duplicate key errors -->
+                <t t-foreach="reservations" t-as="reservation" t-key="reservation_index">
                     <tr>
                         <td t-esc="reservation.person"/>
                         <td t-esc="reservation.id"/>
