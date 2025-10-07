@@ -30,19 +30,19 @@ msgstr "클라우드 CC 핵심 성과 지표"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
-msgid "Sales Performance Indicators"
+msgid "SALES PERFORMANCE INDICATORS"
 msgstr "영업 성과 지표"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
-msgid "Average Order Value Performance"
+msgid "AVERAGE ORDER VALUE PERFORMANCE"
 msgstr "평균 주문 금액 성과"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/performance_indicators.xml:0
-msgid "Utilization Rate Performance"
+msgid "UTILIZATION RATE PERFORMANCE"
 msgstr "이용률 성과"
 
 #. module: golfzon_dashboard
@@ -252,12 +252,6 @@ msgstr "판매"
 #. module: golfzon_dashboard
 #. odoo-python
 #: code:addons/golfzon_dashboard/controllers/main.py:0
-msgid "Today"
-msgstr "오늘"
-
-#. module: golfzon_dashboard
-#. odoo-python
-#: code:addons/golfzon_dashboard/controllers/main.py:0
 msgid "Today - 3 SMS Campaigns"
 msgstr "오늘 - 3건의 SMS 캠페인"
 
@@ -266,6 +260,12 @@ msgstr "오늘 - 3건의 SMS 캠페인"
 #: code:addons/golfzon_dashboard/controllers/main.py:0
 msgid "Today's Reservations"
 msgstr "오늘 예약"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Reservations"
+msgstr "예약"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -361,14 +361,14 @@ msgstr "Dear"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Analysis period: The Last"
-msgstr "분석 기간: 최근"
+msgid "Analysis period:"
+msgstr "분석 기간:"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid " days"
-msgstr "일"
+msgid "The last 30 days"
+msgstr "최근 30 일"
 
 # The following entries support UI strings in dashboard_client.js
 #. module: golfzon_dashboard
@@ -398,14 +398,14 @@ msgstr "CRM 캠페인"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
-msgid "TODAY:"
-msgstr "오늘:"
+msgid "WEATHER:"
+msgstr "날씨:"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
-msgid "WEATHER:"
-msgstr "날씨:"
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Weather"
+msgstr "날씨"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -1354,3 +1354,81 @@ msgstr "금"
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Saturday"
 msgstr "토"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sun"
+msgstr "일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Mon"
+msgstr "월"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Tue"
+msgstr "화"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Wed"
+msgstr "수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Thu"
+msgstr "목"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Fri"
+msgstr "금"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Sat"
+msgstr "토"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "60+ years"
+msgstr "60대 이상"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "50s"
+msgstr "50대"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "40s"
+msgstr "40대"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "30s"
+msgstr "30대"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "20s"
+msgstr "20대"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Under 10"
+msgstr "10세 미만"
