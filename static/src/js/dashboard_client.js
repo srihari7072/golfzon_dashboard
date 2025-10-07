@@ -2,883 +2,923 @@
 
 import { Component, useRef, onMounted, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
-import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { rpc } from "@web/core/network/rpc";
 
 // Import services
 import { WeatherService } from "./services/weather_service";
 import { GolfDataService } from "./services/golf_data_service";
 import { ChartService } from "./services/chart_service";
+import { SalesService } from "./services/sales_service";
+import { VisitorService } from "./services/visitor_service";
+import { ReservationService } from "./services/reservation_service";
+import { AgeService } from "./services/age_service";
 
 // Import utilities
 import { DateUtils } from "./utils/date_utils";
 import { LocalizationUtils } from "./utils/localization_utils";
 
 class GolfzonDashboard extends Component {
-  static template = "golfzon_dashboard.Dashboard";
+    static template = "golfzon_dashboard.Dashboard";
 
-  setup() {
-    this._t = _t;
+    setup() {
+        // Initialize services with rpc function
+        this.rpc = rpc;
+        this.weatherService = new WeatherService(this.rpc);
+        this.golfDataService = new GolfDataService(this.rpc);
+        this.chartService = new ChartService();
+        this.salesService = new SalesService(this.rpc);
+        this.visitorService = new VisitorService(this.rpc);
+        this.reservationService = new ReservationService(this.rpc);
+        this.ageService = new AgeService(this.rpc);
 
-    // Initialize services
-    try {
-      this.rpc = useService("rpc");
-      console.log("✅ RPC Service available");
-    } catch (e) {
-      console.warn("⚠️ RPC Service not available");
-      this.rpc = null;
-    }
+        // Expose _t to the template context
+        this._t = _t;
 
-    this.weatherService = new WeatherService(this.rpc);
-    this.golfDataService = new GolfDataService(this.rpc);
-    this.chartService = new ChartService();
+        // Chart references
+        this.canvasRef = useRef("salesChart");
+        this.visitorRef = useRef("visitorChart");
+        this.ageRef = useRef("ageChart");
+        this.menuDrawer = useRef("menuDrawer");
+        this.reservationTrendChart = useRef("reservationTrendChart");
+        this.memberTypeChart = useRef("memberTypeChart");
+        this.advanceBookingChart = useRef("advanceBookingChart");
+        this.regionalChart = useRef("regionalChart");
 
-    // Chart references (unchanged)
-    this.canvasRef = useRef("salesChart");
-    this.visitorRef = useRef("visitorChart");
-    this.ageRef = useRef("ageChart");
-    this.menuDrawer = useRef("menuDrawer");
-    this.reservationTrendChart = useRef("reservationTrendChart");
-    this.memberTypeChart = useRef("memberTypeChart");
-    this.advanceBookingChart = useRef("advanceBookingChart");
-    this.regionalChart = useRef("regionalChart");
-    this.heatmapCellDetails = {};
-
-    this.state = useState({
-      activeMenuItem: "dashboard",
-      currentLanguage: LocalizationUtils.getStoredLanguage(),
-      userName: "username",
-      drawerOpen: false,
-      showWeatherDetails: false,
-      currentDate: DateUtils.formatCurrentDate(),
-      userLocation: null,
-
-      // ✅ UPDATED: Initialize with preloaded data if available
-      weather: {
-        temperature: 27,
-        precipitation: 0,
-        chance: 0,
-        icon: "☀️",
-        location: "Detecting location...",
-      },
-
-      reservations: { current: 0, total: 80 },
-      teeTime: {
-        part1: { current: 0, total: 50 },
-        part2: { current: 0, total: 30 },
-        part3: { current: 0, total: 15 },
-      },
-
-      hourlyWeather: [],
-      reservationDetails: [],
-      performanceData: this.golfDataService.getDefaultPerformanceData(),
-
-      activities: [],
-      customer_growth: [],
-
-      forecastData: {
-        forecast_chart: [],
-        calendar_data: [],
-        pie_charts: {},
-        summary_stats: {
-          total_reservations: 0,
-          utilization_rate: 0,
-          month_comparison: { month1: 0, month2: 0, month3: 0 },
-          yearly_growth: 0,
-        },
-        analysis_period: DateUtils.generateAnalysisPeriod(),
-      },
-
-      selectedPeriod: "30days",
-      showReservationDetails: false,
-      selectedSlot: { day: "", period: "", count: 0 },
-
-      heatmapData: this.getInitialHeatmapData(),
-      selectedHeatmapBox: this.getDefaultHeatmapBox(),
-
-      visitorData: {
-        totalVisitors: 0,
-        growthPercentage: 0,
-        sectionTotals: { part1: 0, part2: 0, part3: 0 },
-        isGrowthPositive: true,
-      },
-
-      salesData: {
-        totals: { current_total: 0, growth_percentage: 0, average_unit_price: 0 },
-        current_data: [],
-        prev_year_data: [],
-        labels: [],
-      },
-
-      hasTrendDown: false,
-
-      ...DateUtils.generatePeriodLabels(),
-    });
-
-    this.setPeriod = this.setPeriod.bind(this);
-
-    onMounted(() => this.onMounted());
-  }
-
-  getInitialHeatmapData() {
-    return {
-      headers: [
-        this._t("Sunday"),
-        this._t("Monday"),
-        this._t("Tuesday"),
-        this._t("Wednesday"),
-        this._t("Thursday"),
-        this._t("Friday"),
-        this._t("Saturday")
-      ],
-      rows: [
-        { "label": this._t("Early Morning(5 AM -7 AM)"), "data": [0, 0, 0, 0, 0, 0, 0] },
-        { "label": this._t("Morning(8 AM -12 PM)"), "data": [0, 0, 0, 0, 0, 0, 0] },
-        { "label": this._t("Afternoon(1 PM -4 PM)"), "data": [0, 0, 0, 0, 0, 0, 0] },
-        { "label": this._t("Night(5 PM -7 PM)"), "data": [0, 0, 0, 0, 0, 0, 0] }
-      ],
-      date_range: this._t("No data available")
-    };
-  }
-
-  getDefaultHeatmapBox() {
-    return {
-      dayIndex: null,
-      timeIndex: null,
-      value: null,
-      day: null,
-      timeSlot: null,
-      displayDay: "",
-      displayTime: "",
-      hourlyBreakdown: [],
-      isHighest: false,
-      isLowest: false,
-      isVisible: false,
-    };
-  }
-
-  async onMounted() {
-    console.log("Dashboard mounted - initializing...");
-
-    this.state.visitorData = {
-      totalVisitors: 0,
-      growthPercentage: 0,
-      sectionTotals: { part1: 0, part2: 0, part3: 0 },
-      isGrowthPositive: true,
-    };
-    this.state.hasTrendDown = false;
-
-    await this.loadHeatmapData();
-    await this.loadSalesData(this.state.selectedPeriod);
-
-    // Initialize all data
-    await Promise.all([
-      this.initializeLocation(),
-      this.loadDashboardData(),
-      this.loadPerformanceData(),
-    ]);
-
-    // Wait for DOM to render
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Initialize charts after DOM is ready
-    await this.initializeAllCharts();
-
-    // Event listeners
-    document.addEventListener("click", this.handleOutsideDrawer.bind(this));
-  }
-
-  async initializeLocation() {
-    try {
-      const locationData = await this.weatherService.detectUserLocation();
-      this.state.userLocation = {
-        lat: locationData.lat,
-        lon: locationData.lon,
-      };
-      this.state.weather.location = locationData.locationName;
-      await this.loadWeatherAndGolfData(locationData.lat, locationData.lon);
-    } catch (error) {
-      console.error("Location initialization failed:", error);
-      await this.loadWeatherAndGolfData();
-    }
-  }
-
-  async loadWeatherAndGolfData(lat = null, lon = null) {
-    try {
-      const [weatherData, golfData] = await Promise.all([
-        this.weatherService.fetchWeatherData(lat, lon),
-        this.golfDataService.fetchGolfInfo(lat, lon),
-      ]);
-
-      this.state.weather = { ...this.state.weather, ...weatherData.current };
-      this.state.hourlyWeather = weatherData.hourly;
-      this.state.reservations = golfData.reservations;
-      this.state.teeTime = golfData.teeTime;
-      this.state.reservationDetails = golfData.reservationDetails;
-    } catch (error) {
-      console.error("Error loading weather and golf data:", error);
-    }
-  }
-
-  async loadDashboardData() {
-    try {
-      const data = await this.golfDataService.fetchDashboardData();
-      this.state.activities = data.activities;
-      this.state.customer_growth = data.customer_growth;
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
-    }
-  }
-
-  async loadPerformanceData() {
-    console.log("🔄 Loading performance data...");
-
-    try {
-      const url =
-        window.location.origin + "/golfzon/api/performance_indicators";
-      const response = await fetch(url);
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.status === "success" && data.data) {
-          // ✅ ENHANCED: Process trend values to ensure correct +/- symbols
-          const processedData = {
-            sales_performance: {
-              current_revenue:
-                data.data.sales_performance.cumulative_sales_year.toLocaleString(),
-              monthly_revenue:
-                data.data.sales_performance.current_month_sales.toLocaleString(),
-              current_trend: this.formatTrendValue(
-                data.data.sales_performance.year_growth
-              ),
-              monthly_trend: this.formatTrendValue(
-                data.data.sales_performance.month_growth
-              ),
+        this.state = useState({
+            activeMenuItem: "dashboard",
+            currentLanguage: LocalizationUtils.getStoredLanguage(),
+            userName: "username",
+            drawerOpen: false,
+            showWeatherDetails: false,
+            currentDate: DateUtils.formatCurrentDate(),
+            userLocation: null,
+            weather: {
+                temperature: 27,
+                precipitation: 0,
+                chance: 0,
+                icon: "☀️",
+                location: "Detecting location...",
             },
-            avg_order_value: {
-              current_weekly_value:
-                data.data.average_order_performance.cumulative_unit_price_year.toLocaleString(),
-              monthly_value:
-                data.data.average_order_performance.current_monthly_guest_price.toLocaleString(),
-              current_trend: "+11%", // You can calculate from database if available
-              monthly_trend: "+13%", // You can calculate from database if available
+            reservations: { current: 78, total: 80 },
+            teeTime: {
+                part1: { current: 40, total: 50 },
+                part2: { current: 25, total: 30 },
+                part3: { current: 7, total: 15 },
             },
-            utilization_rate: {
-              current_weekly_capacity: data.data.utilization_performance
-                ? data.data.utilization_performance.cumulative_operation_year.toLocaleString()
-                : "0",
-              monthly_capacity: data.data.utilization_performance
-                ? data.data.utilization_performance.current_month_operation.toLocaleString()
-                : "0",
-              current_trend: data.data.utilization_performance
-                ? this.formatTrendValue(
-                  data.data.utilization_performance.year_growth
-                )
-                : "0%",
-              monthly_trend: data.data.utilization_performance
-                ? this.formatTrendValue(
-                  data.data.utilization_performance.month_growth
-                )
-                : "0%",
+            hourlyWeather: [],
+            reservationDetails: [],
+            performanceData: {
+                sales_performance: {
+                    current_revenue: "...",
+                    monthly_revenue: "...",
+                    current_trend: "...",
+                    monthly_trend: "...",
+                    current_trend_value: 0,
+                    monthly_trend_value: 0
+                },
+                avg_order_value: {
+                    current_weekly_value: "...",
+                    monthly_value: "...",
+                    current_trend: "...",
+                    monthly_trend: "...",
+                    current_trend_value: 0,
+                    monthly_trend_value: 0
+                },
+                utilization_rate: {
+                    current_weekly_capacity: "...",
+                    monthly_capacity: "...",
+                    current_trend: "...",
+                    monthly_trend: "...",
+                    current_trend_value: 0,
+                    monthly_trend_value: 0
+                }
             },
-          };
-
-          this.state.performanceData = processedData;
-          console.log(
-            "✅ Performance data loaded:",
-            this.state.performanceData
-          );
-        }
-      }
-    } catch (error) {
-      console.error("❌ Error loading performance data:", error);
-      // Keep default values with proper formatting
-    }
-  }
-
-  // ✅ NEW: Helper method to format trend values correctly
-  formatTrendValue(value) {
-    if (typeof value !== "number") return "0%";
-
-    // Ensure proper sign display
-    const sign = value >= 0 ? "+" : ""; // Negative numbers already have minus sign
-    return `${sign}${value}%`;
-  }
-
-  async initializeAllCharts() {
-    console.log("Initializing all charts with data...");
-
-    // Wait for DOM to render
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    const canvasElements = [
-      { name: "salesChart", ref: this.canvasRef },
-      { name: "visitorChart", ref: this.visitorRef },
-      { name: "ageChart", ref: this.ageRef },
-      { name: "reservationTrendChart", ref: this.reservationTrendChart },
-      { name: "memberTypeChart", ref: this.memberTypeChart },
-      { name: "advanceBookingChart", ref: this.advanceBookingChart },
-      { name: "regionalChart", ref: this.regionalChart },
-    ];
-
-    canvasElements.forEach(({ name, ref }) => {
-      if (!ref.el) {
-        console.warn(`Canvas element not found: ${name}`);
-      } else {
-        console.log(`✅ Canvas element found: ${name}`);
-      }
-    });
-
-    await this.updateAllCharts();
-
-    if (this.ageRef.el) {
-      try {
-        console.log("🔄 Creating age chart with database data...");
-        await this.chartService.createAgeChart(this.ageRef.el);
-      } catch (error) {
-        console.error("❌ Error creating age chart:", error);
-      }
-    } else {
-      console.warn("❌ Age chart canvas not found");
-    }
-
-    this.initializePieCharts();
-
-    setTimeout(async () => {
-      try {
-        console.log("🔄 Initializing gender animation with database data...");
-
-        // Check if chart service is available
-        if (!this.chartService) {
-          console.error("❌ ChartService not available for gender animation");
-          return;
-        }
-
-        // Check if the method exists
-        if (typeof this.chartService.initializeGenderAnimation !== "function") {
-          console.error(
-            "❌ initializeGenderAnimation method not found in ChartService"
-          );
-          return;
-        }
-
-        await this.chartService.initializeGenderAnimation();
-      } catch (error) {
-        console.error("❌ Error initializing gender animation:", error);
-        console.log(
-          "📋 Available chartService methods:",
-          Object.getOwnPropertyNames(Object.getPrototypeOf(this.chartService))
-        );
-      }
-    }, 500);
-  }
-
-  initializePieCharts() {
-    const pieChartConfigs = [
-      {
-        ref: this.memberTypeChart,
-        id: "memberType",
-        data: [76, 13, 2, 8, 1],
-        colors: ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4"],
-      },
-      {
-        ref: this.advanceBookingChart,
-        id: "advanceBooking",
-        data: [43, 17, 26, 7, 6, 1],
-        colors: [
-          "#1958a4",
-          "#4489da",
-          "#4c9cfd",
-          "#3a96d4",
-          "#5ab4f0",
-          "#91d3ff",
-        ],
-      },
-      {
-        ref: this.regionalChart,
-        id: "regional",
-        data: [48, 19, 8, 7, 18],
-        colors: ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4", "#5ab4f0"],
-      },
-    ];
-
-    pieChartConfigs.forEach((config) => {
-      if (config.ref.el) {
-        this.chartService.createPieChart(
-          config.ref.el,
-          config.id,
-          config.data,
-          config.colors
-        );
-      }
-    });
-  }
-
-  // ✅ ADD/UPDATE this method in your GolfzonDashboard class:
-
-  async loadSalesData(period = "30days") {
-    console.log(`🔄 Loading sales data for period: ${period}`);
-
-    try {
-      const url =
-        window.location.origin + `/golfzon/api/sales_trends?period=${period}`;
-      console.log(`📞 Fetching sales data from: ${url}`);
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const salesResponse = await response.json();
-      console.log("📊 Sales response received:", salesResponse);
-
-      if (salesResponse.status === "success" && salesResponse.data) {
-        // ✅ UPDATE SALES DATA in state
-        this.state.salesData = {
-          totals: {
-            current_total: salesResponse.data.totals.current_total || 0,
-            growth_percentage: salesResponse.data.totals.growth_percentage || 0,
-            average_unit_price:
-              salesResponse.data.totals.average_unit_price || 0,
-          },
-          current_data: salesResponse.data.current_data || [],
-          prev_year_data: salesResponse.data.prev_year_data || [],
-          labels: salesResponse.data.labels || [],
-        };
-
-        console.log("✅ Sales data loaded successfully:", {
-          totalSales: this.state.salesData.totals.current_total,
-          growth: this.state.salesData.totals.growth_percentage,
-          avgPrice: this.state.salesData.totals.average_unit_price,
+            activities: [],
+            customer_growth: [],
+            forecastData: {
+                forecast_chart: [],
+                calendar_data: [],
+                pie_charts: {},
+                summary_stats: {
+                    total_reservations: 2926,
+                    utilization_rate: 78.5,
+                    month_comparison: { month1: 82.4, month2: 76.2, month3: 75.3 },
+                    yearly_growth: 10,
+                },
+                analysis_period: DateUtils.generateAnalysisPeriod(),
+            },
+            selectedPeriod: "30days",
+            showReservationDetails: false,
+            selectedSlot: { day: "", period: "", count: 0 },
+            heatmapData: this.getInitialHeatmapData(),
+            selectedHeatmapBox: this.getDefaultHeatmapBox(),
+            salesData: {
+                total_sales: 0,
+                percentage_change: 0,
+                average_unit_price: 0,
+                current_year: [],
+                previous_year: [],
+                date_range: { start: "", end: "" },
+            },
+            visitorData: {
+                total_visitors: 0,
+                percentage_change: 0,
+                sections: { part1: 0, part2: 0, part3: 0 },
+                gender_ratio: { male_percentage: 0, female_percentage: 0 },
+                current_year: [],
+                previous_year: [],
+                date_range: { start: "", end: "" },
+            },
+            reservationData: {
+                total_reservations: 0,
+                percentage_change: 0,
+                operation_rate: {
+                    part1_percentage: 0,
+                    part2_percentage: 0,
+                    part3_percentage: 0,
+                },
+                current_year: [],
+                previous_year: [],
+                date_range: { start: "", end: "" },
+            },
+            ageData: {
+                under_10: { count: 0, percentage: 0 },
+                twenties: { count: 0, percentage: 0 },
+                thirties: { count: 0, percentage: 0 },
+                forties: { count: 0, percentage: 0 },
+                fifties: { count: 0, percentage: 0 },
+                sixty_plus: { count: 0, percentage: 0 },
+                total_count: 0,
+            },
+            ...DateUtils.generatePeriodLabels(),
         });
 
-        // ✅ REPLACE WITH THIS CODE:
-        const currentDate = new Date();
-        const days = period === '7days' ? 7 : 30;
-        const endDate = new Date(currentDate);
-        const startDate = new Date(currentDate);
-        startDate.setDate(currentDate.getDate() - days - 1);
-
-        const currentLang = this.state.currentLanguage || 'en_US';
-        const locale = currentLang === 'ko_KR' ? 'ko-KR' : 'en-US';
-
-        // Format dates: "August 29, 2025 – September 27, 2025"
-        const startFormatted = startDate.toLocaleDateString(locale, {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        });
-
-        const endFormatted = endDate.toLocaleDateString(locale, {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        });
-
-        const daysLabel = period === '7days' ? '7' : '30';
-        const periodPrefix = this._t("Analysis period: The Last");
-        const daysSuffix = this._t(" days");
-
-        const periodText = `${periodPrefix} ${daysLabel} ${daysSuffix} (${startFormatted} – ${endFormatted})`;
-
-        this.state.forecastData.analysis_period = periodText;
-      } else {
-        console.error(
-          "❌ Sales data fetch failed:",
-          salesResponse.message || "Unknown error"
-        );
-        // Keep default zero values
-      }
-    } catch (error) {
-      console.error("❌ Error loading sales data:", error);
-      // Keep default zero values
-    }
-  }
-
-  async setPeriod(period) {
-    console.log(`🔄 Setting period to: ${period}`);
-    if (this.state.selectedPeriod !== period) {
-      this.state.selectedPeriod = period;
-
-      // ✅ Reload sales data for new period
-      await this.loadSalesData(period);
-
-      // Update charts and visitor data
-      await this.updateAllCharts();
-    }
-  }
-
-  async updateAllCharts() {
-    try {
-      console.log("🔄 Dashboard: Updating all charts with database data...");
-
-      if (this.canvasRef.el) {
-        this.chartService.createSalesChart(
-          this.canvasRef.el,
-          this.state.selectedPeriod
-        );
-      }
-
-      if (this.visitorRef.el) {
-        console.log("🔄 Dashboard: Creating visitor chart via HTTP");
-        await this.chartService.createVisitorChart(
-          this.visitorRef.el,
-          this.state.selectedPeriod
-        );
-      }
-      await this.updateVisitorCards(this.state.selectedPeriod);
-
-      if (this.reservationTrendChart.el) {
-        console.log("🔄 Dashboard: Creating reservation chart via HTTP");
-
-        await this.chartService.createReservationChart(
-          this.reservationTrendChart.el,
-          this.state.selectedPeriod,
-          null // Pass null
-        );
-      }
-
-      this.updateChartStatistics();
-    } catch (error) {
-      console.error("❌ Dashboard: Error updating charts:", error);
-    }
-  }
-
-  updateChartStatistics() {
-    const stats = this.chartService.getChartStatistics();
-    const breakdown = this.chartService.getOperationBreakdown();
-
-    // Keep numeric values for existing template bindings
-    this.state.forecastData.summary_stats = {
-      total_reservations: stats.current_total,
-      utilization_rate: stats.operation_rate,          // stays a number or % as your template expects
-      growth_percentage: stats.growth_percentage,
-      month_comparison: {
-        month1: breakdown.part1,
-        month2: breakdown.part2,
-        month3: breakdown.part3,
-      },
-      // NEW: pretty text with spaces (use in XML where the cramped text shows)
-      month_comparison_text: `${this._t('Part 1')} ${breakdown.part1}%   ${this._t('Part 2')} ${breakdown.part2}%   ${this._t('Part 3')} ${breakdown.part3}%`,
-    };
-  }
-
-  async updateVisitorCards(period) {
-    console.log(`🔄 Dashboard: Updating visitor cards for ${period}...`);
-
-    try {
-      const url =
-        window.location.origin + `/golfzon/api/visitor_data?period=${period}`;
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.status === "success") {
-        const visitorData = data.data;
-
-        console.log("✅ Dashboard: Visitor cards data loaded:", {
-          currentTotal: visitorData.totals.current_total,
-          growth: visitorData.totals.growth_percentage,
-          sections: visitorData.section_totals,
-        });
-
-        // ✅ FIXED: Set hasTrendDown as state property, not getter
-        this.state.visitorData = {
-          totalVisitors: visitorData.totals.current_total,
-          growthPercentage: visitorData.totals.growth_percentage,
-          sectionTotals: visitorData.section_totals,
-          isGrowthPositive: visitorData.totals.growth_percentage >= 0,
-        };
-
-        // ✅ FIXED: Set hasTrendDown as state property for XML template
-        this.state.hasTrendDown = visitorData.totals.growth_percentage < 0;
-      } else {
-        console.error("❌ Dashboard: Failed to load visitor cards data");
-        // Set default values
-        this.state.visitorData = {
-          totalVisitors: 0,
-          growthPercentage: 0,
-          sectionTotals: { part1: 0, part2: 0, part3: 0 },
-          isGrowthPositive: true,
-        };
-        this.state.hasTrendDown = false;
-      }
-    } catch (error) {
-      console.error("❌ Dashboard: Error updating visitor cards:", error);
-      // Set default values on error
-      this.state.visitorData = {
-        totalVisitors: 0,
-        growthPercentage: 0,
-        sectionTotals: { part1: 0, part2: 0, part3: 0 },
-        isGrowthPositive: true,
-      };
-      this.state.hasTrendDown = false;
-    }
-  }
-
-  setActiveMenuItem(item) {
-    this.state.activeMenuItem = item;
-  }
-
-  async setPeriod(period) {
-    if (this.state.selectedPeriod !== period) {
-      this.state.selectedPeriod = period;
-      console.log(`📊 Period changed to: ${period}`);
-
-      // Update both charts and visitor data
-      await this.updateAllCharts();
-    }
-  }
-
-  toggleWeatherDetails() {
-    this.state.showWeatherDetails = !this.state.showWeatherDetails;
-  }
-
-  toggleDrawer(ev) {
-    ev.stopPropagation();
-    this.state.drawerOpen = !this.state.drawerOpen;
-    if (this.menuDrawer.el) {
-      this.menuDrawer.el.classList.toggle("open", this.state.drawerOpen);
-    }
-  }
-
-  handleOutsideDrawer(ev) {
-    if (
-      this.state.drawerOpen &&
-      this.menuDrawer.el &&
-      !ev.target.closest(".menu-drawer") &&
-      !ev.target.closest(".menu-btn")
-    ) {
-      this.state.drawerOpen = false;
-      this.menuDrawer.el.classList.remove("open");
-    }
-  }
-
-  switchLanguage(lang) {
-    this.state.currentLanguage = lang;
-    LocalizationUtils.switchLanguage(lang);
-  }
-
-  logout() {
-    window.location.href = "/custom/logout";
-  }
-
-  getHeatmapCellClass(value) {
-    if (typeof value !== "number" || value === 0) return "bottom-20";
-
-    const allValues = this.getAllHeatmapValues().filter((v) => v > 0);
-    if (allValues.length === 0) return "bottom-20";
-
-    allValues.sort((a, b) => b - a);
-
-    const total = allValues.length;
-    const top20Index = Math.ceil(total * 0.2);
-    const top40Index = Math.ceil(total * 0.4);
-    const top60Index = Math.ceil(total * 0.6);
-    const top80Index = Math.ceil(total * 0.8);
-
-    const valueRank = allValues.indexOf(value) + 1;
-
-    if (valueRank <= top20Index) return "top-20";
-    if (valueRank <= top40Index) return "top-20-40";
-    if (valueRank <= top60Index) return "median-20";
-    if (valueRank <= top80Index) return "bottom-20-40";
-    return "bottom-20";
-  }
-
-  getAllHeatmapValues() {
-    const allValues = [];
-    if (this.state.heatmapData && this.state.heatmapData.rows) {
-      this.state.heatmapData.rows.forEach((row) => {
-        if (row.data && Array.isArray(row.data)) {
-          row.data.forEach((cellValue) => {
-            if (typeof cellValue === "number" && cellValue > 0) {
-              allValues.push(cellValue);
-            }
-          });
-        }
-      });
-    }
-    return allValues;
-  }
-
-  async loadHeatmapData() {
-    console.log("🔄 Loading heatmap data with Korean translation support...");
-    try {
-      const response = await fetch('/golfzon/api/heatmap_data');
-      const data = await response.json();
-
-      console.log('📊 Heatmap API response:', {
-        status: data.status,
-        hasData: data.data ? true : false,
-        headersCount: data.data?.headers?.length,
-        rowsCount: data.data?.rows?.length,
-        cellDetailsCount: Object.keys(data.data?.cell_details || {}).length
-      });
-
-      // ✅ CRITICAL: Log the raw data from backend
-      if (data.data && data.data.rows) {
-        console.log('📊 Raw heatmap data from backend:');
-        data.data.rows.forEach((row, idx) => {
-          console.log(`   Row ${idx} (${row.label}):`, row.data);
-        });
-      }
-
-      if (data.status === 'success' && data.data) {
-        // ✅ FIX: Apply Korean translations to headers WITHOUT breaking data
-        const translatedHeaders = (data.data.headers || []).map(header => {
-          const translations = {
-            'Sunday': this._t("Sunday"),
-            'Monday': this._t("Monday"),
-            'Tuesday': this._t("Tuesday"),
-            'Wednesday': this._t("Wednesday"),
-            'Thursday': this._t("Thursday"),
-            'Friday': this._t("Friday"),
-            'Saturday': this._t("Saturday")
-          };
-          return translations[header] || header;
-        });
-
-        // ✅ FIX: Apply Korean translations to time slot labels WITHOUT breaking data
-        const translatedRows = (data.data.rows || []).map(row => {
-          const labelTranslations = {
-            'Early Morning (5 AM - 7 AM)': this._t("Early Morning(5 AM -7 AM)"),
-            'Morning (8 AM - 12 PM)': this._t("Morning(8 AM -12 PM)"),
-            'Afternoon (1 PM - 4 PM)': this._t("Afternoon(1 PM -4 PM)"),
-            'Night (5 PM - 7 PM)': this._t("Night(5 PM -7 PM)")
-          };
-
-          // ✅ CRITICAL: Preserve original data array exactly as received
-          return {
-            label: labelTranslations[row.label] || row.label,
-            data: Array.isArray(row.data) ? [...row.data] : [0, 0, 0, 0, 0, 0, 0]
-          };
-        });
-
-        // ✅ CRITICAL: Verify data preservation
-        console.log('📊 Translated data verification:');
-        translatedRows.forEach((row, idx) => {
-          console.log(`   Row ${idx} (${row.label}):`, row.data);
-        });
-
-        // ✅ FIX: Store translated data with original numeric values preserved
-        this.state.heatmapData = {
-          headers: translatedHeaders,
-          rows: translatedRows,
-          date_range: data.data.date_range || "No data available"
-        };
-
-        // ✅ FIX: STORE PRE-CALCULATED DETAILS for instant access
-        this.heatmapCellDetails = data.data.cell_details || {};
-
-        console.log('✅ Heatmap data loaded successfully!', {
-          headers: translatedHeaders,
-          rowsCount: translatedRows.length,
-          totalCells: translatedRows.reduce((sum, row) => sum + row.data.reduce((a, b) => a + b, 0), 0),
-          cellDetailsKeys: Object.keys(this.heatmapCellDetails).length
-        });
-      } else {
-        console.error('❌ Failed to load heatmap data:', data.message);
-        this.state.heatmapData = this.getInitialHeatmapData();
-        this.heatmapCellDetails = {};
-      }
-    } catch (error) {
-      console.error('❌ Error loading heatmap data:', error);
-      this.state.heatmapData = this.getInitialHeatmapData();
-      this.heatmapCellDetails = {};
-    }
-  }
-
-
-  selectHeatmapBox(boxData, event) {
-    console.log("🎯 Heatmap box selected:", boxData);
-
-    if (event) {
-      event.stopPropagation();
+        onMounted(() => this.onMounted());
     }
 
-    const cellKey = `${boxData.dayIndex}_${boxData.timeIndex}`;
-    const cellDetails = this.heatmapCellDetails[cellKey];
-
-    let hourlyBreakdown = [];
-
-    if (cellDetails && cellDetails.hourly_breakdown) {
-      // ✅ FIX: Apply translations
-      hourlyBreakdown = cellDetails.hourly_breakdown.map(item => {
-        let hourText = item.hour;
-        let teamsText = item.teams;
-
-        // Translate AM/PM → 오전/오후
-        if (hourText.includes('AM')) {
-          hourText = hourText.replace('AM', this._t('AM'));
-        } else if (hourText.includes('PM')) {
-          hourText = hourText.replace('PM', this._t('PM'));
-        }
-
-        // Translate teams → 팀
-        teamsText = teamsText.replace('teams', this._t('teams'))
-          .replace('team', this._t('team'));
-
+    getInitialHeatmapData() {
         return {
-          hour: hourText,
-          teams: teamsText
+            headers: [
+                _t("Sun"),
+                _t("Mon"),
+                _t("Tue"),
+                _t("Wed"),
+                _t("Thu"),
+                _t("Fri"),
+                _t("Sat"),
+            ],
+            rows: [
+                {
+                    label: _t("Early Morning(5 AM -7 AM)"),
+                    slot_key: 'early morning',
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    label: _t("Morning(8 AM -12 PM)"),
+                    slot_key: 'morning',
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    label: _t("Afternoon(1 PM -4 PM)"),
+                    slot_key: 'afternoon',
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    label: _t("Night(5 PM -7 PM)"),
+                    slot_key: 'night',
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                },
+            ],
         };
-      });
     }
 
-    // ✅ FIX: Translate day name
-    const dayTranslations = {
-      'Sunday': this._t('Sunday'),
-      'Monday': this._t('Monday'),
-      'Tuesday': this._t('Tuesday'),
-      'Wednesday': this._t('Wednesday'),
-      'Thursday': this._t('Thursday'),
-      'Friday': this._t('Friday'),
-      'Saturday': this._t('Saturday')
-    };
+    getDefaultHeatmapBox() {
+        return {
+            dayIndex: null,
+            timeIndex: null,
+            value: null,
+            day: null,
+            timeSlot: null,
+            displayDay: "",
+            displayTime: "",
+            hourlyBreakdown: [],
+            isHighest: false,
+            isLowest: false,
+            isVisible: false,
+        };
+    }
 
-    const displayDay = dayTranslations[boxData.day] || boxData.day;
+    async onMounted() {
+        console.log("Dashboard mounted - initializing...");
 
-    // Find highest/lowest
-    const allValues = this.state.heatmapData.rows
-      .flatMap(row => row.data)
-      .filter(val => val > 0);
+        // Initialize all data
+        await Promise.all([
+            this.initializeLocation(),
+            this.loadPerformanceData(),
+            this.loadSalesData(),
+            this.loadVisitorData(),
+            this.loadAgeData(),
+            this.loadHeatmapData(),
+            this.loadMemberCompositionData()
+        ]);
 
-    const maxValue = Math.max(...allValues);
-    const minValue = Math.min(...allValues);
+        // Wait for DOM to render
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
-    this.state.selectedHeatmapBox = {
-      isVisible: true,
-      dayIndex: boxData.dayIndex,
-      timeIndex: boxData.timeIndex,
-      value: boxData.value,
-      day: boxData.day,
-      displayDay: displayDay,  // ✅ Translated day
-      timeSlot: boxData.timeSlot,
-      hourlyBreakdown: hourlyBreakdown,  // ✅ Translated breakdown
-      isHighest: boxData.value === maxValue && boxData.value > 0,
-      isLowest: boxData.value === minValue && boxData.value > 0
-    };
-  }
+        // Initialize charts after DOM is ready
+        this.initializeAllCharts();
 
+        // Event listeners
+        document.addEventListener("click", this.handleOutsideDrawer.bind(this));
+    }
 
-  formatDayDisplayOnly(day) {
-    const dayMap = {
-      Mon: this._t("Monday"),
-      Tue: this._t("Tuesday"),
-      Wed: this._t("Wednesday"),
-      Thu: this._t("Thursday"),
-      Fri: this._t("Friday"),
-      Sat: this._t("Saturday"),
-      Sun: this._t("Sunday"),
-    };
-    return dayMap[day] || day;
-  }
+    async loadSalesData() {
+        try {
+            console.log("=== Loading sales data for period:", this.state.selectedPeriod, "===");
+            this.salesService.clearCache();
+            const salesData = await this.salesService.fetchSalesData(this.state.selectedPeriod);
+            console.log("Sales data received:", salesData);
+            this.state.salesData = salesData;
+            console.log("=== Sales data loaded successfully ===");
+        } catch (error) {
+            console.error("Error loading sales data:", error);
+            this.state.salesData = this.salesService._getDefaultSalesData(this.state.selectedPeriod);
+        }
+    }
 
-  willDestroy() {
-    super.willDestroy();
-    this.chartService.destroyAllCharts();
-    document.removeEventListener("click", this.handleOutsideDrawer.bind(this));
-  }
+    async loadVisitorData() {
+        try {
+            console.log("=== Loading visitor data for period:", this.state.selectedPeriod, "===");
+            this.visitorService.clearCache();
+            const visitorData = await this.visitorService.fetchVisitorData(
+                this.state.selectedPeriod
+            );
+            console.log("Visitor data received:", visitorData);
+            this.state.visitorData = visitorData;
+            console.log("=== Visitor data loaded successfully ===");
+        } catch (error) {
+            console.error("Error loading visitor data:", error);
+            this.state.visitorData = this.visitorService._getDefaultVisitorData(
+                this.state.selectedPeriod
+            );
+        }
+    }
+
+    async loadReservationData() {
+        try {
+            console.log("Loading reservation data for period:", this.state.selectedPeriod);
+            const reservationData = await this.reservationService.fetchReservationData(
+                this.state.selectedPeriod
+            );
+            this.state.reservationData = reservationData;
+            console.log("Reservation data loaded successfully");
+        } catch (error) {
+            console.error("Error loading reservation data:", error);
+            this.state.reservationData = this.reservationService._getDefaultReservationData(
+                this.state.selectedPeriod
+            );
+        }
+    }
+
+    async loadAgeData() {
+        try {
+            console.log("=== Loading age group data ===");
+            this.ageService.clearCache();
+            const ageData = await this.ageService.fetchAgeGroupData();
+            console.log("Age data received:", ageData);
+            this.state.ageData = ageData;
+            console.log("=== Age data loaded successfully ===");
+        } catch (error) {
+            console.error("Error loading age data:", error);
+            this.state.ageData = this.ageService.getDefaultAgeData();
+        }
+    }
+
+    async loadHeatmapData() {
+        try {
+            console.log('Loading heatmap data from database...');
+            const response = await this.rpc('/golfzon/heatmap/data', {});
+
+            if (response.success) {
+                console.log('Heatmap data received:', response);
+
+                // Update heatmap structure - ensure slot_key exists and translate labels
+                if (response.heatmap && response.heatmap.rows) {
+                    response.heatmap.rows = response.heatmap.rows.map(row => ({
+                        ...row,
+                        label: this.getTranslatedTimeSlotLabel(row.slot_key || this.getSlotKeyFromLabel(row.label)),
+                        slot_key: row.slot_key || this.getSlotKeyFromLabel(row.label)
+                    }));
+
+                    // Translate headers
+                    response.heatmap.headers = [
+                        _t("Sun"),
+                        _t("Mon"),
+                        _t("Tue"),
+                        _t("Wed"),
+                        _t("Thu"),
+                        _t("Fri"),
+                        _t("Sat"),
+                    ];
+                }
+
+                this.state.heatmapData = response.heatmap;
+                // Store hourly breakdown for sidebar
+                this.state.hourlyBreakdownData = response.hourly_breakdown || {};
+                console.log('Heatmap structure:', this.state.heatmapData);
+                console.log('Hourly breakdown keys:', Object.keys(this.state.hourlyBreakdownData));
+                console.log(`Heatmap loaded in ${response.execution_time_ms}ms`);
+            } else {
+                console.error('Failed to load heatmap:', response.error);
+                this.state.heatmapData = this.getInitialHeatmapData();
+                this.state.hourlyBreakdownData = {};
+            }
+        } catch (error) {
+            console.error('Error loading heatmap data:', error);
+            this.state.heatmapData = this.getInitialHeatmapData();
+            this.state.hourlyBreakdownData = {};
+        }
+    }
+
+    // REPLACE the loadMemberCompositionData method with this corrected version
+
+    async loadMemberCompositionData() {
+        try {
+            console.log("=== Loading Member Composition Data ===");
+
+            const response = await this.rpc('/golfzon/member_composition/data', {});
+
+            if (response && response.success) {
+                console.log("Member composition data received:", response.data);
+
+                this.state.memberCompositionData = response.data;
+
+                console.log(`✅ Member composition loaded in ${response.execution_time_ms}ms`);
+
+                // Update pie charts after data is loaded
+                await this.updatePieCharts();
+            } else {
+                console.error("Failed to load member composition:", response ? response.error : 'No response');
+                this.state.memberCompositionData = this.getDefaultMemberCompositionData();
+            }
+
+        } catch (error) {
+            console.error("Error loading member composition data:", error);
+            this.state.memberCompositionData = this.getDefaultMemberCompositionData();
+        }
+    }
+
+    getDefaultMemberCompositionData() {
+        return {
+            by_type: {
+                individual: { count: 0, percentage: 0 },
+                joint_organization: { count: 0, percentage: 0 },
+                general_organization: { count: 0, percentage: 0 },
+                temporary_organization: { count: 0, percentage: 0 },
+                total: 0
+            },
+            by_time: {
+                d15_plus: { count: 0, percentage: 0 },
+                d14: { count: 0, percentage: 0 },
+                d7: { count: 0, percentage: 0 },
+                d3: { count: 0, percentage: 0 },
+                d1: { count: 0, percentage: 0 },
+                d0: { count: 0, percentage: 0 },
+                total: 0
+            },
+            by_channel: {
+                phone: { count: 0, percentage: 0 },
+                internet: { count: 0, percentage: 0 },
+                agency: { count: 0, percentage: 0 },
+                others: { count: 0, percentage: 0 },
+                total: 0
+            }
+        };
+    }
+
+    async updatePieCharts() {
+        if (!this.state.memberCompositionData) {
+            console.warn("No member composition data available");
+            return;
+        }
+
+        const data = this.state.memberCompositionData;
+
+        try {
+            // Chart 1: Reservation by Type
+            if (this.memberTypeChart && this.memberTypeChart.el) {
+                const typeData = {
+                    individual: data.by_type.individual,
+                    joint_organization: data.by_type.joint_organization,
+                    general_organization: data.by_type.general_organization,
+                    temporary_organization: data.by_type.temporary_organization
+                };
+
+                const typeLabels = [
+                    _t("Individual"),
+                    _t("Joint Organization"),
+                    _t("General Organization"),
+                    _t("Temporary Organization")
+                ];
+
+                const typeColors = ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4"];
+
+                this.chartService.createPieChartWithData(
+                    this.memberTypeChart.el,
+                    "memberType",
+                    typeData,
+                    typeLabels,
+                    typeColors
+                );
+            }
+
+            // Chart 2: Reservation by Time
+            if (this.advanceBookingChart && this.advanceBookingChart.el) {
+                const timeData = {
+                    d15_plus: data.by_time.d15_plus,
+                    d14: data.by_time.d14,
+                    d7: data.by_time.d7,
+                    d3: data.by_time.d3,
+                    d1: data.by_time.d1,
+                    d0: data.by_time.d0
+                };
+
+                const timeLabels = ["D-15+", "D-14", "D-7", "D-3", "D-1", "D-0"];
+                const timeColors = ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4", "#5ab4f0", "#91d3ff"];
+
+                this.chartService.createPieChartWithData(
+                    this.advanceBookingChart.el,
+                    "advanceBooking",
+                    timeData,
+                    timeLabels,
+                    timeColors
+                );
+            }
+
+            // Chart 3: Reservation by Channel
+            if (this.regionalChart && this.regionalChart.el) {
+                const channelData = {
+                    phone: data.by_channel.phone,
+                    internet: data.by_channel.internet,
+                    agency: data.by_channel.agency,
+                    others: data.by_channel.others
+                };
+
+                const channelLabels = [
+                    _t("Phone"),
+                    _t("Internet"),
+                    _t("Agency"),
+                    _t("Others")
+                ];
+
+                const channelColors = ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4"];
+
+                this.chartService.createPieChartWithData(
+                    this.regionalChart.el,
+                    "regional",
+                    channelData,
+                    channelLabels,
+                    channelColors
+                );
+            }
+
+            console.log("✅ Pie charts updated successfully");
+
+        } catch (error) {
+            console.error("Error updating pie charts:", error);
+        }
+    }
+
+    // Get translated time slot label
+    getTranslatedTimeSlotLabel(slotKey) {
+        const labelMap = {
+            'early morning': _t("Early Morning(5 AM -7 AM)"),
+            'morning': _t("Morning(8 AM -12 PM)"),
+            'afternoon': _t("Afternoon(1 PM -4 PM)"),
+            'night': _t("Night(5 PM -7 PM)")
+        };
+        return labelMap[slotKey] || slotKey;
+    }
+
+    // Helper method to extract slot_key from label if needed
+    getSlotKeyFromLabel(label) {
+        const lowerLabel = label.toLowerCase();
+        if (lowerLabel.includes('early morning') || lowerLabel.includes('5 am') || lowerLabel.includes('새벽')) return 'early morning';
+        if (lowerLabel.includes('morning') || lowerLabel.includes('8 am') || lowerLabel.includes('오전')) return 'morning';
+        if (lowerLabel.includes('afternoon') || lowerLabel.includes('1 pm') || lowerLabel.includes('오후')) return 'afternoon';
+        if (lowerLabel.includes('night') || lowerLabel.includes('5 pm') || lowerLabel.includes('야간')) return 'night';
+        return 'morning'; // default
+    }
+
+    async initializeLocation() {
+        try {
+            const locationData = await this.weatherService.detectUserLocation();
+            this.state.userLocation = {
+                lat: locationData.lat,
+                lon: locationData.lon,
+            };
+            this.state.weather.location = locationData.locationName;
+            await this.loadWeatherAndGolfData(locationData.lat, locationData.lon);
+        } catch (error) {
+            console.error("Location initialization failed:", error);
+            await this.loadWeatherAndGolfData();
+        }
+    }
+
+    async loadWeatherAndGolfData(lat = null, lon = null) {
+        try {
+            const [weatherData, golfData] = await Promise.all([
+                this.weatherService.fetchWeatherData(lat, lon),
+                this.golfDataService.fetchGolfInfo(lat, lon),
+            ]);
+
+            // Update weather state
+            this.state.weather = { ...this.state.weather, ...weatherData.current };
+            this.state.hourlyWeather = weatherData.hourly;
+
+            // Update golf/reservation state from database
+            this.state.reservations = golfData.reservations;
+            this.state.teeTime = golfData.teeTime;
+            this.state.reservationDetails = golfData.reservationDetails;
+
+            console.log('Updated reservation state:', {
+                reservations: this.state.reservations,
+                teeTime: this.state.teeTime,
+                detailsCount: this.state.reservationDetails.length
+            });
+        } catch (error) {
+            console.error('Error loading weather and golf data:', error);
+        }
+    }
+
+    async loadPerformanceData() {
+        try {
+            console.log("=== Loading Performance Data from Database ===");
+            const data = await this.golfDataService.fetchPerformanceData();
+            this.state.performanceData = data;
+            console.log("✅ Performance data loaded:", data);
+        } catch (error) {
+            console.error("❌ Error loading performance data:", error);
+            this.state.performanceData = this.golfDataService.getDefaultPerformanceData();
+        }
+    }
+
+    initializeAllCharts() {
+        console.log("Initializing all charts...");
+        this.updateAllCharts();
+
+        if (this.ageRef.el && this.state.ageData && this.state.ageData.total_count !== undefined) {
+            console.log("Creating age chart with state data:", this.state.ageData);
+            this.chartService.createAgeChart(this.ageRef.el, this.state.ageData);
+        } else {
+            console.warn("Age chart not created - missing data or element", {
+                hasElement: !!this.ageRef.el,
+                hasData: !!this.state.ageData,
+                ageData: this.state.ageData
+            });
+        }
+        // this.initializePieCharts();
+
+        setTimeout(() => {
+            console.log("Initializing gender animation with data:", this.state.visitorData.gender_ratio);
+            this.chartService.initializeGenderAnimation(this.state.visitorData.gender_ratio);
+        }, 200);
+    }
+
+    // initializePieCharts() {
+    //     const pieChartConfigs = [
+    //         {
+    //             ref: this.memberTypeChart,
+    //             id: "memberType",
+    //             data: [76, 13, 2, 8, 1],
+    //             colors: ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4"],
+    //         },
+    //         {
+    //             ref: this.advanceBookingChart,
+    //             id: "advanceBooking",
+    //             data: [43, 17, 26, 7, 6, 1],
+    //             colors: [
+    //                 "#1958a4",
+    //                 "#4489da",
+    //                 "#4c9cfd",
+    //                 "#3a96d4",
+    //                 "#5ab4f0",
+    //                 "#91d3ff",
+    //             ],
+    //         },
+    //         {
+    //             ref: this.regionalChart,
+    //             id: "regional",
+    //             data: [48, 19, 8, 7, 18],
+    //             colors: ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4", "#5ab4f0"],
+    //         },
+    //     ];
+
+    //     pieChartConfigs.forEach((config) => {
+    //         if (config.ref.el) {
+    //             this.chartService.createPieChart(
+    //                 config.ref.el,
+    //                 config.id,
+    //                 config.data,
+    //                 config.colors
+    //             );
+    //         }
+    //     });
+    // }
+
+    async updateAllCharts() {
+        console.log("Updating all charts with period:", this.state.selectedPeriod);
+
+        await Promise.all([
+            this.loadSalesData(),
+            this.loadVisitorData(),
+            this.loadReservationData()
+        ]);
+
+        if (this.canvasRef.el) {
+            this.chartService.createSalesChart(
+                this.canvasRef.el,
+                this.state.selectedPeriod,
+                this.state.salesData
+            );
+        }
+
+        if (this.visitorRef.el) {
+            this.chartService.createVisitorChart(
+                this.visitorRef.el,
+                this.state.selectedPeriod,
+                this.state.visitorData
+            );
+        }
+
+        if (this.reservationTrendChart.el) {
+            this.chartService.createReservationChart(
+                this.reservationTrendChart.el,
+                this.state.selectedPeriod,
+                this.state.reservationData
+            );
+        }
+
+        if (this.ageRef.el && this.state.ageData && this.state.ageData.total_count !== undefined) {
+            this.chartService.createAgeChart(this.ageRef.el, this.state.ageData);
+        }
+
+        setTimeout(() => {
+            console.log("Updating gender animation with new data:", this.state.visitorData.gender_ratio);
+            this.chartService.initializeGenderAnimation(this.state.visitorData.gender_ratio);
+        }, 200);
+    }
+
+    // Event handlers
+    setActiveMenuItem(item) {
+        this.state.activeMenuItem = item;
+    }
+
+    async setPeriod(period) {
+        this.state.selectedPeriod = period;
+        await this.updateAllCharts();
+    }
+
+    toggleWeatherDetails() {
+        this.state.showWeatherDetails = !this.state.showWeatherDetails;
+    }
+
+    toggleDrawer(ev) {
+        ev.stopPropagation();
+        this.state.drawerOpen = !this.state.drawerOpen;
+        if (this.menuDrawer.el) {
+            this.menuDrawer.el.classList.toggle("open", this.state.drawerOpen);
+        }
+    }
+
+    handleOutsideDrawer(ev) {
+        if (
+            this.state.drawerOpen &&
+            this.menuDrawer.el &&
+            !ev.target.closest(".menu-drawer") &&
+            !ev.target.closest(".menu-btn")
+        ) {
+            this.state.drawerOpen = false;
+            this.menuDrawer.el.classList.remove("open");
+        }
+    }
+
+    switchLanguage(lang) {
+        this.state.currentLanguage = lang;
+        LocalizationUtils.switchLanguage(lang);
+    }
+
+    logout() {
+        window.location.href = "/web/session/logout";
+    }
+
+    getHeatmapCellClass(value) {
+        if (typeof value !== "number" || value === 0) return "bottom-20";
+
+        const allValues = this.getAllHeatmapValues().filter((v) => v > 0);
+        if (allValues.length === 0) return "bottom-20";
+
+        allValues.sort((a, b) => b - a);
+        const total = allValues.length;
+        const top20Index = Math.ceil(total * 0.2);
+        const top40Index = Math.ceil(total * 0.4);
+        const top60Index = Math.ceil(total * 0.6);
+        const top80Index = Math.ceil(total * 0.8);
+
+        const valueRank = allValues.indexOf(value) + 1;
+
+        if (valueRank <= top20Index) return "top-20";
+        if (valueRank <= top40Index) return "top-20-40";
+        if (valueRank <= top60Index) return "median-20";
+        if (valueRank <= top80Index) return "bottom-20-40";
+        return "bottom-20";
+    }
+
+    getAllHeatmapValues() {
+        const allValues = [];
+        if (this.state.heatmapData && this.state.heatmapData.rows) {
+            this.state.heatmapData.rows.forEach((row) => {
+                if (row.data && Array.isArray(row.data)) {
+                    row.data.forEach((cellValue) => {
+                        if (typeof cellValue === "number" && cellValue > 0) {
+                            allValues.push(cellValue);
+                        }
+                    });
+                }
+            });
+        }
+        return allValues;
+    }
+
+    selectHeatmapBox(box, event) {
+        event.stopPropagation();
+
+        // Remove previous selection
+        document.querySelectorAll('.heatmap-box.selected').forEach(el =>
+            el.classList.remove('selected')
+        );
+        event.target.closest('.heatmap-box').classList.add('selected');
+
+        // Validate that we have the necessary data
+        if (!this.state.heatmapData ||
+            !this.state.heatmapData.rows ||
+            !this.state.heatmapData.rows[box.timeIndex]) {
+            console.error('Heatmap data structure is invalid');
+            return;
+        }
+
+        const row = this.state.heatmapData.rows[box.timeIndex];
+        const slotKey = row.slot_key;
+
+        if (!slotKey) {
+            console.error('Slot key is undefined for row:', row);
+            return;
+        }
+
+        // Get hourly breakdown from stored data
+        const key = `${box.dayIndex}_${slotKey}`;
+        const hourlyData = this.state.hourlyBreakdownData?.[key] || {};
+
+        console.log('=== Heatmap Box Clicked ===');
+        console.log('Selected Box:', box);
+        console.log('Day Index:', box.dayIndex);
+        console.log('Time Index:', box.timeIndex);
+        console.log('Slot Key:', slotKey);
+        console.log('Lookup Key:', key);
+        console.log('Hourly Data for this slot:', hourlyData);
+
+        // Generate TOP 10 hourly breakdown with most bookings
+        const hourlyBreakdown = this.generateTop10HourlyBreakdown(hourlyData);
+        console.log('Generated Breakdown:', hourlyBreakdown);
+
+        // Calculate if this is highest/lowest
+        const allValues = this.getAllHeatmapValues();
+        const maxValue = Math.max(...allValues);
+        const minValue = Math.min(...allValues.filter(v => v > 0));
+
+        this.state.selectedHeatmapBox = {
+            ...box,
+            hourlyBreakdown: hourlyBreakdown,
+            isHighest: box.value === maxValue && box.value > 0,
+            isLowest: box.value === minValue && box.value > 0,
+            displayDay: this.formatDayDisplay(box.day), // FIXED: Use formatDayDisplay, not formatDayDisplayOnly
+            displayTime: this.formatTimeSlotDisplay(row.label),
+            isVisible: true
+        };
+
+        console.log('Final Selected Heatmap Box State:', this.state.selectedHeatmapBox);
+        console.log('=========================');
+    }
+
+    generateTop10HourlyBreakdown(hourlyData) {
+        /**
+         * Generate TOP 10 time slots based on booking counts.
+         * Shows 5 slots in top row and 5 slots in bottom row.
+         * Prioritizes hours with bookings, shows chronologically.
+         */
+
+        // All possible hours from 5 AM to 7 PM
+        const allHours = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+
+        // Create array with hour and count
+        const hourDataArray = allHours.map(hour => ({
+            hour: hour,
+            count: hourlyData[hour] || 0
+        }));
+
+        // Separate hours with bookings and hours without bookings
+        const hoursWithBookings = hourDataArray.filter(item => item.count > 0);
+        const hoursWithoutBookings = hourDataArray.filter(item => item.count === 0);
+
+        // Sort hours with bookings by count (descending)
+        hoursWithBookings.sort((a, b) => b.count - a.count);
+
+        // Combine: prioritize hours with bookings, then add empty slots to reach 10
+        let top10Hours = [];
+
+        // Add all hours with bookings (up to 10)
+        top10Hours = top10Hours.concat(hoursWithBookings.slice(0, 10));
+
+        // If we have less than 10, add some empty slots
+        if (top10Hours.length < 10) {
+            const remainingSlots = 10 - top10Hours.length;
+            top10Hours = top10Hours.concat(hoursWithoutBookings.slice(0, remainingSlots));
+        }
+
+        // Sort by hour for chronological display
+        top10Hours.sort((a, b) => a.hour - b.hour);
+
+        // Format for display with translations
+        const breakdown = top10Hours.map(item => {
+            const formattedHour = this.formatHourDisplay(item.hour);
+            let teamText;
+
+            if (item.count === 0) {
+                teamText = _t("0 teams");
+            } else if (item.count === 1) {
+                teamText = _t("1 team");
+            } else {
+                teamText = `${item.count} ${_t("teams")}`;
+            }
+
+            return {
+                hour: formattedHour,
+                teams: teamText,
+                count: item.count
+            };
+        });
+
+        console.log('Generated hourly breakdown:', breakdown);
+        return breakdown;
+    }
+
+    formatHourDisplay(hour) {
+        // Use translated hour labels
+        const hourLabels = {
+            5: _t("5 AM"),
+            6: _t("6 AM"),
+            7: _t("7 AM"),
+            8: _t("8 AM"),
+            9: _t("9 AM"),
+            10: _t("10 AM"),
+            11: _t("11 AM"),
+            12: _t("12 PM"),
+            13: _t("1 PM"),
+            14: _t("2 PM"),
+            15: _t("3 PM"),
+            16: _t("4 PM"),
+            17: _t("5 PM"),
+            18: _t("6 PM"),
+            19: _t("7 PM"),
+        };
+
+        return hourLabels[hour] || `${hour}:00`;
+    }
+
+    formatDayDisplay(day) {
+        const dayMap = {
+            "Sun": _t("Sunday"),
+            "Mon": _t("Monday"),
+            "Tue": _t("Tuesday"),
+            "Wed": _t("Wednesday"),
+            "Thu": _t("Thursday"),
+            "Fri": _t("Friday"),
+            "Sat": _t("Saturday"),
+        };
+        return dayMap[day] || day;
+    }
+
+    formatTimeSlotDisplay(timeSlotLabel) {
+        // Already translated from getTranslatedTimeSlotLabel
+        return timeSlotLabel;
+    }
+
+    willDestroy() {
+        super.willDestroy();
+        this.chartService.destroyAllCharts();
+        document.removeEventListener("click", this.handleOutsideDrawer.bind(this));
+    }
 }
 
 registry.category("actions").add("golfzon.dashboard", GolfzonDashboard);
