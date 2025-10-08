@@ -69,16 +69,4 @@ class Person(models.Model):
     biometrics_agree_yn = fields.Char(string="Biometrics Agree")
     biometrics_agree_date = fields.Datetime(string="Biometrics Agree Date")
 
-    def init(self):
-        """Create custom database indexes for optimal age calculation performance"""
-        super(Person, self).init()
-        
-        # Create index on birth_date for fast age calculations
-        self._cr.execute("""
-            CREATE INDEX IF NOT EXISTS golfzon_person_birth_date_idx 
-            ON golfzon_person(birth_date)
-            WHERE birth_date IS NOT NULL AND birth_date != ''
-        """)
-        
-
-        _logger.info("✅ Golfzon person indexes created successfully")
+    
