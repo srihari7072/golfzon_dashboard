@@ -1,7 +1,4 @@
-from odoo import models, fields, api
-import logging
-
-_logger = logging.getLogger(__name__)
+from odoo import models, fields
 
 class TimeTable(models.Model):
     _name = "time.table"
@@ -41,80 +38,4 @@ class TimeTable(models.Model):
     time_base_amt_id = fields.Char(string="Time Base Amount ID")
     time_base_amt_id_old = fields.Char(string="Time Base Amount ID Old")
 
-    @api.model
-    def init(self):
-        """
-        Create database indexes for millisecond-level query performance.
-        This method runs automatically when the module is installed or upgraded.
-        """
-        _logger.info("Creating indexes for time_table table...")
-        
-        try:
-            # Index for time_table_id (primary lookup and joins)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_id
-                ON time_table(time_table_id)
-                WHERE time_table_id IS NOT NULL;
-            """)
-            
-            # Index for bookg_date (most common filter - today's reservations)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_bookg_date
-                ON time_table(bookg_date)
-                WHERE bookg_date IS NOT NULL;
-            """)
-            
-            # Index for bookg_time (tee time queries)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_bookg_time
-                ON time_table(bookg_time)
-                WHERE bookg_time IS NOT NULL;
-            """)
-            
-            # Composite index for date + time queries (reservation list)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_date_time
-                ON time_table(bookg_date, bookg_time)
-                WHERE bookg_date IS NOT NULL AND bookg_time IS NOT NULL;
-            """)
-            
-            # Composite index for date + time + id (full reservation lookup)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_date_time_lookup
-                ON time_table(bookg_date, bookg_time, time_table_id)
-                WHERE bookg_date IS NOT NULL AND bookg_time IS NOT NULL;
-            """)
-            
-            # Composite index for heatmap queries (date + time + id)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_heatmap
-                ON time_table(bookg_date, bookg_time, time_table_id)
-                WHERE bookg_date IS NOT NULL;
-            """)
-            
-            # Index for round_scd (used in reservation details)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_round_scd
-                ON time_table(round_scd)
-                WHERE round_scd IS NOT NULL;
-            """)
-            
-            # Composite index for complete reservation query
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_full_reservation
-                ON time_table(bookg_date, bookg_time, time_table_id, round_scd)
-                WHERE bookg_date IS NOT NULL AND bookg_time IS NOT NULL;
-            """)
-            
-            # Index for account filtering (if needed)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_time_table_account
-                ON time_table(account_id)
-                WHERE account_id IS NOT NULL;
-            """)
-            
-            _logger.info("✅ time_table indexes created successfully")
-            
-        except Exception as e:
-            _logger.error(f"❌ Error creating time_table indexes: {str(e)}")
-            raise
+    
