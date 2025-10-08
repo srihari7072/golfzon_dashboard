@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 class VisitCustomer(models.Model):
     _name = "visit.customer"
     _description = "Visit Customer"
+    _table = 'visit_customers'
 
     customer_id = fields.Char(string="Customer ID")
     visit_team_id = fields.Char(string="Visit Team ID")
@@ -85,3 +86,4 @@ class VisitCustomer(models.Model):
         )
 
         _logger.info("✅ Visit customer indexes created successfully")
+
