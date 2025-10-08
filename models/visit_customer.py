@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 class VisitCustomer(models.Model):
     _name = "visit.customer"
     _description = "Visit Customer"
+    _table = 'visit_customers'
 
     customer_id = fields.Char(string="Customer ID")
     visit_team_id = fields.Char(string="Visit Team ID")
@@ -57,31 +58,59 @@ class VisitCustomer(models.Model):
     _sql_constraints = []
 
     def init(self):
-        """Create custom database indexes for optimal query performance"""
-        super(VisitCustomer, self).init()
-
-        # Create composite index for date range queries (most important for performance)
-        self._cr.execute(
-            """
-            CREATE INDEX IF NOT EXISTS visit_customer_visit_date_idx 
-            ON visit_customers(visit_date DESC)
         """
-        )
-
-        # Create index for gender-based queries
-        self._cr.execute(
-            """
-            CREATE INDEX IF NOT EXISTS visit_customer_gender_idx 
-            ON visit_customers(gender_scd)
+        Initialize database indices and constraints.
+        FIXED: Check if table exists before running SQL queries.
         """
-        )
-
-        # Create composite index for date + gender queries (optimal for combined filtering)
-        self._cr.execute(
-            """
-            CREATE INDEX IF NOT EXISTS visit_customer_date_gender_idx 
-            ON visit_customers(visit_date DESC, gender_scd)
-        """
-        )
-
-        _logger.info("✅ Visit customer indexes created successfully")
+        # Check if the table exists first
+        self._cr.execute("""
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_schema = 'public'
+                AND table_name = 'visit_customers'
+            );
+        """)
+        
+        table_exists = self._cr.fetchone()[0]
+        
+        if not table_exists:
+            _logger.info("⏭️ Table 'visit_customers' does not exist yet. Skipping index creation.")
+            return
+        
+        _logger.info("✅ Table 'visit_customers' exists. Creating indices...")
+        
+        try:
+            # Create index on visit_date for faster date-based queries
+            self._cr.execute("""
+                CREATE INDEX IF NOT EXISTS idx_visit_customers_visit_date
+                ON visit_customers(visit_date);
+            """)
+            _logger.info("✅ Created index: idx_visit_customers_visit_date")
+            
+            # Create index on gender_scd for gender-based aggregations
+            self._cr.execute("""
+                CREATE INDEX IF NOT EXISTS idx_visit_customers_gender
+                ON visit_customers(gender_scd);
+            """)
+            _logger.info("✅ Created index: idx_visit_customers_gender")
+            
+            # Create index on birth_date for age calculations
+            self._cr.execute("""
+                CREATE INDEX IF NOT EXISTS idx_visit_customers_birth_date
+                ON visit_customers(birth_date);
+            """)
+            _logger.info("✅ Created index: idx_visit_customers_birth_date")
+            
+            # Create composite index for common queries
+            self._cr.execute("""
+                CREATE INDEX IF NOT EXISTS idx_visit_customers_date_gender
+                ON visit_customers(visit_date, gender_scd);
+            """)
+            _logger.info("✅ Created index: idx_visit_customers_date_gender")
+            
+            _logger.info("✅ All visit_customers indices created successfully")
+            
+        except Exception as e:
+            _logger.error(f"❌ Error creating indices for visit_customers: {str(e)}")
+            # Don't raise the exception - let module installation continue
+            pass

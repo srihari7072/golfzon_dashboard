@@ -80,4 +80,5 @@ class Person(models.Model):
             WHERE birth_date IS NOT NULL AND birth_date != ''
         """)
         
+
         _logger.info("✅ Golfzon person indexes created successfully")
