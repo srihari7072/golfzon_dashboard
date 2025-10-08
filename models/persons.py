@@ -1,7 +1,4 @@
-from odoo import models, fields, api
-import logging
-
-_logger = logging.getLogger(__name__)
+from odoo import models, fields
 
 class Person(models.Model):
     _name = "golfzon.person"
@@ -68,5 +65,6 @@ class Person(models.Model):
 
     biometrics_agree_yn = fields.Char(string="Biometrics Agree")
     biometrics_agree_date = fields.Datetime(string="Biometrics Agree Date")
+
 
     
