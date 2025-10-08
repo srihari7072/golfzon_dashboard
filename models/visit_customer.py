@@ -1,8 +1,4 @@
-from odoo import models, fields, api
-import logging
-
-_logger = logging.getLogger(__name__)
-
+from odoo import models, fields
 
 class VisitCustomer(models.Model):
     _name = "visit.customer"
@@ -55,62 +51,3 @@ class VisitCustomer(models.Model):
     coupon_discount_amt = fields.Float(string="Coupon Discount Amount")
     spc_yn = fields.Char(string="Special Y/N")
 
-    _sql_constraints = []
-
-    def init(self):
-        """
-        Initialize database indices and constraints.
-        FIXED: Check if table exists before running SQL queries.
-        """
-        # Check if the table exists first
-        self._cr.execute("""
-            SELECT EXISTS (
-                SELECT FROM information_schema.tables 
-                WHERE table_schema = 'public'
-                AND table_name = 'visit_customers'
-            );
-        """)
-        
-        table_exists = self._cr.fetchone()[0]
-        
-        if not table_exists:
-            _logger.info("⏭️ Table 'visit_customers' does not exist yet. Skipping index creation.")
-            return
-        
-        _logger.info("✅ Table 'visit_customers' exists. Creating indices...")
-        
-        try:
-            # Create index on visit_date for faster date-based queries
-            self._cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_visit_customers_visit_date
-                ON visit_customers(visit_date);
-            """)
-            _logger.info("✅ Created index: idx_visit_customers_visit_date")
-            
-            # Create index on gender_scd for gender-based aggregations
-            self._cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_visit_customers_gender
-                ON visit_customers(gender_scd);
-            """)
-            _logger.info("✅ Created index: idx_visit_customers_gender")
-            
-            # Create index on birth_date for age calculations
-            self._cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_visit_customers_birth_date
-                ON visit_customers(birth_date);
-            """)
-            _logger.info("✅ Created index: idx_visit_customers_birth_date")
-            
-            # Create composite index for common queries
-            self._cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_visit_customers_date_gender
-                ON visit_customers(visit_date, gender_scd);
-            """)
-            _logger.info("✅ Created index: idx_visit_customers_date_gender")
-            
-            _logger.info("✅ All visit_customers indices created successfully")
-            
-        except Exception as e:
-            _logger.error(f"❌ Error creating indices for visit_customers: {str(e)}")
-            # Don't raise the exception - let module installation continue
-            pass
