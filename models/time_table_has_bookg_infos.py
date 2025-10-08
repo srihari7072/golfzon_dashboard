@@ -1,7 +1,4 @@
-from odoo import models, fields, api
-import logging
-
-_logger = logging.getLogger(__name__)
+from odoo import models, fields
 
 class TimeTableHasBookgInfos(models.Model):
     _name = 'time.table.has.bookg.infos'
@@ -33,53 +30,3 @@ class TimeTableHasBookgInfos(models.Model):
     sms_yn = fields.Char(string='SMS Sent?')
     no_show_yn = fields.Char(string='No Show?')
     member_has_packages_id = fields.Char(string='Member Packages ID')
-
-    @api.model
-    def init(self):
-        """
-        Create database indexes for millisecond-level query performance.
-        This method runs automatically when the module is installed or upgraded.
-        """
-        _logger.info("Creating indexes for time_table_has_bookg_infos table...")
-        
-        try:
-            # Index for time_table_id (foreign key to time_table)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_junction_time_table_id
-                ON time_table_has_bookg_infos(time_table_id)
-                WHERE time_table_id IS NOT NULL;
-            """)
-            
-            # Index for bookg_info_id (foreign key to booking_info)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_junction_bookg_info_id
-                ON time_table_has_bookg_infos(bookg_info_id)
-                WHERE bookg_info_id IS NOT NULL;
-            """)
-            
-            # Composite index for joining both tables efficiently (most important!)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_junction_time_bookg
-                ON time_table_has_bookg_infos(time_table_id, bookg_info_id)
-                WHERE time_table_id IS NOT NULL AND bookg_info_id IS NOT NULL;
-            """)
-            
-            # Reverse composite index for different join orders
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_junction_bookg_time
-                ON time_table_has_bookg_infos(bookg_info_id, time_table_id)
-                WHERE bookg_info_id IS NOT NULL AND time_table_id IS NOT NULL;
-            """)
-            
-            # Index on primary key (if exists)
-            self.env.cr.execute("""
-                CREATE INDEX IF NOT EXISTS idx_junction_primary_id
-                ON time_table_has_bookg_infos(time_table_has_bookg_info_id)
-                WHERE time_table_has_bookg_info_id IS NOT NULL;
-            """)
-            
-            _logger.info("✅ time_table_has_bookg_infos indexes created successfully")
-            
-        except Exception as e:
-            _logger.error(f"❌ Error creating time_table_has_bookg_infos indexes: {str(e)}")
-            raise
