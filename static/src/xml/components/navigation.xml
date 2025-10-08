@@ -22,7 +22,6 @@
             </nav>
         </div>
     </t>
-
     <t t-name="golfzon_dashboard.Header">
         <header class="dashboard-header">
             <div class="header-left">
@@ -31,12 +30,21 @@
                 </button>
                 <img src="/golfzon_dashboard/static/src/img/golfzon-logo.png" alt="Golfzon Logo" class="header-logo"/>
             </div>
-
             <div class="header-right">
                 <div class="language-switcher">
-                    <a href="#" t-att-class="state.currentLanguage === 'en_US' ? 'active' : ''" t-on-click="() => this.switchLanguage('en_US')" style="font-weight:bold;">ENG</a>
+                    <a href="#" 
+                    t-att-class="state.currentLanguage &amp;&amp; (state.currentLanguage === 'en_US' || state.currentLanguage.includes('en')) ? 'active' : ''" 
+                    t-on-click="() => this.switchLanguage('en_US')" 
+                    style="font-weight:bold;">
+                        ENG
+                    </a>
                     <span>|</span>
-                    <a href="#" t-att-class="state.currentLanguage === 'ko_KR' ? 'active' : ''" t-on-click="() => this.switchLanguage('ko_KR')" style="font-weight:bold;">KOR</a>
+                    <a href="#" 
+                    t-att-class="state.currentLanguage &amp;&amp; (state.currentLanguage === 'ko_KR' || state.currentLanguage.includes('ko')) ? 'active' : ''" 
+                    t-on-click="() => this.switchLanguage('ko_KR')" 
+                    style="font-weight:bold;">
+                        KOR
+                    </a>
                 </div>
                 <div class="user-info">
                     <span class="username" t-esc="state.userName"/>

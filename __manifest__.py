@@ -47,7 +47,6 @@
         "views/sales_infos_views.xml",
         "views/day_sum_payments_views.xml",
         "views/day_sum_greenfees_views.xml",
-        "views/login.xml",
         "views/bookg_info_his.xml",
         "views/members.xml",
         "views/time_table_has_bookg_infos.xml",
@@ -58,7 +57,6 @@
         "web.assets_backend": [
             # Main SCSS file (imports all components)
             "golfzon_dashboard/static/src/scss/dashboard.scss",
-            # "golfzon_dashboard/static/src/scss/custom_login.scss",
             
             # External Libraries
             "golfzon_dashboard/static/lib/chartjs/Chart.min.js",

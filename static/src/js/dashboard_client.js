@@ -47,7 +47,7 @@ class GolfzonDashboard extends Component {
 
         this.state = useState({
             activeMenuItem: "dashboard",
-            currentLanguage: LocalizationUtils.getStoredLanguage(),
+            currentLanguage: null, // Default to Korean
             userName: "username",
             drawerOpen: false,
             showWeatherDetails: false,
@@ -157,6 +157,77 @@ class GolfzonDashboard extends Component {
         onMounted(() => this.onMounted());
     }
 
+    // ✅ NEW: Language switching methods
+    async loadCurrentLanguage() {
+        try {
+            const response = await fetch('/golfzon/api/current_language');
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                this.state.currentLanguage = data.current_lang;
+                console.log('✅ Current language loaded:', data.current_lang);
+            } else {
+                // ✅ Default to Korean
+                this.state.currentLanguage = 'ko_KR';
+            }
+        } catch (error) {
+            console.error('❌ Error loading current language:', error);
+            // ✅ Default to Korean on error
+            this.state.currentLanguage = 'ko_KR';
+        }
+    }
+
+    async switchLanguage(lang) {
+        let oldLang = this.state.currentLanguage;
+
+        try {
+            console.log(`🔄 Switching language to: ${lang}`);
+
+            // Update current language
+            this.state.currentLanguage = lang;
+
+            // Store language preference
+            localStorage.setItem("dashboard_lang", lang);
+
+            // Call backend to switch language
+            const response = await fetch(`/golfzon/dashboard/set_lang?lang=${lang}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Language switched successfully:', data);
+
+                // FIXED: Update the date immediately before reload
+                this.updateCurrentDate();
+
+                // Force page reload to apply new language
+                window.location.reload();
+            } else {
+                // Revert if failed
+                this.state.currentLanguage = oldLang;
+                console.error('❌ Failed to switch language');
+            }
+        } catch (error) {
+            console.error('❌ Error switching language:', error);
+            // Revert on error (oldLang is now accessible here)
+            this.state.currentLanguage = oldLang;
+        }
+    }
+
+    updateCurrentDate() {
+        this.state.currentDate = DateUtils.formatCurrentDate();
+        console.log('✅ Date updated:', this.state.currentDate);
+    }
+
+    // Helper method to check if current language is Korean
+    isKorean() {
+        return this.state.currentLanguage && this.state.currentLanguage.includes('ko');
+    }
+
+    // Helper method to check if current language is English
+    isEnglish() {
+        return this.state.currentLanguage && this.state.currentLanguage.includes('en');
+    }
+
     getInitialHeatmapData() {
         return {
             headers: [
@@ -211,6 +282,12 @@ class GolfzonDashboard extends Component {
 
     async onMounted() {
         console.log("Dashboard mounted - initializing...");
+
+        // ✅ Load current language first
+        await this.loadCurrentLanguage();
+
+        // FIXED: Update date after language is loaded
+        this.updateCurrentDate();
 
         // Initialize all data
         await Promise.all([
@@ -340,8 +417,6 @@ class GolfzonDashboard extends Component {
             this.state.hourlyBreakdownData = {};
         }
     }
-
-    // REPLACE the loadMemberCompositionData method with this corrected version
 
     async loadMemberCompositionData() {
         try {
@@ -586,47 +661,6 @@ class GolfzonDashboard extends Component {
         }, 200);
     }
 
-    // initializePieCharts() {
-    //     const pieChartConfigs = [
-    //         {
-    //             ref: this.memberTypeChart,
-    //             id: "memberType",
-    //             data: [76, 13, 2, 8, 1],
-    //             colors: ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4"],
-    //         },
-    //         {
-    //             ref: this.advanceBookingChart,
-    //             id: "advanceBooking",
-    //             data: [43, 17, 26, 7, 6, 1],
-    //             colors: [
-    //                 "#1958a4",
-    //                 "#4489da",
-    //                 "#4c9cfd",
-    //                 "#3a96d4",
-    //                 "#5ab4f0",
-    //                 "#91d3ff",
-    //             ],
-    //         },
-    //         {
-    //             ref: this.regionalChart,
-    //             id: "regional",
-    //             data: [48, 19, 8, 7, 18],
-    //             colors: ["#1958a4", "#4489da", "#4c9cfd", "#3a96d4", "#5ab4f0"],
-    //         },
-    //     ];
-
-    //     pieChartConfigs.forEach((config) => {
-    //         if (config.ref.el) {
-    //             this.chartService.createPieChart(
-    //                 config.ref.el,
-    //                 config.id,
-    //                 config.data,
-    //                 config.colors
-    //             );
-    //         }
-    //     });
-    // }
-
     async updateAllCharts() {
         console.log("Updating all charts with period:", this.state.selectedPeriod);
 
@@ -702,11 +736,6 @@ class GolfzonDashboard extends Component {
             this.state.drawerOpen = false;
             this.menuDrawer.el.classList.remove("open");
         }
-    }
-
-    switchLanguage(lang) {
-        this.state.currentLanguage = lang;
-        LocalizationUtils.switchLanguage(lang);
     }
 
     logout() {
@@ -812,11 +841,6 @@ class GolfzonDashboard extends Component {
     }
 
     generateTop10HourlyBreakdown(hourlyData) {
-        /**
-         * Generate TOP 10 time slots based on booking counts.
-         * Shows 5 slots in top row and 5 slots in bottom row.
-         * Prioritizes hours with bookings, shows chronologically.
-         */
 
         // All possible hours from 5 AM to 7 PM
         const allHours = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];

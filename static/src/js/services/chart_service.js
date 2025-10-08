@@ -343,7 +343,7 @@ export class ChartService {
           labels,
           datasets: [
             {
-              label: _t("Number of Guests"),
+              label: _t("Number of Visitors"),
               data: currentYearValues,
               borderColor: COLOR_PRIMARY,
               backgroundColor: "rgba(4, 109, 236, 0.1)",
@@ -354,7 +354,7 @@ export class ChartService {
               pointHoverRadius: 6,
             },
             {
-              label: _t("Number of Guests (Same Period Last Year)"),
+              label: _t("Number of Visitors for the Same Period Last Year"),
               data: previousYearValues,
               borderColor: COLOR_SECONDARY,
               backgroundColor: "transparent",

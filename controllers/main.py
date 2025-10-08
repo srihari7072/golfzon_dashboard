@@ -2,6 +2,7 @@ from odoo import http
 from odoo.http import request
 from datetime import datetime, timedelta, date
 from calendar import monthrange
+import json
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -9,24 +10,92 @@ _logger = logging.getLogger(__name__)
 
 class SalesStatusController(http.Controller):
 
-    @http.route("/golfzon/dashboard/set_lang", type="http", auth="user", methods=["GET"], csrf=False,)
-    def set_language(self, lang=None, **kwargs):
+    @http.route('/golfzon/dashboard/set_lang', type='http', auth='user', methods=['GET'], csrf=False)
+    def set_language(self, lang='ko_KR', **kwargs):
         """Handle language switching for dashboard"""
         try:
             if lang:
-                request.env.user.lang = lang
-                request.session["lang"] = lang
+                # ✅ Update user language preference in database
+                request.env.user.write({'lang': lang})
+                request.session['lang'] = lang
                 _logger.info(f"✅ Language switched to: {lang}")
-
-            redirect_url = kwargs.get(
-                "redirect", "/web#action=golfzon_dashboard.action_golfzon_dashboard"
+            
+            # Return JSON response instead of redirect for AJAX calls
+            return request.make_response(
+                json.dumps({
+                    'status': 'success',
+                    'current_lang': lang,
+                    'message': f'Language switched to {lang}'
+                }),
+                headers={'Content-Type': 'application/json'}
             )
-            return request.redirect(redirect_url)
-
+            
         except Exception as e:
             _logger.error(f"❌ Error setting language: {str(e)}")
-            return request.redirect(
-                "/web#action=golfzon_dashboard.action_golfzon_dashboard"
+            return request.make_response(
+                json.dumps({
+                    'status': 'error',
+                    'message': str(e),
+                    'current_lang': 'ko_KR'  # Default fallback
+                }),
+                headers={'Content-Type': 'application/json'}
+            )
+        
+   
+    @http.route('/golfzon/api/current_language', type='http', auth='user', methods=['GET'], csrf=False)
+    def get_current_language(self, **kwargs):
+        """Get current user language state"""
+        try:
+            current_lang = request.env.user.lang or 'ko_KR'  # Default to Korean
+            is_korean = 'ko' in current_lang.lower()
+            
+            return request.make_response(
+                json.dumps({
+                    'status': 'success',
+                    'current_lang': current_lang,
+                    'is_korean': is_korean,
+                    'display_name': 'Korean' if is_korean else 'English'
+                }),
+                headers={'Content-Type': 'application/json'}
+            )
+        except Exception as e:
+            _logger.error(f"❌ Error getting current language: {str(e)}")
+            return request.make_response(
+                json.dumps({
+                    'status': 'error',
+                    'message': str(e),
+                    'current_lang': 'ko_KR'  # Default to Korean on error
+                }),
+                headers={'Content-Type': 'application/json'}
+            )    
+            
+    @http.route('/golfzon/api/set_default_korean', type='http', auth='user', methods=['GET'], csrf=False)
+    def set_default_korean(self, **kwargs):
+        """Set Korean as default language for current user"""
+        try:
+            # Update current user to Korean
+            request.env.user.write({'lang': 'ko_KR'})
+            request.session['lang'] = 'ko_KR'
+            
+            _logger.info(f"✅ Set Korean as default for user: {request.env.user.name}")
+            
+            return request.make_response(
+                json.dumps({
+                    'status': 'success',
+                    'message': 'Korean set as default language',
+                    'current_lang': 'ko_KR'
+                }),
+                headers={'Content-Type': 'application/json'}
+            )
+            
+        except Exception as e:
+            _logger.error(f"❌ Error setting Korean default: {str(e)}")
+            return request.make_response(
+                json.dumps({
+                    'status': 'error', 
+                    'message': str(e)
+                }),
+                headers={'Content-Type': 'application/json'}
             )
 
     # Sales Status Data
