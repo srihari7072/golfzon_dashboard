@@ -29,6 +29,9 @@
     """,
     "author": "Sri Hari",
     "depends": ["web", "base"],
+
+    "post_init_hook": "post_init_hook",
+    
     "data": [
         "security/ir.model.access.csv",
         "views/menu.xml", 
