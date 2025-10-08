@@ -113,21 +113,24 @@ export class ChartService {
     const currentYearValues = [];
     const previousYearValues = [];
 
+    // ✅ FIX: Create separate date indices for current and previous year
+    const currentYearDates = [];
+    const previousYearDates = [];
+
     // Process current year data
     salesData.current_year.forEach((day, index) => {
       const date = new Date(day.date);
       let label = `${date.getMonth() + 1}.${date.getDate()}`;
       labels.push(label);
       currentYearValues.push(day.amount / 10000);
+      currentYearDates.push(date); // ✅ Store current year dates
     });
 
     // Process previous year data
     salesData.previous_year.forEach(day => {
       previousYearValues.push(day.amount / 10000);
+      previousYearDates.push(new Date(day.date)); // ✅ Store PREVIOUS year dates
     });
-
-    // Build date index for tooltips
-    const dateIndex = salesData.current_year.map(day => new Date(day.date));
 
     this.destroyChart("sales");
 
@@ -215,7 +218,7 @@ export class ChartService {
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                pointStyle: "rectRounded",
+                pointStyle: "circle", // ✅ CHANGED from "rectRounded"
                 boxWidth: 8,
                 boxHeight: 8,
                 padding: 16,
@@ -233,7 +236,7 @@ export class ChartService {
                     lineJoin: 'miter',
                     lineWidth: 0,
                     strokeStyle: dataset.backgroundColor,
-                    pointStyle: 'rectRounded',
+                    pointStyle: 'circle', // ✅ CHANGED from "rectRounded"
                     datasetIndex: i
                   }));
                 }
@@ -251,11 +254,18 @@ export class ChartService {
               titleFont: { size: 14, weight: "600" },
               bodyFont: { size: 13 },
               callbacks: {
+                // ✅ FIX: Use correct date array based on dataset
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  const d = dateIndex[idx];
-                  return this._formatFullDate(d) || labels[idx] || "";
+                  const datasetIndex = items[0].datasetIndex;
+
+                  // Use current year dates or previous year dates
+                  const date = datasetIndex === 0
+                    ? currentYearDates[idx]
+                    : previousYearDates[idx];
+
+                  return this._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const isCurrentYear = ctx.datasetIndex === 0;
@@ -264,13 +274,11 @@ export class ChartService {
                   const formattedValue = `${actualAmount.toLocaleString()} won`;
 
                   if (isCurrentYear) {
-                    // FIXED: Use translation
                     return `${_t("Sales")}: ${formattedValue}`;
                   } else {
                     const idx = ctx.dataIndex;
-                    const date = dateIndex[idx];
+                    const date = previousYearDates[idx]; // ✅ Use previous year date
                     const weather = this._getWeatherData(date);
-                    // FIXED: Use translations
                     return [
                       `${_t("Sales")}: ${formattedValue}`,
                       `${_t("Weather")}: ${weather.condition}`,
@@ -311,7 +319,10 @@ export class ChartService {
     const labels = [];
     const currentYearValues = [];
     const previousYearValues = [];
-    const dateIndex = [];
+
+    // ✅ FIX: Create separate date indices for current and previous year
+    const currentYearDates = [];
+    const previousYearDates = [];
 
     if (visitorData.current_year && visitorData.current_year.length > 0) {
       visitorData.current_year.forEach((day, index) => {
@@ -319,13 +330,14 @@ export class ChartService {
         let label = `${date.getMonth() + 1}.${date.getDate()}`;
         labels.push(label);
         currentYearValues.push(day.count || 0);
-        dateIndex.push(date);
+        currentYearDates.push(date); // ✅ Store current year dates
       });
     }
 
     if (visitorData.previous_year && visitorData.previous_year.length > 0) {
       visitorData.previous_year.forEach(day => {
         previousYearValues.push(day.count || 0);
+        previousYearDates.push(new Date(day.date)); // ✅ Store PREVIOUS year dates
       });
     }
 
@@ -402,7 +414,7 @@ export class ChartService {
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                pointStyle: "rectRounded",
+                pointStyle: "circle", // ✅ CHANGED from "rectRounded"
                 boxWidth: 8,
                 boxHeight: 8,
                 padding: 16,
@@ -420,7 +432,7 @@ export class ChartService {
                     lineJoin: 'miter',
                     lineWidth: 0,
                     strokeStyle: dataset.borderColor,
-                    pointStyle: 'rectRounded',
+                    pointStyle: 'circle', // ✅ CHANGED from "rectRounded"
                     datasetIndex: i
                   }));
                 }
@@ -438,24 +450,29 @@ export class ChartService {
               titleFont: { size: 14, weight: "600" },
               bodyFont: { size: 13 },
               callbacks: {
+                // ✅ FIX: Use correct date array based on dataset
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  const d = dateIndex[idx];
-                  return this._formatFullDate(d) || labels[idx] || "";
+                  const datasetIndex = items[0].datasetIndex;
+
+                  // Use current year dates or previous year dates
+                  const date = datasetIndex === 0
+                    ? currentYearDates[idx]
+                    : previousYearDates[idx];
+
+                  return this._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
                   const isCurrentYear = ctx.datasetIndex === 0;
 
                   if (isCurrentYear) {
-                    // FIXED: Use translation
                     return `${_t("Visitors")}: ${value.toLocaleString()}`;
                   } else {
                     const idx = ctx.dataIndex;
-                    const date = dateIndex[idx];
+                    const date = previousYearDates[idx]; // ✅ Use previous year date
                     const weather = this._getWeatherData(date);
-                    // FIXED: Use translations
                     return [
                       `${_t("Visitors")}: ${value.toLocaleString()}`,
                       `${_t("Weather")}: ${weather.condition}`,
@@ -495,7 +512,10 @@ export class ChartService {
     const labels = [];
     const currentYearValues = [];
     const previousYearValues = [];
-    const dateIndex = [];
+
+    // ✅ FIX: Create separate date indices for current and previous year
+    const currentYearDates = [];
+    const previousYearDates = [];
 
     if (reservationData.current_year && reservationData.current_year.length > 0) {
       reservationData.current_year.forEach((day, index) => {
@@ -503,13 +523,14 @@ export class ChartService {
         let label = `${date.getMonth() + 1}.${date.getDate()}`;
         labels.push(label);
         currentYearValues.push(day.count || 0);
-        dateIndex.push(date);
+        currentYearDates.push(date); // ✅ Store current year dates
       });
     }
 
     if (reservationData.previous_year && reservationData.previous_year.length > 0) {
       reservationData.previous_year.forEach(day => {
         previousYearValues.push(day.count || 0);
+        previousYearDates.push(new Date(day.date)); // ✅ Store PREVIOUS year dates
       });
     }
 
@@ -588,7 +609,7 @@ export class ChartService {
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                pointStyle: "rectRounded",
+                pointStyle: "circle", // ✅ CHANGED from "rectRounded"
                 boxWidth: 8,
                 boxHeight: 8,
                 padding: 16,
@@ -606,7 +627,7 @@ export class ChartService {
                     lineJoin: 'miter',
                     lineWidth: 0,
                     strokeStyle: dataset.borderColor,
-                    pointStyle: 'rectRounded',
+                    pointStyle: 'circle', // ✅ CHANGED from "rectRounded"
                     datasetIndex: i
                   }));
                 }
@@ -624,24 +645,29 @@ export class ChartService {
               titleFont: { size: 14, weight: "600" },
               bodyFont: { size: 13 },
               callbacks: {
+                // ✅ FIX: Use correct date array based on dataset
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
-                  const d = dateIndex[idx];
-                  return this._formatFullDate(d) || labels[idx] || "";
+                  const datasetIndex = items[0].datasetIndex;
+
+                  // Use current year dates or previous year dates
+                  const date = datasetIndex === 0
+                    ? currentYearDates[idx]
+                    : previousYearDates[idx];
+
+                  return this._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
                   const isCurrentYear = ctx.datasetIndex === 0;
 
                   if (isCurrentYear) {
-                    // FIXED: Use translation
                     return `${_t("Reservations")}: ${value}`;
                   } else {
                     const idx = ctx.dataIndex;
-                    const date = dateIndex[idx];
+                    const date = previousYearDates[idx]; // ✅ Use previous year date
                     const weather = this._getWeatherData(date);
-                    // FIXED: Use translations
                     return [
                       `${_t("Reservations")}: ${value}`,
                       `${_t("Weather")}: ${weather.condition}`,

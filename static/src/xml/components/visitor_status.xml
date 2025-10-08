@@ -5,14 +5,14 @@
             <div class="chart-title-section">
                 <div class="title-with-tooltip">
                     <h3 t-esc="chartTitle"/>
-                    <div class="tooltip-wrapper">
+                    <!-- <div class="tooltip-wrapper">
                         <span class="help-icon">
                             <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                         </span>
                         <div class="tooltip-content">
                             <t t-esc="_t('30 days prior to the inquiry date')"/>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="time-period-buttons" t-if="showPeriodButtons">

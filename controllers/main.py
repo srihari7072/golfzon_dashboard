@@ -774,26 +774,14 @@ class SalesStatusController(http.Controller):
 
     def _calculate_visitor_date_range(self, period):
         """
-        Calculate date ranges for current and previous year.
-        Handles scenarios where today's data might not exist.
+        Calculate date ranges for current and previous year visitor data.
+        ✅ FIX: Always use TODAY as reference date (like reservation chart).
         """
-        VisitCustomer = request.env["visit.customer"].sudo()
-
-        # Try to get the latest date from database
-        latest_record = VisitCustomer.search(
-            [("visit_date", "!=", False)],
-            order="visit_date desc",
-            limit=1,
-        )
-
-        if latest_record and latest_record.visit_date:
-            # Use latest date from database as "today"
-            reference_date = latest_record.visit_date
-            _logger.info(f"Using latest date from database: {reference_date}")
-        else:
-            # Fallback to actual today
-            reference_date = datetime.now().date()
-            _logger.info(f"Using current date: {reference_date}")
+        # ✅ FIX: Always use today's date as reference (same as reservation chart)
+        today = datetime.now().date()
+        reference_date = today
+        
+        _logger.info(f"✅ Visitor chart using TODAY as reference: {reference_date}")
 
         # Calculate number of days based on period
         if period == "7days":
@@ -838,17 +826,19 @@ class SalesStatusController(http.Controller):
         """
         Fetch aggregated visitor data using optimized SQL query.
         Groups by date and counts visitors.
+        ✅ FIX: Removed CURRENT_DATE check to show data till today.
         """
-        # Use direct SQL for maximum performance
+        # ✅ FIX: Removed "AND visit_date <= CURRENT_DATE" from query
         query = """
-            SELECT
-                visit_date,
-                COUNT(*) as visitor_count
-            FROM visit_customers
-            WHERE visit_date >= %s
-                AND visit_date <= %s
-            GROUP BY visit_date
-            ORDER BY visit_date ASC
+        SELECT
+            visit_date,
+            COUNT(*) as visitor_count
+        FROM visit_customers
+        WHERE visit_date >= %s
+            AND visit_date <= %s
+            AND account_id IS NOT NULL
+        GROUP BY visit_date
+        ORDER BY visit_date ASC
         """
 
         request.env.cr.execute(query, (start_date, end_date))
@@ -880,6 +870,7 @@ class SalesStatusController(http.Controller):
         # Log summary
         total_count = sum(day["count"] for day in result_list)
         days_with_data = len([day for day in result_list if day["count"] > 0])
+
         _logger.info(
             f"Total visitors for period: {total_count}, Days with data: {days_with_data}/{len(result_list)}"
         )
@@ -1071,8 +1062,165 @@ class SalesStatusController(http.Controller):
                 "data": self._get_empty_age_data(),
             }
 
+    def _fetch_age_group_distribution(self):
+        """
+        ✅ FIXED: Calculate age distribution from golfzon_person table.
+        Now properly handles birth_date as a Date field (not Char).
+        """
+        start_time = datetime.now()
+        
+        _logger.info("="*70)
+        _logger.info("=== FETCHING AGE DISTRIBUTION DATA ===")
+        _logger.info("="*70)
+        
+        # Step 1: Check if golfzon_person table has data
+        Person = request.env["golfzon.person"].sudo()
+        total_persons = Person.search_count([])
+        
+        _logger.info(f"Step 1: Total persons in golfzon_person table: {total_persons}")
+        
+        if total_persons == 0:
+            _logger.error("❌ NO DATA in golfzon_person table!")
+            return self._get_empty_age_data()
+        
+        # Step 2: Check how many have valid birth dates
+        persons_with_birthdate = Person.search_count([
+            ('birth_date', '!=', False)
+        ])
+        
+        _logger.info(f"Step 2: Persons with birth_date: {persons_with_birthdate}")
+        
+        if persons_with_birthdate == 0:
+            _logger.error("❌ NO birth_date data found!")
+            return self._get_empty_age_data()
+        
+        # ✅ FIX: Query for Date field (not Char field)
+        # When birth_date is fields.Date(), it's stored as DATE type in PostgreSQL
+        query = """
+        WITH age_calc AS (
+            SELECT
+                person_code,
+                birth_date,
+                CASE
+                    WHEN birth_date IS NULL THEN NULL
+                    ELSE DATE_PART('year', AGE(CURRENT_DATE, birth_date))
+                END as age
+            FROM golfzon_person
+            WHERE deleted_at IS NULL
+        ),
+        age_groups AS (
+            SELECT
+                CASE
+                    WHEN age IS NULL OR age < 0 OR age > 150 THEN 'unknown'
+                    WHEN age < 10 THEN 'under_10'
+                    WHEN age >= 10 AND age < 20 THEN '20s'
+                    WHEN age >= 20 AND age < 30 THEN '20s'
+                    WHEN age >= 30 AND age < 40 THEN '30s'
+                    WHEN age >= 40 AND age < 50 THEN '40s'
+                    WHEN age >= 50 AND age < 60 THEN '50s'
+                    WHEN age >= 60 THEN '60_plus'
+                    ELSE 'unknown'
+                END as age_group,
+                age,
+                person_code
+            FROM age_calc
+        )
+        SELECT 
+            age_group,
+            COUNT(*) as person_count,
+            MIN(age) as min_age,
+            MAX(age) as max_age
+        FROM age_groups
+        WHERE age_group != 'unknown'
+        GROUP BY age_group
+        ORDER BY
+            CASE age_group
+                WHEN '60_plus' THEN 1
+                WHEN '50s' THEN 2
+                WHEN '40s' THEN 3
+                WHEN '30s' THEN 4
+                WHEN '20s' THEN 5
+                WHEN 'under_10' THEN 6
+                ELSE 7
+            END
+        """
+        
+        try:
+            _logger.info("Step 3: Executing age distribution query (Date field version)...")
+            request.env.cr.execute(query)
+            results = request.env.cr.dictfetchall()
+            
+            _logger.info(f"✅ Query returned {len(results)} age groups")
+            
+            # Initialize all groups with zero
+            age_groups = {
+                "under_10": 0,
+                "20s": 0,
+                "30s": 0,
+                "40s": 0,
+                "50s": 0,
+                "60_plus": 0,
+            }
+            
+            total_count = 0
+            
+            # Process results
+            for row in results:
+                group = row["age_group"]
+                count = row["person_count"]
+                min_age = row.get("min_age")
+                max_age = row.get("max_age")
+                
+                _logger.info(f"  ✅ {group}: {count} people (ages {min_age}-{max_age})")
+                
+                if group in age_groups:
+                    age_groups[group] = count
+                    total_count += count
+            
+            _logger.info(f"📊 Total persons with valid age data: {total_count}")
+            
+            # If no valid data found, return empty structure
+            if total_count == 0:
+                _logger.error("❌ NO VALID AGE DATA after calculation!")
+                _logger.error("Possible issues:")
+                _logger.error("  1. All birth_date values are NULL")
+                _logger.error("  2. All ages fall outside valid ranges (0-150)")
+                _logger.error("  3. All records have deleted_at set")
+                _logger.error("  4. birth_date field type mismatch in database")
+                return self._get_empty_age_data()
+            
+            # Calculate percentages
+            age_percentages = {}
+            for group, count in age_groups.items():
+                percentage = round((count / total_count * 100), 1) if total_count > 0 else 0
+                age_percentages[group] = {
+                    "count": count,
+                    "percentage": percentage
+                }
+                _logger.info(f"  📊 {group}: {count} people ({percentage}%)")
+            
+            end_time = datetime.now()
+            execution_time = (end_time - start_time).total_seconds() * 1000
+            
+            result = {
+                "age_groups": age_percentages,
+                "total_count": total_count,
+            }
+            
+            _logger.info(f"✅ Age distribution calculated in {execution_time:.2f}ms")
+            _logger.info(f"✅ FINAL RESULT: {result}")
+            _logger.info("="*70)
+            
+            return result
+            
+        except Exception as e:
+            _logger.error(f"❌ SQL ERROR in age distribution: {str(e)}", exc_info=True)
+            request.env.cr.rollback()
+            return self._get_empty_age_data()
+
     def _get_empty_age_data(self):
-        """Return empty age data structure"""
+        """Return empty age data structure when no data is available"""
+        _logger.warning("⚠️ Returning empty age data structure")
         return {
             "age_groups": {
                 "under_10": {"count": 0, "percentage": 0},
@@ -1084,162 +1232,6 @@ class SalesStatusController(http.Controller):
             },
             "total_count": 0,
         }
-
-    def _fetch_age_group_distribution(self):
-        """
-        Calculate age distribution from golfzon_person table.
-        Birth_date format: 'YYYY-MM-DD HH:MM:SS' (character varying)
-        """
-
-        # Step 1: Get sample data for debugging
-        _logger.info("Step 1: Checking sample data...")
-        try:
-            request.env.cr.execute(
-                """
-                SELECT birth_date, deleted_at 
-                FROM golfzon_person 
-                LIMIT 5
-            """
-            )
-            samples = request.env.cr.fetchall()
-            _logger.info(f"Sample records: {samples}")
-        except Exception as e:
-            _logger.error(f"Error getting samples: {e}")
-
-        # Step 2: Count total records
-        try:
-            request.env.cr.execute(
-                """
-                SELECT 
-                    COUNT(*) as total,
-                    COUNT(CASE WHEN birth_date IS NOT NULL AND birth_date != '' THEN 1 END) as with_birth_date,
-                    COUNT(CASE WHEN deleted_at IS NULL THEN 1 END) as not_deleted
-                FROM golfzon_person
-            """
-            )
-            stats = request.env.cr.fetchone()
-            _logger.info(
-                f"Table stats - Total: {stats[0]}, With birth_date: {stats[1]}, Not deleted: {stats[2]}"
-            )
-        except Exception as e:
-            _logger.error(f"Error getting stats: {e}")
-
-        # Step 3: Main age calculation query
-        query = """
-            WITH age_calc AS (
-                SELECT 
-                    person_code,
-                    birth_date,
-                    CASE
-                        WHEN birth_date IS NULL OR TRIM(birth_date) = '' THEN NULL
-                        WHEN LENGTH(TRIM(birth_date)) < 10 THEN NULL
-                        ELSE 
-                            DATE_PART('year', 
-                                AGE(CURRENT_DATE, 
-                                    TO_DATE(SUBSTRING(birth_date FROM 1 FOR 10), 'YYYY-MM-DD')
-                                )
-                            )
-                    END as age
-                FROM golfzon_person
-                WHERE deleted_at IS NULL
-            ),
-            age_groups AS (
-                SELECT 
-                    CASE
-                        WHEN age IS NULL THEN 'unknown'
-                        WHEN age < 0 OR age > 150 THEN 'unknown'
-                        WHEN age < 10 THEN 'under_10'
-                        WHEN age >= 10 AND age < 20 THEN '20s'
-                        WHEN age >= 20 AND age < 30 THEN '20s'
-                        WHEN age >= 30 AND age < 40 THEN '30s'
-                        WHEN age >= 40 AND age < 50 THEN '40s'
-                        WHEN age >= 50 AND age < 60 THEN '50s'
-                        WHEN age >= 60 THEN '60_plus'
-                        ELSE 'unknown'
-                    END as age_group,
-                    COUNT(*) as person_count
-                FROM age_calc
-                GROUP BY age_group
-            )
-            SELECT age_group, person_count
-            FROM age_groups
-            ORDER BY 
-                CASE age_group
-                    WHEN '60_plus' THEN 1
-                    WHEN '50s' THEN 2
-                    WHEN '40s' THEN 3
-                    WHEN '30s' THEN 4
-                    WHEN '20s' THEN 5
-                    WHEN 'under_10' THEN 6
-                    ELSE 7
-                END
-        """
-
-        try:
-            _logger.info("Step 3: Executing age distribution query...")
-            request.env.cr.execute(query)
-            results = request.env.cr.dictfetchall()
-
-            _logger.info(f"Query returned {len(results)} groups")
-
-            # Initialize all groups
-            age_groups = {
-                "under_10": 0,
-                "20s": 0,
-                "30s": 0,
-                "40s": 0,
-                "50s": 0,
-                "60_plus": 0,
-            }
-
-            total_count = 0
-            unknown_count = 0
-
-            # Process results
-            for row in results:
-                group = row["age_group"]
-                count = row["person_count"]
-
-                _logger.info(f"  Group '{group}': {count} people")
-
-                if group == "unknown":
-                    unknown_count = count
-                elif group in age_groups:
-                    age_groups[group] = count
-                    total_count += count
-
-            _logger.info(f"Total valid: {total_count}, Unknown: {unknown_count}")
-
-            # If no valid data, return empty
-            if total_count == 0:
-                _logger.error("NO VALID AGE DATA FOUND!")
-                _logger.error("Possible issues:")
-                _logger.error("  1. birth_date column is empty")
-                _logger.error("  2. birth_date format is incorrect")
-                _logger.error("  3. all records have deleted_at set")
-                return self._get_empty_age_data()
-
-            # Calculate percentages
-            age_percentages = {}
-            for group, count in age_groups.items():
-                percentage = (
-                    round((count / total_count * 100), 1) if total_count > 0 else 0
-                )
-                age_percentages[group] = {"count": count, "percentage": percentage}
-                _logger.info(f"Final {group}: count={count}, percentage={percentage}%")
-
-            result = {
-                "age_groups": age_percentages,
-                "total_count": total_count,
-            }
-
-            _logger.info(f"SUCCESS! Returning: {result}")
-            return result
-
-        except Exception as e:
-            _logger.error(f"SQL ERROR: {str(e)}", exc_info=True)
-            request.env.cr.rollback()
-            return self._get_empty_age_data()
 
     # RESERVATION TREND DATA
     @http.route("/golfzon/reservation_trend_data", type="json", auth="user", methods=["POST"])
