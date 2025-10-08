@@ -1,8 +1,4 @@
-from odoo import models, fields, api
-
-class PaymentInfos(models.Model):
-    _name = "payment.infos"
-    _description = "Payment Information"
+from odoo import models, fields
     
     # Map to existing database columns with proper indexing
     pay_id = fields.Integer("Payment ID", required=True, index=True)
@@ -48,17 +44,4 @@ class PaymentInfos(models.Model):
     deleted_id = fields.Integer("Deleted By")
     deleted_at = fields.Datetime("Deleted At")
     
-    # Add composite index for optimal performance
-    _sql_constraints = []
     
-    def init(self):
-        """
-        Create composite index for faster queries on pay_date + cancel_yn
-        This dramatically improves query performance to millisecond level
-        """
-        cr = self.env.cr
-        cr.execute("""
-            CREATE INDEX IF NOT EXISTS payment_infos_date_cancel_idx 
-            ON payment_infos (pay_date, cancel_yn)
-            WHERE cancel_yn = 'N'
-        """)
