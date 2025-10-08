@@ -14,7 +14,7 @@ class Person(models.Model):
     name_chn = fields.Char(string="Chinese Name")
     file_id = fields.Char(string="File")
     lunar_yn = fields.Char(string="Lunar Calendar?")
-    birth_date = fields.Char(string="Birth Date")
+    birth_date = fields.Date(string="Birth Date")
     gender_scd = fields.Char(string="Gender")
     nation_scd = fields.Char(string="Nationality")
     nick_name = fields.Char(string="Nickname")
@@ -80,4 +80,5 @@ class Person(models.Model):
             WHERE birth_date IS NOT NULL AND birth_date != ''
         """)
         
+
         _logger.info("✅ Golfzon person indexes created successfully")
