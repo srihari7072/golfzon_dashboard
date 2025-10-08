@@ -9,22 +9,22 @@ from odoo import api, SUPERUSER_ID
 _logger = logging.getLogger(__name__)
 
 
-def post_init_hook(cr, registry):
+def post_init_hook(env):
     """
     Post-installation hook to create all database indexes at once
     Executes after module installation completes
-
-    :param cr: database cursor
-    :param registry: Odoo registry
+    
+    In Odoo 18, the hook receives only 'env' parameter (not cr, registry)
+    
+    :param env: Odoo environment
     """
-    env = api.Environment(cr, SUPERUSER_ID, {})
+    cr = env.cr  # Get cursor from environment
     _logger.info("=" * 80)
     _logger.info("🚀 Starting Golfzon Dashboard Index Creation")
     _logger.info("=" * 80)
-
+    
     total_indexes = 0
-    failed_indexes = 0
-
+    
     try:
         # Create all indexes
         total_indexes += _create_visit_customer_indexes(cr)
@@ -33,11 +33,11 @@ def post_init_hook(cr, registry):
         total_indexes += _create_time_table_indexes(cr)
         total_indexes += _create_booking_info_indexes(cr)
         total_indexes += _create_time_table_booking_indexes(cr)
-
+        
         _logger.info("=" * 80)
         _logger.info(f"✅ Successfully created {total_indexes} database indexes!")
         _logger.info("=" * 80)
-
+        
     except Exception as e:
         _logger.error("=" * 80)
         _logger.error(f"❌ Error creating indexes: {str(e)}")
@@ -49,7 +49,7 @@ def _create_visit_customer_indexes(cr):
     """Create indexes for visit_customer table"""
     _logger.info("📊 Creating visit_customer indexes...")
     created = 0
-
+    
     indexes = [
         # Index for date range queries (most important for performance)
         """
@@ -70,7 +70,7 @@ def _create_visit_customer_indexes(cr):
         WHERE visit_date IS NOT NULL
         """,
     ]
-
+    
     for idx, sql in enumerate(indexes, 1):
         try:
             cr.execute(sql)
@@ -78,7 +78,7 @@ def _create_visit_customer_indexes(cr):
             _logger.info(f"  ✓ Created visit_customer index {idx}/{len(indexes)}")
         except Exception as e:
             _logger.warning(f"  ⚠ Failed to create visit_customer index {idx}: {e}")
-
+    
     return created
 
 
@@ -86,7 +86,7 @@ def _create_payment_infos_indexes(cr):
     """Create indexes for payment_infos table"""
     _logger.info("📊 Creating payment_infos indexes...")
     created = 0
-
+    
     indexes = [
         # Composite index for faster queries on pay_date + cancel_yn
         """
@@ -101,7 +101,7 @@ def _create_payment_infos_indexes(cr):
         WHERE pay_date IS NOT NULL
         """,
     ]
-
+    
     for idx, sql in enumerate(indexes, 1):
         try:
             cr.execute(sql)
@@ -109,7 +109,7 @@ def _create_payment_infos_indexes(cr):
             _logger.info(f"  ✓ Created payment_infos index {idx}/{len(indexes)}")
         except Exception as e:
             _logger.warning(f"  ⚠ Failed to create payment_infos index {idx}: {e}")
-
+    
     return created
 
 
@@ -117,7 +117,7 @@ def _create_person_indexes(cr):
     """Create indexes for golfzon_person table"""
     _logger.info("📊 Creating golfzon_person indexes...")
     created = 0
-
+    
     indexes = [
         # Index on birth_date for fast age calculations
         """
@@ -126,7 +126,7 @@ def _create_person_indexes(cr):
         WHERE birth_date IS NOT NULL AND birth_date != ''
         """,
     ]
-
+    
     for idx, sql in enumerate(indexes, 1):
         try:
             cr.execute(sql)
@@ -134,7 +134,7 @@ def _create_person_indexes(cr):
             _logger.info(f"  ✓ Created golfzon_person index {idx}/{len(indexes)}")
         except Exception as e:
             _logger.warning(f"  ⚠ Failed to create golfzon_person index {idx}: {e}")
-
+    
     return created
 
 
@@ -142,7 +142,7 @@ def _create_time_table_indexes(cr):
     """Create indexes for time_table table"""
     _logger.info("📊 Creating time_table indexes...")
     created = 0
-
+    
     indexes = [
         # Index for time_table_id (primary lookup and joins)
         """
@@ -199,7 +199,7 @@ def _create_time_table_indexes(cr):
         WHERE account_id IS NOT NULL
         """,
     ]
-
+    
     for idx, sql in enumerate(indexes, 1):
         try:
             cr.execute(sql)
@@ -207,7 +207,7 @@ def _create_time_table_indexes(cr):
             _logger.info(f"  ✓ Created time_table index {idx}/{len(indexes)}")
         except Exception as e:
             _logger.warning(f"  ⚠ Failed to create time_table index {idx}: {e}")
-
+    
     return created
 
 
@@ -215,7 +215,7 @@ def _create_booking_info_indexes(cr):
     """Create indexes for booking_info table"""
     _logger.info("📊 Creating booking_info indexes...")
     created = 0
-
+    
     indexes = [
         # Index for bookg_info_id (primary lookup and joins)
         """
@@ -272,7 +272,7 @@ def _create_booking_info_indexes(cr):
         WHERE bookg_info_id IS NOT NULL
         """,
     ]
-
+    
     for idx, sql in enumerate(indexes, 1):
         try:
             cr.execute(sql)
@@ -280,7 +280,7 @@ def _create_booking_info_indexes(cr):
             _logger.info(f"  ✓ Created booking_info index {idx}/{len(indexes)}")
         except Exception as e:
             _logger.warning(f"  ⚠ Failed to create booking_info index {idx}: {e}")
-
+    
     return created
 
 
@@ -288,7 +288,7 @@ def _create_time_table_booking_indexes(cr):
     """Create indexes for time_table_has_bookg_infos table (junction table)"""
     _logger.info("📊 Creating time_table_has_bookg_infos indexes...")
     created = 0
-
+    
     indexes = [
         # Index for time_table_id (foreign key to time_table)
         """
@@ -321,17 +321,13 @@ def _create_time_table_booking_indexes(cr):
         WHERE time_table_has_bookg_info_id IS NOT NULL
         """,
     ]
-
+    
     for idx, sql in enumerate(indexes, 1):
         try:
             cr.execute(sql)
             created += 1
-            _logger.info(
-                f"  ✓ Created time_table_has_bookg_infos index {idx}/{len(indexes)}"
-            )
+            _logger.info(f"  ✓ Created time_table_has_bookg_infos index {idx}/{len(indexes)}")
         except Exception as e:
-            _logger.warning(
-                f"  ⚠ Failed to create time_table_has_bookg_infos index {idx}: {e}"
-            )
-
+            _logger.warning(f"  ⚠ Failed to create time_table_has_bookg_infos index {idx}: {e}")
+    
     return created
