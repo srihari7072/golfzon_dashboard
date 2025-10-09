@@ -27,9 +27,9 @@ $laptop-md: 1365px;
 $laptop-lg: 1440px;
 $desktop: 1920px;
 
-// .o_navbar {
-//   display: none;
-// }
+.o_navbar {
+  display: none;
+}
 
 // Responsive Mixins
 @mixin mobile-xs {
