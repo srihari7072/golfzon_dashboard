@@ -5,21 +5,21 @@
             <div class="chart-title-section">
                 <div class="title-with-tooltip">
                     <h3 t-esc="chartTitle"/>
-                    <!-- <div class="tooltip-wrapper">
+                    <div class="tooltip-wrapper">
                         <span class="help-icon">
                             <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                         </span>
                         <div class="tooltip-content">
                             <t t-esc="_t('30 days prior to the inquiry date')"/>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             </div>
             <div class="time-period-buttons" t-if="showPeriodButtons">
-                <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">
+                <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.updateVisitorChart('7days')">
                     <t t-esc="_t('Last 7 Days')"/>
                 </button>
-                <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">
+                <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.updateVisitorChart('30days')">
                     <t t-esc="_t('Last 30 Days')"/>
                 </button>
             </div>

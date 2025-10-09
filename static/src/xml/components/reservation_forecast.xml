@@ -35,10 +35,10 @@
                         </div>
                     </div>
                     <div class="time-period-buttons">
-                        <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.setPeriod('7days')">
+                        <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.updateReservationChart('7days')">
                             <t t-esc="_t('Last 7 Days')"/>
                         </button>
-                        <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.setPeriod('30days')">
+                        <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.updateReservationChart('30days')">
                             <t t-esc="_t('Last 30 Days')"/>
                         </button>
                     </div>

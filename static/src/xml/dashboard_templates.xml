@@ -4,6 +4,8 @@
         <div class="o_golfzon_dashboard">
             <!-- Navigation Components -->
             <t t-call="golfzon_dashboard.Navigation"/>
+
+            <DashboardLoader isLoading="state.isLoading" />
             
             <!-- Main Content -->
             <div class="main-content">

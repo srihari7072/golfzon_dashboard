@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <t t-name="golfzon_dashboard.LoaderComponent" owl="1">
+        <div 
+            id="dashboard-loader" 
+            t-att-class="props.isLoading ? '' : 'hidden'"
+            role="status"
+            aria-live="polite"
+            aria-label="Loading dashboard">
+            
+            <!-- ✅ FIXED: Properly centered SVG with correct viewBox -->
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 50 120"
+                preserveAspectRatio="xMidYMid meet"
+                aria-hidden="true">
+                
+                <!-- Blur filter for shadow -->
+                <defs>
+                    <filter id="blur" x="0" y="0">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="0.4" />
+                    </filter>
+                </defs>
+                
+                <!-- ✅ FIXED: Shadow positioned correctly -->
+                <ellipse
+                    id="loader-shadow"
+                    cx="25"
+                    cy="110"
+                    rx="12"
+                    ry="2"
+                    filter="url(#blur)"
+                />
+                
+                <!-- ✅ FIXED: Ball positioned correctly -->
+                <circle
+                    id="loader-ball"
+                    cx="25"
+                    cy="90"
+                    r="12"
+                />
+            </svg>
+            
+            <!-- Accessibility: Hidden screen reader text -->
+            <span class="sr-only">Loading dashboard...</span>
+            
+        </div>
+    </t>
+    
+</templates>

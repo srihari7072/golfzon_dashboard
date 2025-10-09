@@ -1,0 +1,148 @@
+// ===== VARIABLES =====
+$loader-z-index: 999999;
+$loader-bg: #f5f7fa;
+$loader-overlay-bg: rgba(245, 247, 250, 0.98);
+$ball-color: #006df0;
+$ball-size: 12px;
+$shadow-color: #006df0;
+$animation-duration: 0.9s;
+$fade-duration: 0.5s;
+$bounce-height: -50px;
+
+#dashboard-loader {
+  background: #f5f7fa;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $loader-z-index;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity $fade-duration ease, visibility 0s $fade-duration;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $loader-overlay-bg;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    z-index: -1;
+  }
+
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+#dashboard-loader svg {
+  width: 35px;
+  height: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 2px 4px rgba(0, 109, 240, 0.15));
+}
+
+#loader-ball {
+  fill: $ball-color;
+  animation: bounce $animation-duration ease-in-out infinite;
+  transform-origin: center;
+}
+
+#loader-shadow {
+  fill: $shadow-color;
+  animation: shadowPulse $animation-duration ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+
+  50% {
+    transform: translateY($bounce-height) scaleY(1);
+  }
+
+  95% {
+    transform: translateY(0) scaleY(0.9);
+  }
+}
+
+@keyframes shadowPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(0.6);
+    opacity: 0.15;
+  }
+}
+
+.dashboard-container {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+
+  &.dashboard-loading {
+    opacity: 0;
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  #dashboard-loader svg {
+    width: 30px;
+    height: 85px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #dashboard-loader {
+    transition: opacity 0.2s linear;
+  }
+
+  #loader-ball,
+  #loader-shadow {
+    animation-duration: 1.5s;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  #dashboard-loader {
+    background: #f5f7fa;
+
+    &::before {
+      background: #f5f7fa;
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
+    }
+  }
+}

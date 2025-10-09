@@ -47,6 +47,10 @@
         "web.assets_backend": [
             # Main SCSS file (imports all components)
             "golfzon_dashboard/static/src/scss/dashboard.scss",
+            'golfzon_dashboard/static/src/scss/loader.scss',
+
+            'golfzon_dashboard/static/src/js/utils/loader_manager.js',
+            'golfzon_dashboard/static/src/js/utils/dashboard_loader.js',
             
             # External Libraries
             "golfzon_dashboard/static/lib/chartjs/Chart.min.js",
@@ -61,6 +65,8 @@
             "golfzon_dashboard/static/src/xml/components/visitor_status.xml",
             "golfzon_dashboard/static/src/xml/components/sales_status.xml",            
             
+            'golfzon_dashboard/static/src/xml/components/loader_template.xml',
+
             # JavaScript Utilities
             "golfzon_dashboard/static/src/js/utils/date_utils.js",
             "golfzon_dashboard/static/src/js/utils/localization_utils.js",
