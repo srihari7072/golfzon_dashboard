@@ -3,7 +3,7 @@
 export class LoaderManager {
     constructor() {
         this.loadingStartTime = null;
-        this.minDisplayTime = 500; // Minimum time to show loader (ms)
+        this.minDisplayTime = 500;
     }
 
     startLoading() {

@@ -23,6 +23,7 @@ class PaymentInfos(models.Model):
     tax_amt = fields.Float("Tax Amount", digits=(16, 2))
     free_amt = fields.Float("Free Amount", digits=(16, 2))
     vat_amt = fields.Float("VAT Amount", digits=(16, 2))
+    prepay_yn=fields.Char("Prepayment Y/N" )
     
     order_no = fields.Char("Order Number", size=50)
     remark = fields.Text("Remark")

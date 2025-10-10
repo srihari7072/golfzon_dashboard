@@ -10,14 +10,13 @@ export class DashboardLoader extends Component {
     };
 
     setup() {
-        // Component setup
         console.log("🎨 Loader component initialized");
     }
 
     onMounted() {
         console.log("🎨 Loader component mounted");
     }
-
+    
     onWillUnmount() {
         console.log("🎨 Loader component will unmount");
     }

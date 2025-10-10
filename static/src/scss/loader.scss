@@ -3,14 +3,33 @@ $loader-z-index: 999999;
 $loader-bg: #f5f7fa;
 $loader-overlay-bg: rgba(245, 247, 250, 0.98);
 $ball-color: #006df0;
-$ball-size: 12px;
 $shadow-color: #006df0;
 $animation-duration: 0.9s;
 $fade-duration: 0.5s;
-$bounce-height: -50px;
+
+$bounce-height-ultrawide: -80px;
+$svg-width-ultrawide: 60px;
+$svg-height-ultrawide: 180px;
+
+$bounce-height-desktop: -65px;
+$svg-width-desktop: 48px;
+$svg-height-desktop: 150px;
+
+$bounce-height-laptop: -55px;
+$svg-width-laptop: 42px; 
+$svg-height-laptop: 130px; 
+
+$bounce-height-tablet: -50px;
+$svg-width-tablet: 36px;
+$svg-height-tablet: 110px;
+
+$bounce-height-mobile: -40px;
+$svg-width-mobile: 30px;
+$svg-height-mobile: 95px;
+
 
 #dashboard-loader {
-  background: #f5f7fa;
+  background: $loader-bg;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -20,6 +39,7 @@ $bounce-height: -50px;
   opacity: 1;
   visibility: visible;
   transition: opacity $fade-duration ease, visibility 0s $fade-duration;
+  overflow: visible;
 
   &::before {
     content: "";
@@ -41,53 +61,225 @@ $bounce-height: -50px;
   }
 }
 
+
 #dashboard-loader svg {
-  width: 35px;
-  height: 100px;
+  width: $svg-width-ultrawide;
+  height: $svg-height-ultrawide;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0 2px 4px rgba(0, 109, 240, 0.15));
+  filter: drop-shadow(0 3px 6px rgba(0, 109, 240, 0.2));
+  overflow: visible;
 }
+
 
 #loader-ball {
   fill: $ball-color;
-  animation: bounce $animation-duration ease-in-out infinite;
+  animation: bounceUltrawide $animation-duration ease-in-out infinite;
   transform-origin: center;
+  r: 15;
 }
+
 
 #loader-shadow {
   fill: $shadow-color;
-  animation: shadowPulse $animation-duration ease-in-out infinite;
+  animation: shadowPulseUltrawide $animation-duration ease-in-out infinite;
   transform-origin: center;
 }
 
-@keyframes bounce {
-  0%,
-  100% {
+@keyframes bounceUltrawide {
+  0%, 100% {
     transform: translateY(0) scaleY(1);
   }
-
   50% {
-    transform: translateY($bounce-height) scaleY(1);
+    transform: translateY($bounce-height-ultrawide) scaleY(1);
   }
-
   95% {
     transform: translateY(0) scaleY(0.9);
   }
 }
 
-@keyframes shadowPulse {
-  0%,
-  100% {
+@keyframes shadowPulseUltrawide {
+  0%, 100% {
     transform: scale(1);
     opacity: 0.6;
   }
-
   50% {
     transform: scale(0.6);
     opacity: 0.15;
+  }
+}
+
+@media (max-width: 1920px) {
+  #dashboard-loader svg {
+    width: $svg-width-desktop;
+    height: $svg-height-desktop;
+    overflow: visible;
+  }
+
+  #loader-ball {
+    animation: bounceDesktop $animation-duration ease-in-out infinite;
+    r: 12;
+  }
+
+  #loader-shadow {
+    animation: shadowPulseDesktop $animation-duration ease-in-out infinite;
+  }
+
+  @keyframes bounceDesktop {
+    0%, 100% {
+      transform: translateY(0) scaleY(1);
+    }
+    50% {
+      transform: translateY($bounce-height-desktop) scaleY(1);
+    }
+    95% {
+      transform: translateY(0) scaleY(0.9);
+    }
+  }
+
+  @keyframes shadowPulseDesktop {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(0.6);
+      opacity: 0.15;
+    }
+  }
+}
+
+@media (max-width: 1440px) {
+  #dashboard-loader svg {
+    width: $svg-width-laptop;
+    height: $svg-height-laptop;
+    overflow: visible;
+  }
+
+  #loader-ball {
+    animation: bounceLaptop $animation-duration ease-in-out infinite;
+    r: 11;
+  }
+
+  #loader-shadow {
+    animation: shadowPulseLaptop $animation-duration ease-in-out infinite;
+  }
+
+  @keyframes bounceLaptop {
+    0%, 100% {
+      transform: translateY(0) scaleY(1);
+    }
+    50% {
+      transform: translateY($bounce-height-laptop) scaleY(1);
+    }
+    95% {
+      transform: translateY(0) scaleY(0.9);
+    }
+  }
+
+  @keyframes shadowPulseLaptop {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(0.6);
+      opacity: 0.15;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  #dashboard-loader svg {
+    width: $svg-width-tablet;
+    height: $svg-height-tablet;
+    overflow: visible;
+  }
+
+  #loader-ball {
+    animation: bounceTablet $animation-duration ease-in-out infinite;
+    r: 9;
+  }
+
+  #loader-shadow {
+    animation: shadowPulseTablet $animation-duration ease-in-out infinite;
+  }
+
+  @keyframes bounceTablet {
+    0%, 100% {
+      transform: translateY(0) scaleY(1);
+    }
+    50% {
+      transform: translateY($bounce-height-tablet) scaleY(1);
+    }
+    95% {
+      transform: translateY(0) scaleY(0.9);
+    }
+  }
+
+  @keyframes shadowPulseTablet {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(0.6);
+      opacity: 0.15;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  #dashboard-loader svg {
+    width: $svg-width-mobile;
+    height: $svg-height-mobile;
+    overflow: visible;
+  }
+
+  #loader-ball {
+    animation: bounceMobile $animation-duration ease-in-out infinite;
+    r: 8;
+  }
+
+  #loader-shadow {
+    animation: shadowPulseMobile $animation-duration ease-in-out infinite;
+  }
+
+  @keyframes bounceMobile {
+    0%, 100% {
+      transform: translateY(0) scaleY(1);
+    }
+    50% {
+      transform: translateY($bounce-height-mobile) scaleY(1);
+    }
+    95% {
+      transform: translateY(0) scaleY(0.9);
+    }
+  }
+
+  @keyframes shadowPulseMobile {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(0.6);
+      opacity: 0.15;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  #dashboard-loader svg {
+    width: 28px;
+    height: 85px;
+    overflow: visible;
+  }
+
+  #loader-ball {
+    r: 7;
   }
 }
 
@@ -117,13 +309,6 @@ $bounce-height: -50px;
   border: 0;
 }
 
-@media (max-width: 768px) {
-  #dashboard-loader svg {
-    width: 30px;
-    height: 85px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   #dashboard-loader {
     transition: opacity 0.2s linear;
@@ -140,7 +325,7 @@ $bounce-height: -50px;
     background: #f5f7fa;
 
     &::before {
-      background: #f5f7fa;
+      background: rgba(245, 247, 250, 0.98);
       -webkit-backdrop-filter: blur(5px);
       backdrop-filter: blur(5px);
     }

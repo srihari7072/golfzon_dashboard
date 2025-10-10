@@ -36,6 +36,7 @@
                         <field name="payment_cd_id"/>
                         <field name="cancel_yn"/>
                         <field name="remark"/>
+                        <field name="prepay_yn"/>
                     </group>
                     <group>
                         <field name="tax_amt"/>

@@ -192,13 +192,12 @@ $desktop: 1920px;
   position: fixed;
   top: 0;
   left: -260px;
-  width: 260px;
+  width: 200px;
   height: 100vh;
   background: $secondary-color;
   color: $white;
   z-index: 1001;
   transition: left 0.3s ease;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   @include flex(column);
 
   &.open {

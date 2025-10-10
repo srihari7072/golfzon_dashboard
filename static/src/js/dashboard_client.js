@@ -818,7 +818,7 @@ class GolfzonDashboard extends Component {
     }
 
     logout() {
-        window.location.href = "/web/session/logout";
+        window.location.href = "/custom/logout";
     }
 
     getHeatmapCellClass(value) {
