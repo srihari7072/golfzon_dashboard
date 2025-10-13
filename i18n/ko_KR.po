@@ -1202,6 +1202,12 @@ msgstr "대행"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Agent"
+msgstr "에이전시"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Others"
 msgstr "기타"
 

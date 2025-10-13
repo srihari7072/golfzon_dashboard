@@ -35,10 +35,10 @@
                         </div>
                     </div>
                     <div class="time-period-buttons">
-                        <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.updateReservationChart('7days')">
+                        <button class="period-btn" t-att-class="{'active': state.reservationPeriod === '7days'}" t-on-click="() => this.updateReservationChart('7days')">
                             <t t-esc="_t('Last 7 Days')"/>
                         </button>
-                        <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.updateReservationChart('30days')">
+                        <button class="period-btn" t-att-class="{'active': state.reservationPeriod === '30days'}" t-on-click="() => this.updateReservationChart('30days')">
                             <t t-esc="_t('Last 30 Days')"/>
                         </button>
                     </div>
@@ -61,7 +61,9 @@
                                     </div>
                                 </span>
                             </span>
-                            <div class="stat-value">2,926</div>
+                            <div class="stat-value">
+                                <t t-esc="state.reservationData?.total_reservations?.toLocaleString() || '0'"/>
+                            </div>
                         </div>
                         <div class="stat-comparison">
                             <span class="comparison-label">
@@ -93,23 +95,24 @@
                                 </div>
                             </span>
                             <div class="stat-value">
-                                <t t-set="totalRate" t-value="state.reservationData.operation_rate.part1_percentage + state.reservationData.operation_rate.part2_percentage + state.reservationData.operation_rate.part3_percentage"/>
-                                <t t-set="avgRate" t-value="totalRate / 3"/>
-                                <t t-esc="avgRate.toFixed(1)"/>%
+                                <span class="operation-rate">
+                                    <t t-set="avgRate" t-value="((state.reservationData?.operation_rate?.part1_percentage || 0) + (state.reservationData?.operation_rate?.part2_percentage || 0) + (state.reservationData?.operation_rate?.part3_percentage || 0)) / 3"/>
+                                    <t t-esc="avgRate.toFixed(1)"/>%
+                                </span>
                             </div>
                         </div>
                         <div class="stat-breakdown horizontal-parts">
                             <span>
-                                <t t-esc="_t('Part 1')"/>
-                                <t t-esc="state.reservationData.operation_rate.part1_percentage"/>%
+                                <t t-esc="_t('Part 1 ')"/>
+                                <t t-esc="state.reservationData?.operation_rate?.part1_percentage?.toFixed(1) || '0.0'"/>%
                             </span>
                             <span>
-                                <t t-esc="_t('Part 2')"/>
-                                <t t-esc="state.reservationData.operation_rate.part2_percentage"/>%
+                                <t t-esc="_t('Part 2 ')"/>
+                                <t t-esc="state.reservationData?.operation_rate?.part2_percentage?.toFixed(1) || '0.0'"/>%
                             </span>
                             <span>
-                                <t t-esc="_t('Part 3')"/>
-                                <t t-esc="state.reservationData.operation_rate.part3_percentage"/>%
+                                <t t-esc="_t('Part 3 ')"/>
+                                <t t-esc="state.reservationData?.operation_rate?.part3_percentage?.toFixed(1) || '0.0'"/>%
                             </span>
                         </div>
                     </div>
@@ -447,6 +450,15 @@
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_channel?.agency?.percentage || 0"/>%
+                                </span>
+                            </div>
+                            <div class="legend-entry">
+                                <div class="legend-label">
+                                    <span class="dot agent"></span>
+                                    <span><t t-esc="_t('Agent')"/></span>
+                                </div>
+                                <span class="legend-value">
+                                    <t t-esc="state.memberCompositionData?.by_channel?.agent?.percentage || 0"/>%
                                 </span>
                             </div>
                             <div class="legend-entry">

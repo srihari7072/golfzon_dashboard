@@ -16,10 +16,10 @@
                 </div>
             </div>
             <div class="time-period-buttons" t-if="showPeriodButtons">
-                <button class="period-btn" t-att-class="state.selectedPeriod === '7days' ? 'active' : ''" t-on-click="() => this.updateVisitorChart('7days')">
+                <button class="period-btn" t-att-class="{'active': state.visitorPeriod === '7days'}" t-on-click="() => this.updateVisitorChart('7days')">
                     <t t-esc="_t('Last 7 Days')"/>
                 </button>
-                <button class="period-btn" t-att-class="state.selectedPeriod === '30days' ? 'active' : ''" t-on-click="() => this.updateVisitorChart('30days')">
+                <button class="period-btn" t-att-class="{'active': state.visitorPeriod === '30days'}" t-on-click="() => this.updateVisitorChart('30days')">
                     <t t-esc="_t('Last 30 Days')"/>
                 </button>
             </div>

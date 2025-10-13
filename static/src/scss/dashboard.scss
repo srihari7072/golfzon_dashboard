@@ -194,10 +194,13 @@ $desktop: 1920px;
   left: -260px;
   width: 200px;
   height: 100vh;
-  background: $secondary-color;
+  background: $primary-color;
   color: $white;
   z-index: 1001;
-  transition: left 0.3s ease;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
   @include flex(column);
 
   &.open {
@@ -246,48 +249,71 @@ $desktop: 1920px;
 
   .drawer-nav {
     flex: 1;
-    padding: 20px;
+    padding: 12px 0;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+    }
   }
 
   .drawer-item {
     display: block;
-    padding: 12px 0;
-    color: $text-light;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.2s;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    border-radius: 0;
+    position: relative;
 
+    // ✅ Hover state
     &:hover {
       color: $white;
-      background: $accent-color;
-      padding-left: 8px;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateX(4px);
     }
 
+    // ✅ Active state - WHITE background with primary color text
     &.active {
-      background: linear-gradient(
-        135deg,
-        $primary-color,
-        darken($primary-color, 10%)
-      );
-      color: $white !important;
-      border-radius: 6px;
-      padding-left: 16px;
-      position: relative;
-      box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+      background: $white !important;
+      color: $primary-color !important;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transform: translateX(0);
 
+      // ✅ Left border indicator
       &::before {
-        content: "";
         position: absolute;
         left: 0;
         top: 50%;
         transform: translateY(-50%);
         width: 4px;
-        height: 20px;
-        background: $white;
-        border-radius: 0 2px 2px 0;
+        height: 60%;
+        background: $primary-color;
+        border-radius: 0 4px 4px 0;
+      }
+
+      // ✅ No hover effect when active
+      &:hover {
+        background: $white !important;
+        color: $primary-color !important;
+        transform: translateX(0);
       }
     }
   }
@@ -2726,7 +2752,7 @@ $desktop: 1920px;
                       &.agency1 {
                         background: #4c9cfd;
                       }
-                      &.agency2 {
+                      &.agent {
                         background: #3a96d4;
                       }
                       &.other {

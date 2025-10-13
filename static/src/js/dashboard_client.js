@@ -113,7 +113,9 @@ class GolfzonDashboard extends Component {
                 },
                 analysis_period: DateUtils.generateAnalysisPeriod(),
             },
-            selectedPeriod: "30days",
+            salesPeriod: '30days',
+            visitorPeriod: '30days',
+            reservationPeriod: '30days',
             showReservationDetails: false,
             selectedSlot: { day: "", period: "", count: 0 },
             heatmapData: this.getInitialHeatmapData(),
@@ -325,43 +327,43 @@ class GolfzonDashboard extends Component {
     }
 
 
-    async loadSalesData() {
+    async loadSalesData(period = this.state.salesPeriod) {
         try {
-            console.log("=== Loading sales data for period:", this.state.selectedPeriod, "===");
+            console.log(`Loading sales data for period: ${period}`);
             this.salesService.clearCache();
-            const salesData = await this.salesService.fetchSalesData(this.state.selectedPeriod);
-            console.log("Sales data received:", salesData);
+            const salesData = await this.salesService.fetchSalesData(period);
+            console.log('Sales data received:', salesData);
             this.state.salesData = salesData;
-            console.log("=== Sales data loaded successfully ===");
+            console.log('Sales data loaded successfully');
         } catch (error) {
-            console.error("Error loading sales data:", error);
-            this.state.salesData = this.salesService._getDefaultSalesData(this.state.selectedPeriod);
+            console.error('Error loading sales data:', error);
+            this.state.salesData = this.salesService.getDefaultSalesData(period);
         }
     }
 
-    async loadVisitorData() {
+    async loadVisitorData(period = this.state.visitorPeriod) {
         try {
-            console.log("=== Loading visitor data for period:", this.state.selectedPeriod, "===");
+            console.log(`Loading visitor data for period: ${period}`);
             this.visitorService.clearCache();
-            const visitorData = await this.visitorService.fetchVisitorData(this.state.selectedPeriod);
-            console.log("Visitor data received:", visitorData);
+            const visitorData = await this.visitorService.fetchVisitorData(period);
+            console.log('Visitor data received:', visitorData);
             this.state.visitorData = visitorData;
-            console.log("=== Visitor data loaded successfully ===");
+            console.log('Visitor data loaded successfully');
         } catch (error) {
-            console.error("Error loading visitor data:", error);
-            this.state.visitorData = this.visitorService._getDefaultVisitorData(this.state.selectedPeriod);
+            console.error('Error loading visitor data:', error);
+            this.state.visitorData = this.visitorService.getDefaultVisitorData(period);
         }
     }
 
-    async loadReservationData() {
+    async loadReservationData(period = this.state.reservationPeriod) {
         try {
-            console.log("Loading reservation data for period:", this.state.selectedPeriod);
-            const reservationData = await this.reservationService.fetchReservationData(this.state.selectedPeriod);
+            console.log(`Loading reservation data for period: ${period}`);
+            const reservationData = await this.reservationService.fetchReservationData(period);
             this.state.reservationData = reservationData;
-            console.log("Reservation data loaded successfully");
+            console.log('Reservation data loaded successfully');
         } catch (error) {
-            console.error("Error loading reservation data:", error);
-            this.state.reservationData = this.reservationService._getDefaultReservationData(this.state.selectedPeriod);
+            console.error('Error loading reservation data:', error);
+            this.state.reservationData = this.reservationService.getDefaultReservationData(period);
         }
     }
 
@@ -464,6 +466,7 @@ class GolfzonDashboard extends Component {
                 phone: { count: 0, percentage: 0 },
                 internet: { count: 0, percentage: 0 },
                 agency: { count: 0, percentage: 0 },
+                agent: { count: 0, percentage: 0 },
                 others: { count: 0, percentage: 0 },
                 total: 0
             }
@@ -532,6 +535,7 @@ class GolfzonDashboard extends Component {
                     phone: data.by_channel.phone,
                     internet: data.by_channel.internet,
                     agency: data.by_channel.agency,
+                    agent: data.by_channel.agent,
                     others: data.by_channel.others
                 };
 
@@ -539,6 +543,7 @@ class GolfzonDashboard extends Component {
                     _t("Phone"),
                     _t("Internet"),
                     _t("Agency"),
+                    _t("Agent"),
                     _t("Others")
                 ];
 
@@ -631,15 +636,9 @@ class GolfzonDashboard extends Component {
     async updateSalesChart(period) {
         console.log(`📊 Updating SALES chart only for period: ${period}`);
         const startTime = performance.now();
-
         try {
-            // ✅ UPDATE selectedPeriod so button highlighting works
-            this.state.selectedPeriod = period;
-
-            // ✅ Load ONLY sales data
+            this.state.salesPeriod = period;
             await this.loadSalesData();
-
-            // ✅ Update ONLY sales chart
             if (this.canvasRef.el) {
                 this.chartService.createSalesChart(
                     this.canvasRef.el,
@@ -647,10 +646,8 @@ class GolfzonDashboard extends Component {
                     this.state.salesData
                 );
             }
-
             const duration = performance.now() - startTime;
             console.log(`✅ Sales chart updated in ${duration.toFixed(0)}ms`);
-
         } catch (error) {
             console.error("❌ Error updating sales chart:", error);
         }
@@ -661,13 +658,8 @@ class GolfzonDashboard extends Component {
         const startTime = performance.now();
 
         try {
-            // ✅ UPDATE selectedPeriod so button highlighting works
-            this.state.selectedPeriod = period;
-
-            // ✅ Load ONLY visitor data
+            this.state.visitorPeriod = period;
             await this.loadVisitorData();
-
-            // ✅ Update ONLY visitor chart
             if (this.visitorRef.el) {
                 this.chartService.createVisitorChart(
                     this.visitorRef.el,
@@ -675,34 +667,34 @@ class GolfzonDashboard extends Component {
                     this.state.visitorData
                 );
             }
-
-            // ✅ Update gender animation
-            setTimeout(() => {
-                this.chartService.initializeGenderAnimation(
-                    this.state.visitorData.gender_ratio
-                );
-            }, 200);
-
             const duration = performance.now() - startTime;
             console.log(`✅ Visitor chart updated in ${duration.toFixed(0)}ms`);
-
         } catch (error) {
             console.error("❌ Error updating visitor chart:", error);
+        }
+    }
+
+    updateGenderRatioDisplay() {
+        console.log(`👥 Updating Gender Ratio display`);
+
+        try {
+            if (this.state.visitorData?.gender_ratio) {
+                // Update gender ratio WITHOUT animation
+                this.chartService.updateGenderRatio(this.state.visitorData.gender_ratio);
+            } else {
+                console.warn('⚠️ Gender ratio data not available');
+            }
+        } catch (error) {
+            console.error("❌ Error updating gender ratio:", error);
         }
     }
 
     async updateReservationChart(period) {
         console.log(`📊 Updating RESERVATION chart only for period: ${period}`);
         const startTime = performance.now();
-
         try {
-            // ✅ UPDATE selectedPeriod so button highlighting works
-            this.state.selectedPeriod = period;
-
-            // ✅ Load ONLY reservation data
+            this.state.reservationPeriod = period;
             await this.loadReservationData();
-
-            // ✅ Update ONLY reservation chart
             if (this.reservationTrendChart.el) {
                 this.chartService.createReservationChart(
                     this.reservationTrendChart.el,
@@ -710,10 +702,8 @@ class GolfzonDashboard extends Component {
                     this.state.reservationData
                 );
             }
-
             const duration = performance.now() - startTime;
             console.log(`✅ Reservation chart updated in ${duration.toFixed(0)}ms`);
-
         } catch (error) {
             console.error("❌ Error updating reservation chart:", error);
         }
@@ -727,13 +717,10 @@ class GolfzonDashboard extends Component {
             console.log("Creating age chart with state data:", this.state.ageData);
             this.chartService.createAgeChart(this.ageRef.el, this.state.ageData);
         } else {
-            console.warn("Age chart not created - missing data or element", {
-                hasElement: !!this.ageRef.el,
-                hasData: !!this.state.ageData,
-                ageData: this.state.ageData
-            });
+            console.warn("Age chart not created - missing data or element");
         }
 
+        // ✅ Initialize gender ratio WITH animation (page load only)
         setTimeout(() => {
             console.log("Initializing gender animation with data:", this.state.visitorData.gender_ratio);
             this.chartService.initializeGenderAnimation(this.state.visitorData.gender_ratio);
@@ -741,18 +728,19 @@ class GolfzonDashboard extends Component {
     }
 
     async updateAllCharts() {
-        console.log("🔄 Updating ALL charts with period:", this.state.selectedPeriod);
+        console.log('Updating ALL charts with their respective periods');
 
         await Promise.all([
-            this.loadSalesData(),
-            this.loadVisitorData(),
-            this.loadReservationData()
+            this.loadSalesData(this.state.salesPeriod),
+            this.loadVisitorData(this.state.visitorPeriod),
+            this.loadReservationData(this.state.reservationPeriod)
         ]);
 
+        // Render all charts
         if (this.canvasRef.el) {
             this.chartService.createSalesChart(
                 this.canvasRef.el,
-                this.state.selectedPeriod,
+                this.state.salesPeriod,
                 this.state.salesData
             );
         }
@@ -760,7 +748,7 @@ class GolfzonDashboard extends Component {
         if (this.visitorRef.el) {
             this.chartService.createVisitorChart(
                 this.visitorRef.el,
-                this.state.selectedPeriod,
+                this.state.visitorPeriod,
                 this.state.visitorData
             );
         }
@@ -768,21 +756,48 @@ class GolfzonDashboard extends Component {
         if (this.reservationTrendChart.el) {
             this.chartService.createReservationChart(
                 this.reservationTrendChart.el,
-                this.state.selectedPeriod,
+                this.state.reservationPeriod,
                 this.state.reservationData
             );
         }
 
-        if (this.ageRef.el && this.state.ageData && this.state.ageData.total_count !== undefined) {
+        if (this.ageRef.el && this.state.ageData && this.state.ageData.totalcount !== undefined) {
             this.chartService.createAgeChart(this.ageRef.el, this.state.ageData);
         }
-
-        setTimeout(() => {
-            console.log("Updating gender animation with new data:", this.state.visitorData.gender_ratio);
-            this.chartService.initializeGenderAnimation(this.state.visitorData.gender_ratio);
-        }, 200);
     }
 
+    handleMenuItemClick(menuItem, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log(`📍 Menu item clicked: ${menuItem}`);
+
+        // ✅ Set active menu item
+        this.state.activeMenuItem = menuItem;
+
+        // ✅ Close the menu drawer
+        this.state.drawerOpen = false;
+        if (this.menuDrawer.el) {
+            this.menuDrawer.el.classList.remove("open");
+        }
+        console.log(`✅ Active menu item set to: ${menuItem}, drawer closed`);
+
+        // ✅ If you want to navigate to different pages/views, add logic here:
+        // switch(menuItem) {
+        //     case 'dashboard':
+        //         // Show dashboard
+        //         break;
+        //     case 'member':
+        //         // Navigate to member view
+        //         break;
+        //     case 'membergroup':
+        //         // Navigate to member group view
+        //         break;
+        //     case 'crmcampaign':
+        //         // Navigate to CRM campaign view
+        //         break;
+        // }
+    }
     setActiveMenuItem(item) {
         this.state.activeMenuItem = item;
     }

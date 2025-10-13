@@ -694,7 +694,6 @@ class SalesStatusController(http.Controller):
             return "0"
         return "{:,.0f}".format(float(value))
 
-
     # Visitor Graph Data
     @http.route("/golfzon/visitor_data", type="json", auth="user", methods=["POST"])
     def get_visitor_data(self, period="30days"):
@@ -2003,7 +2002,7 @@ class SalesStatusController(http.Controller):
         Returns data for 3 pie charts:
         1. Reservation Proportion by Type (Individual, Joint Org, General Org, Temporary Org)
         2. Reservation Proportion by Time (D-15+, D-14, D-7, D-3, D-1, D-0)
-        3. Reservation Proportion by Channel (Phone, Internet, Agency, Others)
+        3. Reservation Proportion by Channel (Phone, Internet, Agency, Agent, Others)
         
         Optimized for millisecond-level performance with indexed queries.
         """
@@ -2053,11 +2052,10 @@ class SalesStatusController(http.Controller):
         query = """
             SELECT 
                 CASE 
-                    WHEN bookg_kind_scd IN ('G', '01', 'general', 'GEN') THEN 'individual'
-                    WHEN bookg_kind_scd IN ('J', '02', 'joint', 'JOINT') THEN 'joint_org'
-                    WHEN bookg_kind_scd IN ('D', '03', 'delegated', 'general_org', 'DELE') THEN 'general_org'
-                    WHEN bookg_kind_scd IN ('T', '04', 'temporary', 'TEMP') THEN 'temporary_org'
-                    ELSE 'individual'
+                    WHEN bookg_type_scd IN ('G', '10', 'general', 'GEN') THEN 'individual'
+                    WHEN bookg_type_scd IN ('J', '20', 'joint', 'JOINT') THEN 'joint_org'
+                    WHEN bookg_type_scd IN ('D', '30', 'delegated', 'general_org', 'DELE') THEN 'general_org'
+                    WHEN bookg_type_scd IN ('T', '40', 'temporary', 'TEMP') THEN 'temporary_org'
                 END as type_category,
                 COUNT(*) as count
             FROM booking_info
@@ -2122,42 +2120,44 @@ class SalesStatusController(http.Controller):
     def _fetch_reservation_by_time(self):
         """
         Fetch reservation proportion by advance booking time.
-        Calculate days between created_at and bookg_date from time_table.
-        Categories: D-15+, D-14, D-7, D-3, D-1, D-0
+        Calculate days between TODAY and bookg_date from time_table.
         
-        FIXED: Added proper type casting for PostgreSQL date arithmetic
+        Categories based on how far in advance the booking is:
+        - D0: Today's bookings (bookg_date = today)
+        - D1: Tomorrow's bookings (bookg_date = today + 1 day)
+        - D3: 3 days ahead bookings (bookg_date = today + 3 days)
+        - D7: 7 days ahead bookings (bookg_date = today + 7 days)
+        - D14: 14 days ahead bookings (bookg_date = today + 14 days)
+        - D15+: 15+ days ahead bookings (bookg_date >= today + 15 days)
+        
+        Uses ONLY time_table table with bookg_date and bookg_time fields.
         """
         query = """
             WITH booking_days AS (
                 SELECT 
-                    bi.bookg_info_id,
-                    COALESCE(
-                        CAST(tt.bookg_date AS DATE) - CAST(bi.created_at AS DATE),
-                        0
-                    ) as days_advance
-                FROM booking_info bi
-                LEFT JOIN time_table_has_bookg_infos ttbi 
-                    ON bi.bookg_info_id = ttbi.bookg_info_id::integer
-                LEFT JOIN time_table tt 
-                    ON ttbi.time_table_id = tt.time_table_id
-                WHERE bi.bookg_info_id IS NOT NULL
-                    AND bi.deleted_at IS NULL
-                    AND bi.bookg_state_scd NOT IN ('canceled', 'C', 'X')
-                    AND tt.bookg_date IS NOT NULL
-                    AND bi.created_at IS NOT NULL
+                    tt.time_table_id,
+                    tt.bookg_date,
+                    tt.bookg_time,
+                    -- Calculate days difference between booking date and TODAY
+                    CAST(tt.bookg_date AS DATE) - CURRENT_DATE as days_ahead
+                FROM time_table tt
+                WHERE tt.bookg_date IS NOT NULL
+                    AND tt.deleted_at IS NULL
+                    AND tt.bookg_date >= CURRENT_DATE  -- Only future and today's bookings
             )
             SELECT 
                 CASE 
-                    WHEN days_advance >= 15 THEN 'd15_plus'
-                    WHEN days_advance >= 14 AND days_advance < 15 THEN 'd14'
-                    WHEN days_advance >= 7 AND days_advance < 14 THEN 'd7'
-                    WHEN days_advance >= 3 AND days_advance < 7 THEN 'd3'
-                    WHEN days_advance >= 1 AND days_advance < 3 THEN 'd1'
-                    WHEN days_advance >= 0 AND days_advance < 1 THEN 'd0'
+                    WHEN days_ahead >= 15 THEN 'd15_plus'
+                    WHEN days_ahead = 14 THEN 'd14'
+                    WHEN days_ahead >= 7 AND days_ahead < 14 THEN 'd7'
+                    WHEN days_ahead >= 3 AND days_ahead < 7 THEN 'd3'
+                    WHEN days_ahead >= 1 AND days_ahead < 3 THEN 'd1'
+                    WHEN days_ahead = 0 THEN 'd0'
                     ELSE 'd0'
                 END as time_category,
                 COUNT(*) as count
             FROM booking_days
+            WHERE days_ahead >= 0  -- Exclude past bookings
             GROUP BY time_category
         """
         
@@ -2185,48 +2185,54 @@ class SalesStatusController(http.Controller):
             total = sum(time_counts.values())
             
             if total == 0:
-                _logger.warning("No reservation time data found")
+                _logger.warning("No future reservation data found")
                 return self._get_default_time_data()
             
             result = {
-                'd15_plus': {
-                    'count': time_counts['d15_plus'],
-                    'percentage': round((time_counts['d15_plus'] / total) * 100, 1)
-                },
-                'd14': {
-                    'count': time_counts['d14'],
-                    'percentage': round((time_counts['d14'] / total) * 100, 1)
-                },
-                'd7': {
-                    'count': time_counts['d7'],
-                    'percentage': round((time_counts['d7'] / total) * 100, 1)
-                },
-                'd3': {
-                    'count': time_counts['d3'],
-                    'percentage': round((time_counts['d3'] / total) * 100, 1)
+                'd0': {
+                    'label': "Today's Bookings",
+                    'count': time_counts['d0'],
+                    'percentage': round((time_counts['d0'] / total) * 100, 1)
                 },
                 'd1': {
+                    'label': "Tomorrow's Bookings",
                     'count': time_counts['d1'],
                     'percentage': round((time_counts['d1'] / total) * 100, 1)
                 },
-                'd0': {
-                    'count': time_counts['d0'],
-                    'percentage': round((time_counts['d0'] / total) * 100, 1)
+                'd3': {
+                    'label': "3 Days Ahead",
+                    'count': time_counts['d3'],
+                    'percentage': round((time_counts['d3'] / total) * 100, 1)
+                },
+                'd7': {
+                    'label': "7 Days Ahead",
+                    'count': time_counts['d7'],
+                    'percentage': round((time_counts['d7'] / total) * 100, 1)
+                },
+                'd14': {
+                    'label': "14 Days Ahead",
+                    'count': time_counts['d14'],
+                    'percentage': round((time_counts['d14'] / total) * 100, 1)
+                },
+                'd15_plus': {
+                    'label': "15+ Days Ahead",
+                    'count': time_counts['d15_plus'],
+                    'percentage': round((time_counts['d15_plus'] / total) * 100, 1)
                 },
                 'total': total
             }
             
-            _logger.info(f"Reservation by time: {result}")
+            _logger.info(f"Advance booking analysis: {result}")
             return result
             
         except Exception as e:
-            _logger.error(f"Error fetching reservation by time: {str(e)}", exc_info=True)
+            _logger.error(f"Error fetching advance bookings: {str(e)}", exc_info=True)
             return self._get_default_time_data()
 
     def _fetch_reservation_by_channel(self):
         """
         Fetch reservation proportion by channel.
-        Maps chnl_cd_id and chnl_detail to: Phone, Internet, Agency, Others
+        Maps chnl_cd_id and chnl_detail to: Phone, Internet, Agency, Agent, Others
         """
         query = """
             SELECT 
@@ -2234,19 +2240,23 @@ class SalesStatusController(http.Controller):
                     WHEN LOWER(COALESCE(chnl_detail, '')) LIKE '%phone%' 
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%tel%' 
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%call%'
-                        OR chnl_cd_id = 1
+                        OR chnl_cd_id = 39718
                         THEN 'phone'
                     WHEN LOWER(COALESCE(chnl_detail, '')) LIKE '%web%' 
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%online%' 
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%internet%'
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%mobile%'
-                        OR chnl_cd_id = 2
+                        OR chnl_cd_id = 779
                         THEN 'internet'
                     WHEN LOWER(COALESCE(chnl_detail, '')) LIKE '%agency%' 
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%travel%' 
                         OR LOWER(COALESCE(chnl_detail, '')) LIKE '%partner%'
-                        OR chnl_cd_id IN (3, 4)
+                        OR chnl_cd_id = 39719
                         THEN 'agency'
+					WHEN LOWER(COALESCE(chnl_detail, '')) LIKE '%agent%' 
+                        OR LOWER(COALESCE(chnl_detail, '')) LIKE '%office%' 
+                        OR chnl_cd_id = 1676
+                        THEN 'agent'
                     ELSE 'others'
                 END as channel_category,
                 COUNT(*) as count
@@ -2266,6 +2276,7 @@ class SalesStatusController(http.Controller):
                 'phone': 0,
                 'internet': 0,
                 'agency': 0,
+                'agent': 0,
                 'others': 0
             }
             
@@ -2295,6 +2306,10 @@ class SalesStatusController(http.Controller):
                     'count': channel_counts['agency'],
                     'percentage': round((channel_counts['agency'] / total) * 100, 1)
                 },
+                'agent': {
+                    'count': channel_counts['agent'],
+                    'percentage': round((channel_counts['agent'] / total) * 100, 1)
+                },
                 'others': {
                     'count': channel_counts['others'],
                     'percentage': round((channel_counts['others'] / total) * 100, 1)
@@ -2322,12 +2337,12 @@ class SalesStatusController(http.Controller):
     def _get_default_time_data(self):
         """Default data when no records found"""
         return {
-            'd15_plus': {'count': 0, 'percentage': 0},
-            'd14': {'count': 0, 'percentage': 0},
-            'd7': {'count': 0, 'percentage': 0},
-            'd3': {'count': 0, 'percentage': 0},
-            'd1': {'count': 0, 'percentage': 0},
-            'd0': {'count': 0, 'percentage': 0},
+            'd0': {'label': "Today's Bookings", 'count': 0, 'percentage': 0},
+            'd1': {'label': "Tomorrow's Bookings", 'count': 0, 'percentage': 0},
+            'd3': {'label': "3 Days Ahead", 'count': 0, 'percentage': 0},
+            'd7': {'label': "7 Days Ahead", 'count': 0, 'percentage': 0},
+            'd14': {'label': "14 Days Ahead", 'count': 0, 'percentage': 0},
+            'd15_plus': {'label': "15+ Days Ahead", 'count': 0, 'percentage': 0},
             'total': 0
         }
 
@@ -2337,6 +2352,7 @@ class SalesStatusController(http.Controller):
             'phone': {'count': 0, 'percentage': 0},
             'internet': {'count': 0, 'percentage': 0},
             'agency': {'count': 0, 'percentage': 0},
+            'agent': {'count': 0, 'percentage': 0},
             'others': {'count': 0, 'percentage': 0},
             'total': 0
         }

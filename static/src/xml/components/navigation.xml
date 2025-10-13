@@ -7,16 +7,35 @@
                 <span class="drawer-title" t-esc="_t('GOLFZON')"/>
             </div>
             <nav class="drawer-nav">
-                <a class="drawer-item" t-att-class="state.activeMenuItem === 'dashboard' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('dashboard')">
+                <!-- ✅ Dashboard - Active by default with click handler that closes menu -->
+                <a class="drawer-item" 
+                t-att-class="state.activeMenuItem === 'dashboard' ? 'active' : ''" 
+                href="#" 
+                t-on-click="(ev) => this.handleMenuItemClick('dashboard', ev)">
                     <t t-esc="_t('Dashboard')"/>
                 </a>
-                <a class="drawer-item" t-att-class="state.activeMenuItem === 'member' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('member')">
+                
+                <!-- ✅ Member - with click handler that closes menu -->
+                <a class="drawer-item" 
+                t-att-class="state.activeMenuItem === 'member' ? 'active' : ''" 
+                href="#" 
+                t-on-click="(ev) => this.handleMenuItemClick('member', ev)">
                     <t t-esc="_t('Member')"/>
                 </a>
-                <a class="drawer-item" t-att-class="state.activeMenuItem === 'membergroup' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('membergroup')">
+                
+                <!-- ✅ Member Group - with click handler that closes menu -->
+                <a class="drawer-item" 
+                t-att-class="state.activeMenuItem === 'membergroup' ? 'active' : ''" 
+                href="#" 
+                t-on-click="(ev) => this.handleMenuItemClick('membergroup', ev)">
                     <t t-esc="_t('Member Group')"/>
                 </a>
-                <a class="drawer-item" t-att-class="state.activeMenuItem === 'crmcampaign' ? 'active' : ''" href="#" t-on-click="() => this.setActiveMenuItem('crmcampaign')">
+                
+                <!-- ✅ CRM Campaign - with click handler that closes menu -->
+                <a class="drawer-item" 
+                t-att-class="state.activeMenuItem === 'crmcampaign' ? 'active' : ''" 
+                href="#" 
+                t-on-click="(ev) => this.handleMenuItemClick('crmcampaign', ev)">
                     <t t-esc="_t('CRM Campaign')"/>
                 </a>
             </nav>

@@ -996,6 +996,38 @@ export class ChartService {
     }
   }
 
+  updateGenderRatio(genderData) {
+    console.log("🔄 Updating gender ratio WITHOUT animation:", genderData);
+
+    const malePercent = genderData?.male_percentage || 62;
+    const femalePercent = genderData?.female_percentage || 38;
+
+    console.log(`Gender percentages - Male: ${malePercent}%, Female: ${femalePercent}%`);
+
+    const maleFill = document.getElementById("maleFill");
+    const femaleFill = document.getElementById("femaleFill");
+    const malePercentEl = document.getElementById("malePercent");
+    const femalePercentEl = document.getElementById("femalePercent");
+
+    if (maleFill && femaleFill) {
+      const maxHeight = 400;
+      maleFill.setAttribute("y", maxHeight - (maxHeight * malePercent) / 100);
+      maleFill.setAttribute("height", (maxHeight * malePercent) / 100);
+      femaleFill.setAttribute("y", maxHeight - (maxHeight * femalePercent) / 100);
+      femaleFill.setAttribute("height", (maxHeight * femalePercent) / 100);
+    }
+
+    if (malePercentEl) {
+      malePercentEl.textContent = malePercent + "%";
+    }
+
+    if (femalePercentEl) {
+      femalePercentEl.textContent = femalePercent + "%";
+    }
+
+    console.log("✅ Gender ratio updated instantly (no animation)");
+  }
+
   initializeGenderAnimation(genderData) {
     console.log("🎨 Initializing gender animation with data:", genderData);
 
@@ -1012,30 +1044,18 @@ export class ChartService {
 
       if (maleFill && femaleFill) {
         const maxHeight = 400;
-
         maleFill.setAttribute("y", maxHeight - (maxHeight * male) / 100);
         maleFill.setAttribute("height", (maxHeight * male) / 100);
-
         femaleFill.setAttribute("y", maxHeight - (maxHeight * female) / 100);
         femaleFill.setAttribute("height", (maxHeight * female) / 100);
-
-        console.log(`✅ Gender fill heights set - Male: ${(maxHeight * male) / 100}px, Female: ${(maxHeight * female) / 100}px`);
-      } else {
-        console.warn("⚠️ Gender SVG fill elements not found (maleFill/femaleFill)");
       }
 
       if (malePercentEl) {
         malePercentEl.textContent = male + "%";
-        console.log(`✅ Male percentage text updated: ${male}%`);
-      } else {
-        console.warn("⚠️ Male percentage element not found");
       }
 
       if (femalePercentEl) {
         femalePercentEl.textContent = female + "%";
-        console.log(`✅ Female percentage text updated: ${female}%`);
-      } else {
-        console.warn("⚠️ Female percentage element not found");
       }
     }
 
