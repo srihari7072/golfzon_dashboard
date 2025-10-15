@@ -209,12 +209,12 @@
                         <!-- Default content when no box is selected -->
                         <div class="sidebar-default-content" t-if="!state.selectedHeatmapBox.isVisible">
                             <div class="default-message">
-                                <h4 class="default-title">
+                                <div class="default-title">
                                     <t t-esc="_t('When selecting the cell on the right,')"/>
-                                </h4>
-                                <h4 class="default-title">
+                                </div>
+                                <div class="default-title">
                                     <t t-esc="_t('You can check the number of reserved teams by time slot for that cell.')"/>
-                                </h4>
+                                </div>
                             </div>
                         </div>
                         

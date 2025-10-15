@@ -155,24 +155,27 @@
                             <div class="temperature" t-esc="hour.temperature + '°C'"/>
                             <div class="precipitation-chance-wrapper">
                                 <div class="water-drop-wrapper">
-                                    <svg class="drop-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+                                    <svg class="drop-svg" viewBox="0 0 12 16" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                                        <!-- Drop outline -->
                                         <path class="drop-outline" 
-                                            d="M12 2 C8 8 4 13 4 18 C4 23.5 7.6 28 12 28 C16.4 28 20 23.5 20 18 C20 13 16 8 12 2 Z" 
+                                            d="M6 1C4.5 3 2 6 2 9C2 11.76 3.79 14 6 14C8.21 14 10 11.76 10 9C10 6 7.5 3 6 1Z" 
                                             fill="none" 
-                                            stroke="#D0D0D0" 
-                                            stroke-width="1.5"/>
+                                            stroke="#8B8B8B" 
+                                            stroke-width="1"/>
                                         
+                                        <!-- Clip path for water fill -->
                                         <defs>
                                             <clipPath t-attf-id="dropClip_{{hour_index}}">
-                                                <path d="M12 2 C8 8 4 13 4 18 C4 23.5 7.6 28 12 28 C16.4 28 20 23.5 20 18 C20 13 16 8 12 2 Z"/>
+                                                <path d="M6 1C4.5 3 2 6 2 9C2 11.76 3.79 14 6 14C8.21 14 10 11.76 10 9C10 6 7.5 3 6 1Z"/>
                                             </clipPath>
                                         </defs>
                                         
+                                        <!-- Water fill (dynamic based on percentage) -->
                                         <rect class="water-fill" 
-                                            x="4" 
-                                            t-att-y="30 - (hour.chance * 0.26)" 
-                                            width="16" 
-                                            height="26" 
+                                            x="2" 
+                                            t-att-y="16 - (hour.chance * 0.13)" 
+                                            width="8" 
+                                            height="13" 
                                             t-attf-clip-path="url(#dropClip_{{hour_index}})" 
                                             fill="#8B8B8B"/>
                                     </svg>
