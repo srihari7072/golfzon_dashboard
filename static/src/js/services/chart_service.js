@@ -43,9 +43,39 @@ export class ChartService {
 
   _getStoredLocale() {
     try {
+      // ✅ Check if Korean is currently selected in the dashboard
+      const languageSwitcher = document.querySelector('.language-switcher a.active');
+      if (languageSwitcher && languageSwitcher.textContent.includes('KOR')) {
+        console.log("🇰🇷 Korean detected from language switcher");
+        return "ko-KR";
+      }
+
+      // Check multiple sources for language preference
       const stored = localStorage.getItem("dashboard_lang");
-      if (stored === "ko_KR") return "ko-KR";
+      if (stored === "ko_KR" || stored === "ko") {
+        console.log("🇰🇷 Korean detected from localStorage");
+        return "ko-KR";
+      }
+
+      // Also check session storage
+      const sessionLang = sessionStorage.getItem("current_language");
+      if (sessionLang && sessionLang.includes("ko")) {
+        console.log("🇰🇷 Korean detected from sessionStorage");
+        return "ko-KR";
+      }
+
+      // Check if there's a global language setting
+      if (window.odoo && window.odoo.session && window.odoo.session.user_context) {
+        const userLang = window.odoo.session.user_context.lang;
+        if (userLang && userLang.includes("ko")) {
+          console.log("🇰🇷 Korean detected from Odoo session");
+          return "ko-KR";
+        }
+      }
+
     } catch (_) { }
+
+    console.log("🇺🇸 Defaulting to English");
     return "en-US";
   }
 
@@ -53,12 +83,27 @@ export class ChartService {
     if (!(d instanceof Date)) return "";
     try {
       const locale = this._getStoredLocale();
-      return d.toLocaleDateString(locale, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        weekday: "long",
-      });
+
+      if (locale === "ko-KR") {
+        // Korean format with manual translation
+        const koreanDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const koreanMonths = ['1월', '2월', '3월', '4월', '5월', '6월',
+          '7월', '8월', '9월', '10월', '11월', '12월'];
+
+        const dayName = koreanDays[d.getDay()];
+        const monthName = koreanMonths[d.getMonth()];
+        const year = d.getFullYear();
+        const day = d.getDate();
+
+        return `${year}년 ${monthName} ${day}일 ${dayName}`;
+      } else {
+        return d.toLocaleDateString(locale, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "long",
+        });
+      }
     } catch (_) {
       return "";
     }
@@ -139,6 +184,8 @@ export class ChartService {
     const GRID_COLOR = "#EEF3FA";
     const AXIS_COLOR = "#6f6f6f";
 
+    const chartService = this;
+
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "bar",
@@ -202,13 +249,15 @@ export class ChartService {
             y: {
               beginAtZero: true,
               ticks: {
-                stepSize: 10,
-                color: AXIS_COLOR,
-                font: { size: 12 },
                 callback: function (value) {
                   return value;
                 },
+                color: AXIS_COLOR,
+                font: { size: 12 },
+                precision: 0,
+                maxTicksLimit: 8,
               },
+              grace: '5%',
               grid: { display: true, color: GRID_COLOR, drawBorder: false },
             },
           },
@@ -218,7 +267,7 @@ export class ChartService {
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                pointStyle: "circle", // ✅ CHANGED from "rectRounded"
+                pointStyle: "circle",
                 boxWidth: 6,
                 boxHeight: 6,
                 padding: 16,
@@ -236,7 +285,7 @@ export class ChartService {
                     lineJoin: 'miter',
                     lineWidth: 0,
                     strokeStyle: dataset.backgroundColor,
-                    pointStyle: 'circle', // ✅ CHANGED from "rectRounded"
+                    pointStyle: 'circle',
                     datasetIndex: i
                   }));
                 }
@@ -265,7 +314,7 @@ export class ChartService {
                     ? currentYearDates[idx]
                     : previousYearDates[idx];
 
-                  return this._formatFullDate(date) || labels[idx] || "";
+                  return chartService._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const isCurrentYear = ctx.datasetIndex === 0;
@@ -278,7 +327,7 @@ export class ChartService {
                   } else {
                     const idx = ctx.dataIndex;
                     const date = previousYearDates[idx]; // ✅ Use previous year date
-                    const weather = this._getWeatherData(date);
+                    const weather = chartService._getWeatherData(date);
                     return [
                       `${_t("Sales")}: ${formattedValue}`,
                       `${_t("Weather")}: ${weather.condition}`,
@@ -347,6 +396,8 @@ export class ChartService {
     const COLOR_SECONDARY = "#86E5F5";
     const GRID_COLOR = "#EEF3FA";
     const AXIS_COLOR = "#6f6f6f";
+
+    const chartService = this;
 
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
@@ -465,7 +516,7 @@ export class ChartService {
                     ? currentYearDates[idx]
                     : previousYearDates[idx];
 
-                  return this._formatFullDate(date) || labels[idx] || "";
+                  return chartService._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
@@ -476,7 +527,7 @@ export class ChartService {
                   } else {
                     const idx = ctx.dataIndex;
                     const date = previousYearDates[idx]; // ✅ Use previous year date
-                    const weather = this._getWeatherData(date);
+                    const weather = chartService._getWeatherData(date);
                     return [
                       `${_t("Visitors")}: ${value.toLocaleString()}`,
                       `${_t("Weather")}: ${weather.condition}`,
@@ -544,6 +595,8 @@ export class ChartService {
     const COLOR_SECONDARY = "#86E5F5";
     const GRID_COLOR = "#EEF3FA";
     const AXIS_COLOR = "#6f6f6f";
+
+    const chartService = this;
 
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
@@ -662,7 +715,7 @@ export class ChartService {
                     ? currentYearDates[idx]
                     : previousYearDates[idx];
 
-                  return this._formatFullDate(date) || labels[idx] || "";
+                  return chartService._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
@@ -673,7 +726,7 @@ export class ChartService {
                   } else {
                     const idx = ctx.dataIndex;
                     const date = previousYearDates[idx]; // ✅ Use previous year date
-                    const weather = this._getWeatherData(date);
+                    const weather = chartService._getWeatherData(date);
                     return [
                       `${_t("Reservations")}: ${value}`,
                       `${_t("Weather")}: ${weather.condition}`,

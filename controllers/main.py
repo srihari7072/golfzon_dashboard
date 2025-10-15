@@ -97,6 +97,51 @@ class SalesStatusController(http.Controller):
                 }),
                 headers={'Content-Type': 'application/json'}
             )
+            
+    @http.route('/golfzon/api/current_date', type='http', auth='user', methods=['GET'], csrf=False)
+    def get_current_date(self, **kwargs):
+        """Get current date formatted according to user language"""
+        try:
+            from datetime import datetime
+            
+            current_date = datetime.now()
+            user_lang = request.env.user.lang or 'ko_KR'
+            
+            # Format date according to user language
+            if 'ko' in user_lang.lower():
+                # Korean format: "2025년 10월 5일 일요일"
+                korean_days = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
+                korean_months = ['1월', '2월', '3월', '4월', '5월', '6월', 
+                                '7월', '8월', '9월', '10월', '11월', '12월']
+                
+                day_name = korean_days[current_date.weekday()]
+                month_name = korean_months[current_date.month - 1]
+                
+                formatted_date = f"{current_date.year}년 {month_name} {current_date.day}일 {day_name}"
+            else:
+                # English format: "Sunday, October 5, 2025"
+                formatted_date = current_date.strftime('%A, %B %d, %Y')
+            
+            return request.make_response(
+                json.dumps({
+                    'status': 'success',
+                    'formatted_date': formatted_date,
+                    'language': user_lang,
+                    'raw_date': current_date.isoformat()
+                }),
+                headers={'Content-Type': 'application/json'}
+            )
+            
+        except Exception as e:
+            _logger.error(f"❌ Error formatting date: {str(e)}")
+            return request.make_response(
+                json.dumps({
+                    'status': 'error',
+                    'message': str(e),
+                    'formatted_date': 'Date unavailable'
+                }),
+                headers={'Content-Type': 'application/json'}
+            )
 
     # Sales Status Data
     @http.route("/golfzon/sales_data", type="json", auth="user", methods=["POST"])
@@ -1667,8 +1712,8 @@ class SalesStatusController(http.Controller):
         slot_labels = {
             'early morning': 'Early Morning(5 AM -7 AM)',
             'morning': 'Morning(8 AM -12 PM)',
-            'afternoon': 'Afternoon(1 PM -4 PM)',
-            'night': 'Night(5 PM -7 PM)'
+            'afternoon': 'Afternoon(13 PM -16 PM)',
+            'night': 'Night(17 PM -19 PM)'
         }
         
         # Create a mapping from day_of_week (0=Sunday) to column index
@@ -1791,8 +1836,8 @@ class SalesStatusController(http.Controller):
             'rows': [
                 {'label': 'Early Morning(5 AM -7 AM)', 'slot_key': 'early morning', 'data': [0, 0, 0, 0, 0, 0, 0]},
                 {'label': 'Morning(8 AM -12 PM)', 'slot_key': 'morning', 'data': [0, 0, 0, 0, 0, 0, 0]},
-                {'label': 'Afternoon(1 PM -4 PM)', 'slot_key': 'afternoon', 'data': [0, 0, 0, 0, 0, 0, 0]},
-                {'label': 'Night(5 PM -7 PM)', 'slot_key': 'night', 'data': [0, 0, 0, 0, 0, 0, 0]}
+                {'label': 'Afternoon(13 PM -16 PM)', 'slot_key': 'afternoon', 'data': [0, 0, 0, 0, 0, 0, 0]},
+                {'label': 'Night(17 PM -19 PM)', 'slot_key': 'night', 'data': [0, 0, 0, 0, 0, 0, 0]}
             ]
         }
 

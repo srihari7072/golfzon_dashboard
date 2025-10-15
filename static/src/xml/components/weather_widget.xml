@@ -4,13 +4,15 @@
         <div class="golf-info-card">
             <div class="golf-info-main">
                 <!-- Date Section -->
-                <t t-call="golfzon_dashboard.DateSection"/>
+                <div class="date-weather-container">
+                    <t t-call="golfzon_dashboard.DateSection"/>
+                    <t t-call="golfzon_dashboard.WeatherSection"/>
+                </div>
+                <div class="vertical-line"></div>
                 <!-- Weather and Info Container -->
                 <div class="multi-info-container">
-                    <t t-call="golfzon_dashboard.WeatherSection"/>
-                    <div class="vertical-line"></div>
                     <t t-call="golfzon_dashboard.ReservationInfo"/>
-                    <div class="vertical-line"></div>
+                    <div class="vertical-seperator"></div>
                     <t t-call="golfzon_dashboard.TeeTimeInfo"/>
                 </div>
                 <!-- Dropdown Button -->
@@ -24,9 +26,11 @@
         <div class="info-section date-section">
             <div class="info-content">
                 <div class="info-label">
-                    <t t-esc="_t('TODAY:')"/>
+                    <t t-esc="_t('Today:')"/>
                 </div>
-                <div class="info-label" t-esc="state.currentDate"/>
+                <div class="info-label">
+                    <span t-if="state.currentDate" t-esc="state.currentDate"/>
+                </div>
             </div>
         </div>
     </t>
@@ -144,13 +148,37 @@
         <div class="weather-half">
             <div class="horizontal-weather-container">
                 <div class="horizontal-weather-scroll">
-                    <!-- FIXED: Changed t-key from "hour.time" to "hour_index" to prevent duplicate key errors -->
                     <t t-foreach="state.hourlyWeather" t-as="hour" t-key="hour_index">
                         <div class="weather-time-slot">
                             <div class="time-label" t-esc="hour.time"/>
                             <div class="weather-icon" t-esc="hour.icon"/>
                             <div class="temperature" t-esc="hour.temperature + '°C'"/>
-                            <div class="precipitation-chance" t-esc="hour.chance + '%'"/>
+                            <div class="precipitation-chance-wrapper">
+                                <div class="water-drop-wrapper">
+                                    <svg class="drop-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+                                        <path class="drop-outline" 
+                                            d="M12 2 C8 8 4 13 4 18 C4 23.5 7.6 28 12 28 C16.4 28 20 23.5 20 18 C20 13 16 8 12 2 Z" 
+                                            fill="none" 
+                                            stroke="#D0D0D0" 
+                                            stroke-width="1.5"/>
+                                        
+                                        <defs>
+                                            <clipPath t-attf-id="dropClip_{{hour_index}}">
+                                                <path d="M12 2 C8 8 4 13 4 18 C4 23.5 7.6 28 12 28 C16.4 28 20 23.5 20 18 C20 13 16 8 12 2 Z"/>
+                                            </clipPath>
+                                        </defs>
+                                        
+                                        <rect class="water-fill" 
+                                            x="4" 
+                                            t-att-y="30 - (hour.chance * 0.26)" 
+                                            width="16" 
+                                            height="26" 
+                                            t-attf-clip-path="url(#dropClip_{{hour_index}})" 
+                                            fill="#8B8B8B"/>
+                                    </svg>
+                                </div>
+                                <span class="precipitation-text" t-esc="hour.chance + '%'"/>
+                            </div>
                             <div class="precipitation-amount" t-esc="hour.precipitation + 'mm'"/>
                         </div>
                     </t>

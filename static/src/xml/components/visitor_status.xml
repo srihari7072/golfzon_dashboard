@@ -72,14 +72,18 @@
                             <t t-esc="_t('Compared to last year')"/>
                         </span>
                         <span class="trend-indicator" t-att-class="state.visitorData.percentage_change >= 0 ? 'trend-up' : 'trend-down'">
-                            <span class="trend-icon" t-esc="state.visitorData.percentage_change >= 0 ? '▲' : '▼'"/>
-                            <span>
+                            <span class="trend-icon">
                                 <t t-if="state.visitorData.percentage_change >= 0">
-                                    +<t t-esc="state.visitorData.percentage_change"/>%
+                                    <img src="/golfzon_dashboard/static/src/img/trend-up.svg" alt="Up" class="trend-arrow"/>
                                 </t>
                                 <t t-else="">
-                                    <t t-esc="state.visitorData.percentage_change"/>%
+                                    <img src="/golfzon_dashboard/static/src/img/trend-down.svg" alt="Down" class="trend-arrow"/>
                                 </t>
+                            </span>
+                            <span>
+                                <t t-if="state.visitorData.percentage_change >= 0">+</t>
+                                <t t-else="">-</t>
+                                <t t-esc="Math.abs(state.visitorData.percentage_change || 0).toFixed(1)"/>%
                             </span>
                         </span>
                     </div>

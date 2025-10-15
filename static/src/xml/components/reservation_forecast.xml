@@ -71,11 +71,16 @@
                             </span>
                             <span class="trend-indicator" t-att-class="state.reservationData.percentage_change >= 0 ? 'trend-up' : 'trend-down'">
                                 <span class="trend-icon">
-                                    <t t-if="state.reservationData.percentage_change >= 0">▲</t>
-                                    <t t-else="">▼</t>
+                                    <t t-if="state.reservationData.percentage_change >= 0">
+                                        <img src="/golfzon_dashboard/static/src/img/trend-up.svg" alt="Up" class="trend-arrow"/>
+                                    </t>
+                                    <t t-else="">
+                                        <img src="/golfzon_dashboard/static/src/img/trend-down.svg" alt="Down" class="trend-arrow"/>
+                                    </t>
                                 </span>
                                 <span>
                                     <t t-if="state.reservationData.percentage_change >= 0">+</t>
+                                    <t t-else="">-</t>
                                     <t t-esc="Math.abs(state.reservationData.percentage_change).toFixed(1)"/>%
                                 </span>
                             </span>
@@ -207,9 +212,9 @@
                                 <h4 class="default-title">
                                     <t t-esc="_t('When selecting the cell on the right,')"/>
                                 </h4>
-                                <p class="default-subtitle">
+                                <h4 class="default-title">
                                     <t t-esc="_t('You can check the number of reserved teams by time slot for that cell.')"/>
-                                </p>
+                                </h4>
                             </div>
                         </div>
                         
@@ -218,13 +223,17 @@
                             <!-- Alert Messages -->
                             <div class="alert-message-section">
                                 <div class="alert-message highest" t-if="state.selectedHeatmapBox.isHighest">
-                                    <span class="alert-badge">⚠</span>
+                                    <span class="alert-badge">
+                                        <img src="/golfzon_dashboard/static/src/img/highest_booking_icon.svg" alt="Highest" class="alert-icon-img" />
+                                    </span>
                                     <span class="alert-text">
                                         <t t-esc="_t('This is the time slot with the most bookings')"/>
                                     </span>
                                 </div>
                                 <div class="alert-message lowest" t-if="state.selectedHeatmapBox.isLowest">
-                                    <span class="alert-badge">ⓘ</span>
+                                    <span class="alert-badge">
+                                        <img src="/golfzon_dashboard/static/src/img/least_booking_icon.svg" alt="least" class="alert-icon-img" />
+                                    </span>
                                     <span class="alert-text">
                                         <t t-esc="_t('This is the time slot with the fewest bookings')"/>
                                     </span>
@@ -233,7 +242,7 @@
                             
                             <!-- Sidebar Header (no duplicate day, no timeslot) -->
                             <div class="sidebar-header-section">
-                                <h2 class="sidebar-title" t-esc="state.selectedHeatmapBox.displayDay"/>
+                                <h2 class="sidebar-title" t-esc="state.selectedHeatmapBox.combinedTitle"/>
                                 <p class="sidebar-subtitle">
                                     <t t-esc="_t('Number of reservations by time zone')"/>
                                 </p>
@@ -255,7 +264,7 @@
                                     </div>
 
                                     <!-- Bottom Row: Next 5 time slots -->
-                                    <div class="hourly-row-bottom">
+                                    <div class="hourly-row-bottom" t-if="state.selectedHeatmapBox.hourlyBreakdown.length > 5">
                                         <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown.slice(5, 10)" 
                                         t-as="hourSlot" 
                                         t-key="hourSlot_index + '_bottom'">

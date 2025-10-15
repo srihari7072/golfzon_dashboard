@@ -54,7 +54,14 @@
                         <div class="metric-value" t-esc="currentValue"/>
                         <div class="trend-wrapper">
                             <div t-att-class="'trend-indicator ' + (hasTrendDown ? 'trend-down' : 'trend-up')">
-                                <span class="trend-icon" t-esc="hasTrendDown ? '▼' : '▲'"/>
+                                <span class="trend-icon">
+                                    <t t-if="hasTrendDown">
+                                        <img src="/golfzon_dashboard/static/src/img/trend-down.svg" alt="Down" class="trend-arrow"/>
+                                    </t>
+                                    <t t-else="">
+                                        <img src="/golfzon_dashboard/static/src/img/trend-up.svg" alt="Up" class="trend-arrow"/>
+                                    </t>
+                                </span>
                                 <span t-esc="currentTrend"/>
                             </div>
                             <div class="trend-period" t-esc="_t('(year-over-year)')"/>
@@ -69,7 +76,19 @@
                         <div class="metric-value" t-esc="monthlyValue"/>
                         <div class="trend-wrapper">
                             <div t-att-class="'trend-indicator ' + (monthlyTrend.startsWith('+') ? 'trend-up' : (monthlyTrend.startsWith('-') ? 'trend-down' : 'trend-neutral'))">
-                                <span class="trend-icon" t-esc="monthlyTrend.startsWith('+') ? '▲' : (monthlyTrend.startsWith('-') ? '▼' : '●')"/>
+                                <span class="trend-icon">
+                                    <t t-if="monthlyTrend.startsWith('+')">
+                                        <img src="/golfzon_dashboard/static/src/img/trend-up.svg" alt="Up" class="trend-arrow"/>
+                                    </t>
+                                    <t t-elif="monthlyTrend.startsWith('-')">
+                                        <img src="/golfzon_dashboard/static/src/img/trend-down.svg" alt="Down" class="trend-arrow"/>
+                                    </t>
+                                    <t t-else="">
+                                        <svg class="trend-neutral-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                            <circle cx="12" cy="12" r="6"/>
+                                        </svg>
+                                    </t>
+                                </span>
                                 <span t-esc="monthlyTrend"/>
                             </div>
                             <div class="trend-period" t-esc="_t('(year-over-year)')"/>

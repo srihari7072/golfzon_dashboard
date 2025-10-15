@@ -56,7 +56,7 @@ class GolfzonDashboard extends Component {
             userName: "username",
             drawerOpen: false,
             showWeatherDetails: false,
-            currentDate: DateUtils.formatCurrentDate(),
+            currentDate: null,
             userLocation: null,
             weather: {
                 temperature: 27,
@@ -171,38 +171,98 @@ class GolfzonDashboard extends Component {
 
             if (data.status === 'success') {
                 this.state.currentLanguage = data.current_lang;
+                localStorage.setItem("dashboard_lang", data.current_lang);
+                sessionStorage.setItem("current_language", data.current_lang);
                 console.log('✅ Current language loaded:', data.current_lang);
             } else {
                 this.state.currentLanguage = 'ko_KR';
+                localStorage.setItem("dashboard_lang", 'ko_KR');
+                sessionStorage.setItem("current_language", 'ko_KR');
             }
         } catch (error) {
             console.error('❌ Error loading current language:', error);
             this.state.currentLanguage = 'ko_KR';
+            localStorage.setItem("dashboard_lang", 'ko_KR');
+            sessionStorage.setItem("current_language", 'ko_KR');
+        }
+    }
+    getKoreanDateFallback() {
+        const date = new Date();
+        const koreanDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const koreanMonths = ['1월', '2월', '3월', '4월', '5월', '6월',
+            '7월', '8월', '9월', '10월', '11월', '12월'];
+
+        const dayName = koreanDays[date.getDay()];
+        const monthName = koreanMonths[date.getMonth()];
+        const year = date.getFullYear();
+        const day = date.getDate();
+
+        return `${year}년 ${monthName} ${day}일 ${dayName}`;
+    }
+
+    async loadCurrentDate() {
+        try {
+            const response = await fetch('/golfzon/api/current_date');
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                this.state.currentDate = data.formatted_date;
+                console.log('✅ Korean date loaded from backend:', data.formatted_date);
+            } else {
+                const lang = this.state.currentLanguage || 'ko_KR';
+                this.state.currentDate = this.getKoreanDateFallback();
+            }
+        } catch (error) {
+            console.error('❌ Error loading current date:', error);
+            this.state.currentDate = this.getKoreanDateFallback();
         }
     }
 
-    async switchLanguage(lang) {
-        let oldLang = this.state.currentLanguage;
+    getKoreanDateFallback() {
+        const date = new Date();
+        const koreanDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const koreanMonths = ['1월', '2월', '3월', '4월', '5월', '6월',
+            '7월', '8월', '9월', '10월', '11월', '12월'];
 
+        const dayName = koreanDays[date.getDay()];
+        const monthName = koreanMonths[date.getMonth()];
+        const year = date.getFullYear();
+        const day = date.getDate();
+
+        return `${year}년 ${monthName} ${day}일 ${dayName}`;
+    }
+
+    async switchLanguage(lang) {
         try {
             console.log(`🔄 Switching language to: ${lang}`);
-            this.state.currentLanguage = lang;
+
             localStorage.setItem("dashboard_lang", lang);
+            sessionStorage.setItem("current_language", lang);
+
+            const oldLang = this.state.currentLanguage;
+            this.state.currentLanguage = lang;
 
             const response = await fetch(`/golfzon/dashboard/set_lang?lang=${lang}`);
 
             if (response.ok) {
-                const data = await response.json();
-                console.log('✅ Language switched successfully:', data);
-                this.updateCurrentDate();
+                console.log('✅ Language switched successfully');
+                await this.loadCurrentDate();
+                if (this.chartService && typeof this.chartService.refreshChartsForLanguage === 'function') {
+                    this.chartService.refreshChartsForLanguage();
+                }
+
                 window.location.reload();
             } else {
                 this.state.currentLanguage = oldLang;
+                localStorage.setItem("dashboard_lang", oldLang || 'ko_KR');
+                sessionStorage.setItem("current_language", oldLang || 'ko_KR');
                 console.error('❌ Failed to switch language');
             }
         } catch (error) {
             console.error('❌ Error switching language:', error);
             this.state.currentLanguage = oldLang;
+            localStorage.setItem("dashboard_lang", oldLang || 'ko_KR');
+            sessionStorage.setItem("current_language", oldLang || 'ko_KR');
         }
     }
 
@@ -242,12 +302,12 @@ class GolfzonDashboard extends Component {
                     data: [0, 0, 0, 0, 0, 0, 0]
                 },
                 {
-                    label: _t("Afternoon(1 PM -4 PM)"),
+                    label: _t("Afternoon(13 PM -6 PM)"),
                     slot_key: 'afternoon',
                     data: [0, 0, 0, 0, 0, 0, 0]
                 },
                 {
-                    label: _t("Night(5 PM -7 PM)"),
+                    label: _t("Night(17 PM -19 PM)"),
                     slot_key: 'night',
                     data: [0, 0, 0, 0, 0, 0, 0]
                 },
@@ -279,7 +339,7 @@ class GolfzonDashboard extends Component {
             await this.loadCurrentLanguage();
             this.loaderManager.logProgress("Language loaded");
 
-            this.updateCurrentDate();
+            await this.loadCurrentDate();
             this.loaderManager.logProgress("Date initialized");
 
             console.log("📡 Fetching all dashboard data in parallel...");
@@ -568,8 +628,8 @@ class GolfzonDashboard extends Component {
         const labelMap = {
             'early morning': _t("Early Morning(5 AM -7 AM)"),
             'morning': _t("Morning(8 AM -12 PM)"),
-            'afternoon': _t("Afternoon(1 PM -4 PM)"),
-            'night': _t("Night(5 PM -7 PM)")
+            'afternoon': _t("Afternoon(13 PM -16 PM)"),
+            'night': _t("Night(17 PM -19 PM)")
         };
         return labelMap[slotKey] || slotKey;
     }
@@ -713,17 +773,22 @@ class GolfzonDashboard extends Component {
         console.log("Initializing all charts...");
         this.updateAllCharts();
 
-        if (this.ageRef.el && this.state.ageData && this.state.ageData.total_count !== undefined) {
-            console.log("Creating age chart with state data:", this.state.ageData);
-            this.chartService.createAgeChart(this.ageRef.el, this.state.ageData);
+        if (this.ageRef?.el) {
+            if (this.state.ageData && this.state.ageData.total_count !== undefined) {
+                console.log("Creating age chart with state data:", this.state.ageData);
+                this.chartService.createAgeChart(this.ageRef.el, this.state.ageData);
+            } else {
+                console.log("Age chart skipped - waiting for data to load");
+            }
         } else {
-            console.warn("Age chart not created - missing data or element");
+            console.log("Age chart element not found - likely on different page");
         }
 
-        // ✅ Initialize gender ratio WITH animation (page load only)
         setTimeout(() => {
-            console.log("Initializing gender animation with data:", this.state.visitorData.gender_ratio);
-            this.chartService.initializeGenderAnimation(this.state.visitorData.gender_ratio);
+            if (this.state.visitorData?.gender_ratio) {
+                console.log("Initializing gender animation with data:", this.state.visitorData.gender_ratio);
+                this.chartService.initializeGenderAnimation(this.state.visitorData.gender_ratio);
+            }
         }, 200);
     }
 
@@ -833,7 +898,7 @@ class GolfzonDashboard extends Component {
     }
 
     logout() {
-        window.location.href = "/custom/logout";
+        window.location.href = "/web/session/logout";
     }
 
     getHeatmapCellClass(value) {
@@ -874,23 +939,68 @@ class GolfzonDashboard extends Component {
         return allValues;
     }
 
+    // ✅ CORRECTED FUNCTION: Generate Day + Time Slot Title with Korean Translation
+    generateDayTimeSlotTitle(day, timeSlot) {
+        // Map Korean single character days to full Korean day names
+        const dayMap = {
+            '일': '일',
+            '월': '월',
+            '화': '화',
+            '수': '수',
+            '목': '목',
+            '금': '금',
+            '토': '토'
+        };
+
+        // Map time slots to Korean names (remove time portions)
+        const timeSlotMap = {
+            // English versions with time
+            'Early Morning(5 AM -7 AM)': '새벽',
+            'Morning(8 AM -12 PM)': '오전',
+            'Afternoon(13 PM -16 PM)': '오후',
+            'Night(17 PM -19 PM)': '야간',
+            // Korean versions with time
+            '새벽(5~7시)': '새벽',
+            '오전(8~12시)': '오전',
+            '오후(13~16시)': '오후',
+            '야간(17~19시)': '야간',
+            // Lowercase English versions
+            'early morning': '새벽',
+            'morning': '오전',
+            'afternoon': '오후',
+            'night': '야간',
+            // Clean versions (already translated)
+            '새벽': '새벽',
+            '오전': '오전',
+            '오후': '오후',
+            '야간': '야간'
+        };
+
+        const koreanDay = dayMap[day] || day;
+        const koreanTimeSlot = timeSlotMap[timeSlot] || timeSlot;
+
+        return `${koreanDay} ${koreanTimeSlot}`;
+    }
+
+
     selectHeatmapBox(box, event) {
         event.stopPropagation();
-
-        document.querySelectorAll('.heatmap-box.selected').forEach(el =>
-            el.classList.remove('selected')
-        );
+        document.querySelectorAll('.heatmap-box.selected').forEach(el => el.classList.remove('selected'));
         event.target.closest('.heatmap-box').classList.add('selected');
 
-        if (!this.state.heatmapData ||
-            !this.state.heatmapData.rows ||
-            !this.state.heatmapData.rows[box.timeIndex]) {
+        console.log('Heatmap Box Clicked:');
+        console.log('Selected Box:', box);
+
+        if (!this.state.heatmapData || !this.state.heatmapData.rows || !this.state.heatmapData.rows[box.timeIndex]) {
             console.error('Heatmap data structure is invalid');
             return;
         }
 
         const row = this.state.heatmapData.rows[box.timeIndex];
+        console.log('Row Data:', row);
+
         const slotKey = row.slot_key;
+        console.log('Slot Key from row:', slotKey);
 
         if (!slotKey) {
             console.error('Slot key is undefined for row:', row);
@@ -898,22 +1008,18 @@ class GolfzonDashboard extends Component {
         }
 
         const key = `${box.dayIndex}_${slotKey}`;
-        const hourlyData = this.state.hourlyBreakdownData?.[key] || {};
-
-        console.log('=== Heatmap Box Clicked ===');
-        console.log('Selected Box:', box);
-        console.log('Day Index:', box.dayIndex);
-        console.log('Time Index:', box.timeIndex);
-        console.log('Slot Key:', slotKey);
         console.log('Lookup Key:', key);
+
+        const hourlyData = this.state.hourlyBreakdownData?.[key];
         console.log('Hourly Data for this slot:', hourlyData);
 
-        const hourlyBreakdown = this.generateTop10HourlyBreakdown(hourlyData);
-        console.log('Generated Breakdown:', hourlyBreakdown);
+        const hourlyBreakdown = this.generateHourlyBreakdownBySlot(hourlyData, slotKey);
 
         const allValues = this.getAllHeatmapValues();
         const maxValue = Math.max(...allValues);
         const minValue = Math.min(...allValues.filter(v => v > 0));
+
+        const combinedTitle = this.generateDayTimeSlotTitle(box.day, box.timeSlot);
 
         this.state.selectedHeatmapBox = {
             ...box,
@@ -922,52 +1028,51 @@ class GolfzonDashboard extends Component {
             isLowest: box.value === minValue && box.value > 0,
             displayDay: this.formatDayDisplay(box.day),
             displayTime: this.formatTimeSlotDisplay(row.label),
+            combinedTitle: combinedTitle,  // ✅ ADD THIS LINE
             isVisible: true
         };
 
         console.log('Final Selected Heatmap Box State:', this.state.selectedHeatmapBox);
-        console.log('=========================');
     }
 
-    generateTop10HourlyBreakdown(hourlyData) {
-        const allHours = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+    generateHourlyBreakdownBySlot(hourlyData, slotKey) {
+        // ✅ FIXED: Normalize slot key first
+        const normalizedSlotKey = slotKey.toLowerCase().replace(/\s+/g, '_');
 
-        const hourDataArray = allHours.map(hour => ({
-            hour: hour,
-            count: hourlyData[hour] || 0
-        }));
+        // ✅ Define hour ranges for each time slot
+        const slotHourRanges = {
+            'early_morning': [5, 6, 7],
+            'morning': [8, 9, 10, 11, 12],
+            'afternoon': [13, 14, 15, 16],
+            'night': [17, 18, 19]
+        };
 
-        const hoursWithBookings = hourDataArray.filter(item => item.count > 0);
-        const hoursWithoutBookings = hourDataArray.filter(item => item.count === 0);
-
-        hoursWithBookings.sort((a, b) => b.count - a.count);
-
-        let top10Hours = [];
-        top10Hours = top10Hours.concat(hoursWithBookings.slice(0, 10));
-
-        if (top10Hours.length < 10) {
-            const remainingSlots = 10 - top10Hours.length;
-            top10Hours = top10Hours.concat(hoursWithoutBookings.slice(0, remainingSlots));
+        // ✅ Get hours for the selected slot with fallback
+        let hoursToDisplay = slotHourRanges[normalizedSlotKey];
+        if (!hoursToDisplay) {
+            hoursToDisplay = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
         }
 
-        top10Hours.sort((a, b) => a.hour - b.hour);
+        console.log(`Filtering hours for slot: ${normalizedSlotKey}`, hoursToDisplay);
 
-        const breakdown = top10Hours.map(item => {
-            const formattedHour = this.formatHourDisplay(item.hour);
+        // ✅ Generate breakdown only for relevant hours
+        const breakdown = hoursToDisplay.map(hour => {
+            const count = hourlyData?.[hour] || 0;
+            const formattedHour = this.formatHourDisplay(hour);
+
             let teamText;
-
-            if (item.count === 0) {
-                teamText = _t("0 teams");
-            } else if (item.count === 1) {
-                teamText = _t("1 team");
+            if (count === 0) {
+                teamText = _t('0 teams');
+            } else if (count === 1) {
+                teamText = _t('1 team');
             } else {
-                teamText = `${item.count} ${_t("teams")}`;
+                teamText = `${count} ${_t('teams')}`;
             }
 
             return {
                 hour: formattedHour,
                 teams: teamText,
-                count: item.count
+                count: count
             };
         });
 

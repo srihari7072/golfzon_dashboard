@@ -614,14 +614,38 @@ msgstr "오전(8~12시)"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Afternoon(1 PM -4 PM)"
+msgid "Afternoon(13 PM -16 PM)"
 msgstr "오후(13~16시)"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Night(5 PM -7 PM)"
+msgid "Night(17 PM -19 PM)"
 msgstr "야간(17~19시)"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Early Morning"
+msgstr "새벽"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Morning"
+msgstr "오전"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Afternoon"
+msgstr "오후"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Night"
+msgstr "야간"
 
 #. module: golfzon_dashboard
 #. odoo-javascript

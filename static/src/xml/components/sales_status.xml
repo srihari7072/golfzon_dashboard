@@ -73,7 +73,10 @@
                                 <div class="metric-card-meta">
                                     <span class="metric-card-caption"><t t-esc="_t('Compared to the same period last year')"/></span>
                                     <span t-att-class="'trend-indicator ' + (state.salesData.percentage_change >= 0 ? 'trend-up' : 'trend-down')">
-                                        <span class="trend-icon" t-esc="state.salesData.percentage_change >= 0 ? '▲' : '▼'"/>
+                                        <span class="trend-icon">
+                                            <img t-if="state.salesData.percentage_change >= 0" src="/golfzon_dashboard/static/src/img/trend-up.svg" alt="Increase" />
+                                            <img t-else="" src="/golfzon_dashboard/static/src/img/trend-down.svg" alt="Decrease" />
+                                        </span>
                                         <span>
                                             <t t-if="state.salesData.percentage_change >= 0">+</t>
                                             <t t-else="">-</t>
