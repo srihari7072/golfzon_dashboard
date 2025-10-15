@@ -967,18 +967,18 @@ $desktop: 1920px;
 
               .precipitation-chance-wrapper {
                 @include flex(row, center, center);
-                gap: 4px;
+                gap: 6px;
                 margin-bottom: 1px;
-                align-items: center; // ✅ CRITICAL FIX
+                align-items: center;
 
                 .water-drop-wrapper {
-                  width: 18px;
-                  height: 27px;
+                  width: 12px;
+                  height: 16px;
                   position: relative;
                   flex-shrink: 0;
-                  display: flex; // ✅ ADD THIS
-                  align-items: center; // ✅ ADD THIS
-                  justify-content: center; // ✅ ADD THIS
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
 
                   .drop-svg {
                     width: 100%;
@@ -986,25 +986,25 @@ $desktop: 1920px;
                     display: block;
 
                     .drop-outline {
-                      stroke: #d0d0d0;
-                      stroke-width: 1.5;
+                      stroke: #8b8b8b; // ✅ Match client design
+                      stroke-width: 1;
                       fill: none;
                     }
 
                     .water-fill {
                       fill: #8b8b8b;
-                      transition: y 0.5s ease;
+                      transition: y 0.3s ease;
                     }
                   }
                 }
 
                 .precipitation-text {
                   color: #8b8b8b;
-                  font-size: 14px;
+                  font-size: 13px; // ✅ Adjusted for better proportion
                   font-weight: 500;
                   white-space: nowrap;
-                  line-height: 1; // ✅ ADD THIS
-                  flex-shrink: 0; // ✅ ADD THIS
+                  line-height: 1;
+                  flex-shrink: 0;
                 }
               }
 
@@ -2445,7 +2445,6 @@ $desktop: 1920px;
                   font-size: 14px;
                   font-weight: 600;
                   color: #495057;
-                  margin: 0 0 12px 0;
                   font-family: "Pretendard", sans-serif;
 
                   @include laptop-sm {
@@ -2531,7 +2530,6 @@ $desktop: 1920px;
 
               // Sidebar Header Section (no duplicate day)
               .sidebar-header-section {
-                margin-bottom: 25px;
 
                 .sidebar-title {
                   font-size: 28px;
@@ -2574,7 +2572,7 @@ $desktop: 1920px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 8px;
+                // gap: 8px;
                 flex-wrap: wrap;
               }
 
@@ -2610,7 +2608,7 @@ $desktop: 1920px;
                 font-size: 14px;
                 font-weight: 600;
                 color: #4a90e2;
-                margin-bottom: 4px;
+                margin-bottom: 10px;
                 white-space: nowrap;
 
                 @include laptop-sm {
@@ -2626,6 +2624,7 @@ $desktop: 1920px;
                 font-weight: 600;
                 color: #333333;
                 white-space: nowrap;
+                margin-top: 10px;
 
                 @include laptop-sm {
                   font-size: 10px;

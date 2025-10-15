@@ -2401,3 +2401,88 @@ class SalesStatusController(http.Controller):
             'others': {'count': 0, 'percentage': 0},
             'total': 0
         }
+
+
+    # =============================================
+    # WEATHER API PROXY (CORS-FREE SOLUTION)
+    # =============================================
+    @http.route('/golfzon/weather/current', type='json', auth='user', methods=['POST'], csrf=False)
+    def get_weather_current(self, lat=None, lon=None):
+        """
+        Proxy endpoint for current weather data.
+        Bypasses CORS by making server-side request to OpenWeatherMap.
+        """
+        import requests
+        
+        try:
+            API_KEY = "cd5743655e1a5d90679cffd3f85fa4fd"
+            
+            # Use provided coordinates or default to New Delhi
+            latitude = lat or "28.6139"
+            longitude = lon or "77.2090"
+            
+            # Make request from server (NO CORS issues!)
+            weather_url = "https://api.openweathermap.org/data/2.5/weather"
+            params = {
+                'lat': latitude,
+                'lon': longitude,
+                'appid': API_KEY,
+                'units': 'metric'
+            }
+            
+            response = requests.get(weather_url, params=params, timeout=10)
+            response.raise_for_status()
+            
+            _logger.info(f"✅ Weather API success for {latitude},{longitude}")
+            
+            return {
+                'success': True,
+                'data': response.json()
+            }
+            
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"❌ Weather API error: {str(e)}")
+            return {
+                'success': False,
+                'error': str(e),
+                'message': 'Failed to fetch weather data'
+            }
+
+    @http.route('/golfzon/weather/forecast', type='json', auth='user', methods=['POST'], csrf=False)
+    def get_weather_forecast(self, lat=None, lon=None):
+        """
+        Proxy endpoint for weather forecast data.
+        Bypasses CORS by making server-side request.
+        """
+        import requests
+        
+        try:
+            API_KEY = "cd5743655e1a5d90679cffd3f85fa4fd"
+            latitude = lat or "28.6139"
+            longitude = lon or "77.2090"
+            
+            forecast_url = "https://api.openweathermap.org/data/2.5/forecast"
+            params = {
+                'lat': latitude,
+                'lon': longitude,
+                'appid': API_KEY,
+                'units': 'metric'
+            }
+            
+            response = requests.get(forecast_url, params=params, timeout=10)
+            response.raise_for_status()
+            
+            _logger.info(f"✅ Forecast API success for {latitude},{longitude}")
+            
+            return {
+                'success': True,
+                'data': response.json()
+            }
+            
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"❌ Forecast API error: {str(e)}")
+            return {
+                'success': False,
+                'error': str(e),
+                'message': 'Failed to fetch forecast data'
+            }

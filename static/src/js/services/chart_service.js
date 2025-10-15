@@ -152,40 +152,62 @@ export class ChartService {
   async createSalesChart(canvasEl, period, salesData) {
     if (!this._validateCanvas(canvasEl, "Sales Trends")) return;
     console.log("Creating sales chart with data:", salesData);
-
-    // Prepare labels and data from database
+  
     const labels = [];
     const currentYearValues = [];
     const previousYearValues = [];
-
-    // ✅ FIX: Create separate date indices for current and previous year
     const currentYearDates = [];
     const previousYearDates = [];
-
+  
     // Process current year data
     salesData.current_year.forEach((day, index) => {
       const date = new Date(day.date);
       let label = `${date.getMonth() + 1}.${date.getDate()}`;
       labels.push(label);
       currentYearValues.push(day.amount / 10000);
-      currentYearDates.push(date); // ✅ Store current year dates
+      currentYearDates.push(date);
     });
-
+  
     // Process previous year data
     salesData.previous_year.forEach(day => {
       previousYearValues.push(day.amount / 10000);
-      previousYearDates.push(new Date(day.date)); // ✅ Store PREVIOUS year dates
+      previousYearDates.push(new Date(day.date));
     });
-
+  
     this.destroyChart("sales");
-
+  
     const COLOR_PRIMARY = "#046DEC";
     const COLOR_SECONDARY = "#86E5F5";
     const GRID_COLOR = "#EEF3FA";
     const AXIS_COLOR = "#6f6f6f";
-
+  
     const chartService = this;
-
+  
+    // ✅ FIXED: Custom plugin to draw white circle INSIDE bar at the top
+    const whiteCirclePlugin = {
+      id: 'whiteCircleHover',
+      afterDatasetsDraw: (chart) => {
+        if (chart.tooltip?._active && chart.tooltip._active.length > 0) {
+          const activePoint = chart.tooltip._active[0];
+          const ctx = chart.ctx;
+          const x = activePoint.element.x;
+          // ✅ KEY FIX: Add offset to position circle INSIDE the bar
+          const y = activePoint.element.y + 1.5; // Move 8px down from top edge
+  
+          // Draw small white circle INSIDE the bar
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, 2 * Math.PI);
+          ctx.fillStyle = 'white';
+          ctx.fill();
+          ctx.strokeStyle = activePoint.element.options.backgroundColor;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    };
+  
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "bar",
@@ -227,8 +249,12 @@ export class ChartService {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { left: 8, right: 8, top: 8, bottom: 8 } },
-          interaction: { mode: "nearest", intersect: true },
+          layout: { padding: { left: 8, right: 8, top: 60, bottom: 8 } },
+          interaction: { 
+            mode: "nearest", 
+            intersect: true,
+            axis: 'xy'
+          },
           scales: {
             x: {
               grid: { display: false },
@@ -300,20 +326,22 @@ export class ChartService {
               padding: 12,
               cornerRadius: 8,
               caretSize: 6,
+              yAlign: 'bottom',
+              xAlign: 'center',
               titleFont: { size: 14, weight: "600" },
               bodyFont: { size: 13 },
+              titleAlign: 'center',
+              bodyAlign: 'center',
               callbacks: {
-                // ✅ FIX: Use correct date array based on dataset
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
                   const datasetIndex = items[0].datasetIndex;
-
-                  // Use current year dates or previous year dates
+  
                   const date = datasetIndex === 0
                     ? currentYearDates[idx]
                     : previousYearDates[idx];
-
+  
                   return chartService._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
@@ -321,12 +349,12 @@ export class ChartService {
                   const chartValue = ctx.raw ?? 0;
                   const actualAmount = chartValue * 10000;
                   const formattedValue = `${actualAmount.toLocaleString()} won`;
-
+  
                   if (isCurrentYear) {
                     return `${_t("Sales")}: ${formattedValue}`;
                   } else {
                     const idx = ctx.dataIndex;
-                    const date = previousYearDates[idx]; // ✅ Use previous year date
+                    const date = previousYearDates[idx];
                     const weather = chartService._getWeatherData(date);
                     return [
                       `${_t("Sales")}: ${formattedValue}`,
@@ -341,19 +369,20 @@ export class ChartService {
           },
           animation: { duration: 300, easing: "easeOutQuart" },
         },
+        plugins: [whiteCirclePlugin],
       });
-
+  
       this.chartInstances.set("sales", chart);
       console.log("Sales chart created successfully");
       return chart;
     } catch (e) {
       console.error("Error creating Sales Trends chart:", e);
     }
-  }
+  }     
 
   createVisitorChart(canvasEl, period, visitorData) {
     if (!this._validateCanvas(canvasEl, "Visitor Chart")) return;
-
+  
     if (!visitorData || !visitorData.current_year) {
       console.warn("No visitor data provided, using default empty data");
       visitorData = {
@@ -362,43 +391,41 @@ export class ChartService {
         date_range: { start: "", end: "" }
       };
     }
-
+  
     console.log("Creating visitor chart with data:", visitorData);
-
+  
     const labels = [];
     const currentYearValues = [];
     const previousYearValues = [];
-
-    // ✅ FIX: Create separate date indices for current and previous year
     const currentYearDates = [];
     const previousYearDates = [];
-
+  
     if (visitorData.current_year && visitorData.current_year.length > 0) {
       visitorData.current_year.forEach((day, index) => {
         const date = new Date(day.date);
         let label = `${date.getMonth() + 1}.${date.getDate()}`;
         labels.push(label);
         currentYearValues.push(day.count || 0);
-        currentYearDates.push(date); // ✅ Store current year dates
+        currentYearDates.push(date);
       });
     }
-
+  
     if (visitorData.previous_year && visitorData.previous_year.length > 0) {
       visitorData.previous_year.forEach(day => {
         previousYearValues.push(day.count || 0);
-        previousYearDates.push(new Date(day.date)); // ✅ Store PREVIOUS year dates
+        previousYearDates.push(new Date(day.date));
       });
     }
-
+  
     this.destroyChart("visitor");
-
+  
     const COLOR_PRIMARY = "#046DEC";
     const COLOR_SECONDARY = "#86E5F5";
     const GRID_COLOR = "#EEF3FA";
     const AXIS_COLOR = "#6f6f6f";
-
+  
     const chartService = this;
-
+  
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
@@ -413,10 +440,11 @@ export class ChartService {
               borderWidth: 2,
               fill: true,
               tension: 0.4,
-              pointRadius: 2,
-              pointHoverRadius: 2,
-              usePointStyle: true,
-              pointStyle: "circle",
+              pointRadius: 0,
+              pointHoverRadius: 6, // ✅ Outer circle size
+              pointHoverBackgroundColor: "white", // ✅ WHITE center
+              pointHoverBorderColor: COLOR_PRIMARY, // ✅ BLUE border
+              pointHoverBorderWidth: 3, // ✅ Border thickness
             },
             {
               label: _t("Number of Visitors for the Same Period Last Year"),
@@ -425,10 +453,11 @@ export class ChartService {
               backgroundColor: "transparent",
               borderWidth: 2,
               tension: 0.4,
-              pointRadius: 2,
-              pointHoverRadius: 2,
-              usePointStyle: true,
-              pointStyle: "circle",
+              pointRadius: 0,
+              pointHoverRadius: 6, // ✅ Outer circle size
+              pointHoverBackgroundColor: "white", // ✅ WHITE center
+              pointHoverBorderColor: COLOR_SECONDARY, // ✅ LIGHT BLUE border
+              pointHoverBorderWidth: 3, // ✅ Border thickness
             },
           ],
         },
@@ -469,7 +498,7 @@ export class ChartService {
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                pointStyle: "circle", // ✅ CHANGED from "rectRounded"
+                pointStyle: "circle",
                 boxWidth: 6,
                 boxHeight: 6,
                 padding: 16,
@@ -487,7 +516,7 @@ export class ChartService {
                     lineJoin: 'miter',
                     lineWidth: 0,
                     strokeStyle: dataset.borderColor,
-                    pointStyle: 'circle', // ✅ CHANGED from "rectRounded"
+                    pointStyle: 'circle',
                     datasetIndex: i
                   }));
                 }
@@ -505,28 +534,26 @@ export class ChartService {
               titleFont: { size: 14, weight: "600" },
               bodyFont: { size: 13 },
               callbacks: {
-                // ✅ FIX: Use correct date array based on dataset
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
                   const datasetIndex = items[0].datasetIndex;
-
-                  // Use current year dates or previous year dates
+  
                   const date = datasetIndex === 0
                     ? currentYearDates[idx]
                     : previousYearDates[idx];
-
+  
                   return chartService._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
                   const isCurrentYear = ctx.datasetIndex === 0;
-
+  
                   if (isCurrentYear) {
                     return `${_t("Visitors")}: ${value.toLocaleString()}`;
                   } else {
                     const idx = ctx.dataIndex;
-                    const date = previousYearDates[idx]; // ✅ Use previous year date
+                    const date = previousYearDates[idx];
                     const weather = chartService._getWeatherData(date);
                     return [
                       `${_t("Visitors")}: ${value.toLocaleString()}`,
@@ -541,18 +568,18 @@ export class ChartService {
           animation: { duration: 300, easing: "easeOutQuart" },
         },
       });
-
+  
       this.chartInstances.set("visitor", chart);
       console.log("Visitor chart created successfully");
       return chart;
     } catch (e) {
       console.error("❌ Error creating visitor chart:", e);
     }
-  }
+  }  
 
   async createReservationChart(canvasEl, period, reservationData) {
     if (!this._validateCanvas(canvasEl, "Reservation Chart")) return;
-
+  
     if (!reservationData || !reservationData.current_year) {
       console.warn("No reservation data provided, using default empty data");
       reservationData = {
@@ -561,43 +588,41 @@ export class ChartService {
         date_range: { start: "", end: "" }
       };
     }
-
+  
     console.log("Creating reservation chart with data:", reservationData);
-
+  
     const labels = [];
     const currentYearValues = [];
     const previousYearValues = [];
-
-    // ✅ FIX: Create separate date indices for current and previous year
     const currentYearDates = [];
     const previousYearDates = [];
-
+  
     if (reservationData.current_year && reservationData.current_year.length > 0) {
       reservationData.current_year.forEach((day, index) => {
         const date = new Date(day.date);
         let label = `${date.getMonth() + 1}.${date.getDate()}`;
         labels.push(label);
         currentYearValues.push(day.count || 0);
-        currentYearDates.push(date); // ✅ Store current year dates
+        currentYearDates.push(date);
       });
     }
-
+  
     if (reservationData.previous_year && reservationData.previous_year.length > 0) {
       reservationData.previous_year.forEach(day => {
         previousYearValues.push(day.count || 0);
-        previousYearDates.push(new Date(day.date)); // ✅ Store PREVIOUS year dates
+        previousYearDates.push(new Date(day.date));
       });
     }
-
+  
     this.destroyChart("reservation");
-
+  
     const COLOR_PRIMARY = "#046DEC";
     const COLOR_SECONDARY = "#86E5F5";
     const GRID_COLOR = "#EEF3FA";
     const AXIS_COLOR = "#6f6f6f";
-
+  
     const chartService = this;
-
+  
     try {
       const chart = new Chart(canvasEl.getContext("2d"), {
         type: "line",
@@ -612,10 +637,11 @@ export class ChartService {
               borderWidth: 2,
               fill: true,
               tension: 0.4,
-              pointRadius: 2,
-              pointHoverRadius: 2,
-              usePointStyle: true,
-              pointStyle: "circle",
+              pointRadius: 0,
+              pointHoverRadius: 6, // ✅ Outer circle size
+              pointHoverBackgroundColor: "white", // ✅ WHITE center
+              pointHoverBorderColor: COLOR_PRIMARY, // ✅ BLUE border
+              pointHoverBorderWidth: 3, // ✅ Border thickness
             },
             {
               label: _t("Reservation Countfor the Same Period Last Year"),
@@ -624,10 +650,11 @@ export class ChartService {
               backgroundColor: "transparent",
               borderWidth: 2,
               tension: 0.4,
-              pointRadius: 2,
-              pointHoverRadius: 2,
-              usePointStyle: true,
-              pointStyle: "circle",
+              pointRadius: 0,
+              pointHoverRadius: 6, // ✅ Outer circle size
+              pointHoverBackgroundColor: "white", // ✅ WHITE center
+              pointHoverBorderColor: COLOR_SECONDARY, // ✅ LIGHT BLUE border
+              pointHoverBorderWidth: 3, // ✅ Border thickness
             },
           ],
         },
@@ -668,7 +695,7 @@ export class ChartService {
               position: "bottom",
               labels: {
                 usePointStyle: true,
-                pointStyle: "circle", // ✅ CHANGED from "rectRounded"
+                pointStyle: "circle",
                 boxWidth: 6,
                 boxHeight: 6,
                 padding: 16,
@@ -686,7 +713,7 @@ export class ChartService {
                     lineJoin: 'miter',
                     lineWidth: 0,
                     strokeStyle: dataset.borderColor,
-                    pointStyle: 'circle', // ✅ CHANGED from "rectRounded"
+                    pointStyle: 'circle',
                     datasetIndex: i
                   }));
                 }
@@ -704,28 +731,26 @@ export class ChartService {
               titleFont: { size: 14, weight: "600" },
               bodyFont: { size: 13 },
               callbacks: {
-                // ✅ FIX: Use correct date array based on dataset
                 title: (items) => {
                   if (!items || !items[0]) return "";
                   const idx = items[0].dataIndex;
                   const datasetIndex = items[0].datasetIndex;
-
-                  // Use current year dates or previous year dates
+  
                   const date = datasetIndex === 0
                     ? currentYearDates[idx]
                     : previousYearDates[idx];
-
+  
                   return chartService._formatFullDate(date) || labels[idx] || "";
                 },
                 label: (ctx) => {
                   const value = ctx.raw ?? 0;
                   const isCurrentYear = ctx.datasetIndex === 0;
-
+  
                   if (isCurrentYear) {
                     return `${_t("Reservations")}: ${value}`;
                   } else {
                     const idx = ctx.dataIndex;
-                    const date = previousYearDates[idx]; // ✅ Use previous year date
+                    const date = previousYearDates[idx];
                     const weather = chartService._getWeatherData(date);
                     return [
                       `${_t("Reservations")}: ${value}`,
@@ -740,14 +765,14 @@ export class ChartService {
           animation: { duration: 300, easing: "easeOutQuart" },
         },
       });
-
+  
       this.chartInstances.set("reservation", chart);
       console.log("✅ Reservation chart created successfully");
       return chart;
     } catch (e) {
       console.error("❌ Error creating reservation chart:", e);
     }
-  }
+  }  
 
   createAgeChart(canvasEl, ageData) {
     if (!this._validateCanvas(canvasEl, "Age Chart")) return;

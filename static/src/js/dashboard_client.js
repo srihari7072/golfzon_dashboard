@@ -1066,7 +1066,7 @@ class GolfzonDashboard extends Component {
             } else if (count === 1) {
                 teamText = _t('1 team');
             } else {
-                teamText = `${count} ${_t('teams')}`;
+                teamText = `${count}${_t('teams')}`;
             }
 
             return {
