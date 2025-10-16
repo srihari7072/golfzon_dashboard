@@ -26,7 +26,7 @@
         <div class="info-section date-section">
             <div class="info-content">
                 <div class="info-label">
-                    <t t-esc="_t('Today:')"/>
+                    <span>Today:</span>
                 </div>
                 <div class="info-label">
                     <span t-if="state.currentDate" t-esc="state.currentDate"/>
@@ -41,7 +41,7 @@
             </div>
             <div class="info-content">
                 <div class="info-label">
-                    <t t-esc="_t('WEATHER:')"/>
+                    <t t-esc="_t('WEATHER')"/>
                 </div>
                 <div class="d-flex custom-gap">
                     <div class="info-value">
@@ -73,7 +73,7 @@
             </div>
             <div class="info-content">
                 <div class="info-label">
-                    <t t-esc="_t('TOTAL RESERVATIONS:')"/>
+                    <t t-esc="_t('TOTAL RESERVATIONS')"/>
                 </div>
                 <div class="info-numbers">
                     <t t-esc="state.reservations.current"/>
@@ -90,7 +90,7 @@
             </div>
             <div class="info-content">
                 <div class="info-label">
-                    <t t-esc="_t('FULL TEE TIME:')"/>
+                    <t t-esc="_t('FULL TEE TIME')"/>
                 </div>
                 <div class="d-flex custom-gap">
                     <div class="info-value">

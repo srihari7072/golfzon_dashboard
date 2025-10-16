@@ -398,8 +398,8 @@ msgstr "CRM 캠페인"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
-msgid "WEATHER:"
-msgstr "날씨:"
+msgid "WEATHER"
+msgstr "날씨"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -410,14 +410,14 @@ msgstr "날씨"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
-msgid "TOTAL RESERVATIONS:"
-msgstr "총 예약:"
+msgid "TOTAL RESERVATIONS"
+msgstr "총 예약"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/reservation_forcast.xml:0
-msgid "FULL TEE TIME:"
-msgstr "풀 티타임:"
+msgid "FULL TEE TIME"
+msgstr "풀 티타임"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -441,19 +441,19 @@ msgstr "강수량"
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Part1"
-msgstr "파트1"
+msgstr "1부"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Part2"
-msgstr "파트2"
+msgstr "2부"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Part3"
-msgstr "파트3"
+msgstr "3부"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -543,37 +543,37 @@ msgstr "총 가동률"
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Part 1"
-msgstr "파트 1"
+msgstr "1부"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Part 2"
-msgstr "파트 2"
+msgstr "2부"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Part 3"
-msgstr "파트 3"
+msgstr "3부"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "Part 1 "
-msgstr "파트 1"
+msgstr "1부 "
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "Part 2 "
-msgstr "파트 2"
+msgstr "2부 "
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
 msgid "Part 3 "
-msgstr "파트 3"
+msgstr "3부 "
 
 #. module: golfzon_dashboard
 #. odoo-javascript

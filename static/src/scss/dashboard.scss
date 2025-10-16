@@ -719,6 +719,7 @@ $desktop: 1920px;
           letter-spacing: 0;
           text-align: center;
           color: black;
+          line-height: 1.2;
         }
 
         @include laptop-sm {
@@ -1473,9 +1474,9 @@ $desktop: 1920px;
       max-width: calc(33.333% - 30px);
       box-sizing: border-box;
       background: $white;
-      border-radius: 6px;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
       transition: all 0.3s ease;
       position: relative;
       // height: 266px;
@@ -1606,12 +1607,12 @@ $desktop: 1920px;
 
                 &.trend-up {
                   background: rgba(76, 175, 80, 0.1);
-                  color: #388e3c;
+                  color: #00c266;
                 }
 
                 &.trend-down {
                   background: rgba(244, 67, 54, 0.1);
-                  color: #d32f2f;
+                  color: #f23a2f;
                 }
 
                 // ✅ UPDATED: Icon styling with proper sizing
@@ -1778,8 +1779,8 @@ $desktop: 1920px;
 
       .line-chart-card {
         background: $white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
         padding: 30px;
         height: 100%;
         @include laptop-sm {
@@ -1950,8 +1951,8 @@ $desktop: 1920px;
 
           .stat-card {
             background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border-radius: 6px;
+            border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
+            border-radius: 8px;
             padding: 16px;
             @include flex(row, space-between, center);
 
@@ -2094,6 +2095,7 @@ $desktop: 1920px;
                 gap: 4px;
                 line-height: 1;
                 white-space: nowrap;
+                height: 26px;
 
                 &.trend-up {
                   color: $success-color;
@@ -2196,9 +2198,9 @@ $desktop: 1920px;
           justify-content: flex-end;
           gap: 24px;
           background: $white;
-          border-radius: 12px;
+          border-radius: 10px;
           padding: 30px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
           min-height: 400px;
 
           @include laptop-sm {
@@ -2339,7 +2341,7 @@ $desktop: 1920px;
                     // Hover Effect
                     &:hover {
                       transform: scale(1.05);
-                      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                      box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.4);
                       z-index: 10;
                     }
 
@@ -2530,7 +2532,6 @@ $desktop: 1920px;
 
               // Sidebar Header Section (no duplicate day)
               .sidebar-header-section {
-
                 .sidebar-title {
                   font-size: 28px;
                   font-weight: 700;
@@ -2645,8 +2646,8 @@ $desktop: 1920px;
       // Pie Charts Section
       .pie-charts-card {
         background: $white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
         padding: 20px;
         min-height: 396px;
 
@@ -3039,7 +3040,7 @@ $desktop: 1920px;
         font-size: 18px;
         font-weight: 600;
         color: #060606;
-        gap: 15px;
+        gap: 4px;
         min-width: 160px;
 
         @include laptop-sm {
@@ -3160,6 +3161,7 @@ $desktop: 1920px;
         gap: 4px;
         line-height: 1;
         white-space: nowrap;
+        height: 26px;
 
         &.trend-up {
           color: $success-color;
@@ -3391,8 +3393,8 @@ $desktop: 1920px;
       padding: 30px 30px 20px;
       width: 100%;
       height: 350px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
 
       @include laptop-sm {
         padding: 24px 24px 20px;
@@ -3426,9 +3428,8 @@ $desktop: 1920px;
 
   .sales-trends-panel {
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e9eef5;
+    border-radius: 10px;
+    box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
     padding: 30px 30px 50px;
 
     @include laptop-sm {
@@ -3588,8 +3589,8 @@ $desktop: 1920px;
 
   .metric-card {
     background: #fff;
-    border: 1px solid #e9eef5;
-    border-radius: 12px;
+    border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
+    border-radius: 8px;
     padding: 20px 24px;
     flex: 1;
     min-width: 300px;
@@ -3628,6 +3629,7 @@ $desktop: 1920px;
       position: relative;
       display: inline-flex;
       align-items: center;
+      margin-right: 60px;
 
       .help-icon {
         display: inline-flex;
@@ -3694,7 +3696,7 @@ $desktop: 1920px;
 
     &-label {
       font-size: 18px;
-      color: #555555;
+      color: #060606;
       font-weight: 600;
       margin: 0;
       padding: 0;
@@ -3769,13 +3771,14 @@ $desktop: 1920px;
       gap: 4px;
       line-height: 1;
       white-space: nowrap;
+      height: 26px;
 
       &.trend-up {
-        color: #4caf50;
+        color: #00c266;
         background: #e8f5e9;
       }
       &.trend-down {
-        color: #d32f2f;
+        color: #f23a2f;
         background: #ffebee;
       }
 
@@ -3907,9 +3910,9 @@ $desktop: 1920px;
 }
 
 .card-gender {
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
   padding-left: 30px;
   padding-right: 30px;
   padding-top: 30px;
