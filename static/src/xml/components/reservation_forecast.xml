@@ -109,16 +109,16 @@
                         <div class="stat-breakdown horizontal-parts">
                             <span>
                                 <t t-esc="_t('Part 1 ')"/>
-                                <t t-esc="state.reservationData?.operation_rate?.part1_percentage?.toFixed(1) || '0.0'"/>%
-                            </span>
+                                    <t t-esc="state.reservationData?.operation_rate?.part1_percentage?.toFixed(1) || '0.0'"/>%
+                                </span>
                             <span>
                                 <t t-esc="_t('Part 2 ')"/>
-                                <t t-esc="state.reservationData?.operation_rate?.part2_percentage?.toFixed(1) || '0.0'"/>%
-                            </span>
+                                    <t t-esc="state.reservationData?.operation_rate?.part2_percentage?.toFixed(1) || '0.0'"/>%
+                                </span>
                             <span>
                                 <t t-esc="_t('Part 3 ')"/>
-                                <t t-esc="state.reservationData?.operation_rate?.part3_percentage?.toFixed(1) || '0.0'"/>%
-                            </span>
+                                    <t t-esc="state.reservationData?.operation_rate?.part3_percentage?.toFixed(1) || '0.0'"/>%
+                                </span>
                         </div>
                     </div>
                 </div>
@@ -210,10 +210,13 @@
                         <div class="sidebar-default-content" t-if="!state.selectedHeatmapBox.isVisible">
                             <div class="default-message">
                                 <div class="default-title">
-                                    <t t-esc="_t('When selecting the cell on the right,')"/>
+                                    <t t-esc="_t('When selecting the cell on the right')"/>
                                 </div>
                                 <div class="default-title">
-                                    <t t-esc="_t('You can check the number of reserved teams by time slot for that cell.')"/>
+                                    <t t-esc="_t('The number of reserved teams by time slot for that cell')"/>
+                                </div>
+                                <div class="default-title">
+                                    <t t-esc="_t('can be checked.')"/>
                                 </div>
                             </div>
                         </div>
