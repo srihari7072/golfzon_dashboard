@@ -668,14 +668,20 @@ msgstr "야간"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "When selecting the cell on the right,"
+msgid "When selecting the cell on the right"
 msgstr "우측 셀 선택 시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "You can check the number of reserved teams by time slot for that cell."
-msgstr "해당셀의 시간대별 예약 팀수를확인할 수 있습니다."
+msgid "The number of reserved teams by time slot for that cell"
+msgstr "해당셀의 시간대별 예약 팀수를"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
+msgid "can be checked."
+msgstr "확인할 수 있습니다."
 
 #. module: golfzon_dashboard
 #. odoo-javascript
