@@ -1854,14 +1854,14 @@ $desktop: 1920px;
                   left: 50%;
                   transform: translateX(-50%);
                   background: #ffffff;
-                  color: #1976d2;
-                  border: 2px solid #b3d3fa;
+                  color: #2788fc;
+                  border: 1px solid #8cbffd;
                   padding: 8px 14px;
                   border-radius: 8px;
-                  font-size: 15px;
-                  font-weight: 400;
+                  font-size: 14px;
+                  font-weight: 500;
                   white-space: nowrap;
-                  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+                  box-shadow: 0xp 0px 8px 0px #0000001A;
                   z-index: 10;
 
                   &::after {
@@ -2015,14 +2015,14 @@ $desktop: 1920px;
                     left: 50%;
                     transform: translateX(-50%);
                     background: #fff;
-                    color: #1976d2;
-                    border: 2px solid #b3d3fa;
+                    color: #2788fc;
+                    border: 1px solid #8cbffd;
                     border-radius: 8px;
                     padding: 8px 14px;
-                    font-size: 15px;
-                    font-weight: 400;
+                    font-size: 14px;
+                    font-weight: 500;
                     white-space: nowrap;
-                    box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+                    box-shadow: 0 0px 8px 0px #0000001A;
                     z-index: 10;
 
                     @include laptop-sm {
@@ -3083,14 +3083,14 @@ $desktop: 1920px;
             left: 50%;
             transform: translateX(-50%);
             background: #fff;
-            color: #1976d2;
-            border: 2px solid #b3d3fa;
+            color: #2788fc;
+            border: 1px solid #8cbffd;
             border-radius: 8px;
             padding: 8px 14px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 400;
             white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+            box-shadow: 0 0px 8px 0px #0000001A;
             z-index: 10;
 
             &::after {
@@ -3263,14 +3263,14 @@ $desktop: 1920px;
             left: 50%;
             transform: translateX(-50%);
             background: #fff;
-            color: #1976d2;
-            border: 2px solid #b3d3fa;
+            color: #2788fc;
+            border: 1px solid #8cbffd;
             border-radius: 8px;
             padding: 8px 14px;
-            font-size: 15px;
-            font-weight: 400;
+            font-size: 14px;
+            font-weight: 500;
             white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+            box-shadow: 0 0px 8px 0px #0000001A;
             z-index: 1000;
 
             &::after {
@@ -3495,13 +3495,14 @@ $desktop: 1920px;
           left: 50%;
           transform: translateX(-50%);
           background: #fff;
-          color: #1976d2;
-          border: 2px solid #b3d3fa;
+          color: #2788fc;
+          border: 1px solid #8cbffd;
           border-radius: 8px;
           padding: 8px 14px;
           font-size: 14px;
+          font-weight: 500;
           white-space: nowrap;
-          box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+          box-shadow: 0 0px 8px 0px #0000001A;
           &::after {
             content: "";
             position: absolute;
@@ -3659,14 +3660,14 @@ $desktop: 1920px;
         left: 50%;
         transform: translateX(-50%);
         background: #ffffff;
-        color: #1976d2;
-        border: 2px solid #b3d3fa;
+        color: #2788fc;
+        border: 1px solid #8cbffd;
         padding: 8px 14px;
         border-radius: 8px;
-        font-size: 15px;
-        font-weight: 400;
+        font-size: 14px;
+        font-weight: 500;
         white-space: nowrap;
-        box-shadow: 0 2px 8px rgba(30, 136, 229, 0.08);
+        box-shadow: 0 0px 8px 0px #0000001A;
         z-index: 10;
 
         &::after {

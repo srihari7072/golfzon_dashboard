@@ -125,7 +125,7 @@ export class ChartService {
 
   // Helper function to format sales amount
   _formatSalesAmount(value) {
-    return `${(value * 10000).toLocaleString()} won`;
+    return `${(value * 10000).toLocaleString()}`;
   }
 
   getDateLabels(period) {
@@ -348,7 +348,7 @@ export class ChartService {
                   const isCurrentYear = ctx.datasetIndex === 0;
                   const chartValue = ctx.raw ?? 0;
                   const actualAmount = chartValue * 10000;
-                  const formattedValue = `${actualAmount.toLocaleString()} won`;
+                  const formattedValue = `${actualAmount.toLocaleString()}`;
   
                   if (isCurrentYear) {
                     return `${_t("Sales")}: ${formattedValue}`;

@@ -26,7 +26,7 @@
         <div class="info-section date-section">
             <div class="info-content">
                 <div class="info-label">
-                    <span>Today:</span>
+                    <span t-out="'Today:'"></span>
                 </div>
                 <div class="info-label">
                     <span t-if="state.currentDate" t-esc="state.currentDate"/>

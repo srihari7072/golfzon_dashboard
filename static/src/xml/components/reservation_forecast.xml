@@ -29,7 +29,8 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-esc="_t('30 days after the inquiry date')"/>
+                                    <t t-if="state.reservationPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')" />
+                                    <t t-else="" t-esc="_t('30 Days Before the Reference Date')" />
                                 </div>
                             </div>
                         </div>
@@ -57,7 +58,7 @@
                                         <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                     </span>
                                     <div class="tooltip-content">
-                                        <t t-esc="_t('30 days after the inquiry date')"/>
+                                        <t t-esc="_t('Total Number of Reservations Based on Visit date')"/>
                                     </div>
                                 </span>
                             </span>
@@ -95,7 +96,7 @@
                                         <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                     </span>
                                     <div class="tooltip-content">
-                                        <t t-esc="_t('30 days after the inquiry date')"/>
+                                        <t t-esc="_t('Ratio of Reserved Tee Times to Total Operating Tee Times')"/>
                                     </div>
                                 </div>
                             </span>

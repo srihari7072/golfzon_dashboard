@@ -26,7 +26,8 @@
                                 <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                             </span>
                             <div class="tooltip-content">
-                                <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                <t t-if="state.salesPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')" />
+                                <t t-else="" t-esc="_t('30 Days Before the Reference Date')" />
                             </div>
                         </span>
                     </div>
@@ -60,7 +61,7 @@
                                             <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                         </span>
                                         <div class="tooltip-content">
-                                            <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                            <t t-esc="_t('Total Sales Amount During the Reference Period')"/>
                                         </div>
                                     </span>
                                     <div class="metric-card-value">
@@ -100,7 +101,7 @@
                                             <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                         </span>
                                         <div class="tooltip-content">
-                                            <t t-esc="_t('30 days prior to the inquiry date')"/>
+                                            <t t-esc="_t('Average Sales per Customer Based on Total Sales')"/>
                                         </div>
                                     </span>
                                     <div class="metric-card-value">

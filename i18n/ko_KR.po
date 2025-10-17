@@ -506,8 +506,50 @@ msgstr "기간별 예약 추세"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "30 days after the inquiry date"
-msgstr "조회일 기준 30일"
+msgid "7 Days Before the Reference Date"
+msgstr "조회일 이후 7일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "30 Days Before the Reference Date"
+msgstr "조회일 이후 30일"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total Number of Reservations Based on Visit date"
+msgstr "내장일 기준 예약된 전체 예약 건수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Ratio of Reserved Tee Times to Total Operating Tee Times"
+msgstr "예약된 티타임 수 대비 전체 운영 티타임 수 비율"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total Number of Visitors During the Reference Period"
+msgstr "조회 기간 총 내장객수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total Number of Actual Admissions (Visits)"
+msgstr "실제 입장(내장) 처리된 총 인원수"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Total Sales Amount During the Reference Period"
+msgstr "조회 기간 총 매출금액"
+
+#. module: golfzon_dashboard
+#. odoo-javascript
+#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
+msgid "Average Sales per Customer Based on Total Sales"
+msgstr "총 매출 기준 평균 객단가"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -824,356 +866,8 @@ msgstr "1팀"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "2 teams"
-msgstr "2팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "3 teams"
-msgstr "3팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "4 teams"
-msgstr "4팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "5 teams"
-msgstr "5팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "6 teams"
-msgstr "6팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "7 teams"
-msgstr "7팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "8 teams"
-msgstr "8팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "9 teams"
-msgstr "9팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "10 teams"
-msgstr "10팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "11 teams"
-msgstr "11팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "12 teams"
-msgstr "12팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "13 teams"
-msgstr "13팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "14 teams"
-msgstr "14팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "15 teams"
-msgstr "15팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "16 teams"
-msgstr "16팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "17 teams"
-msgstr "17팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "18 teams"
-msgstr "18팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "19 teams"
-msgstr "19팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "20 teams"
-msgstr "20팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "21 teams"
-msgstr "21팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "22 teams"
-msgstr "22팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "23 teams"
-msgstr "23팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "24 teams"
-msgstr "24팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "25 teams"
-msgstr "25팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "26 teams"
-msgstr "26팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "27 teams"
-msgstr "27팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "28 teams"
-msgstr "28팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "29 teams"
-msgstr "29팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "30 teams"
-msgstr "30팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "31 teams"
-msgstr "31팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "32 teams"
-msgstr "32팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "33 teams"
-msgstr "33팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "34 teams"
-msgstr "34팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "35 teams"
-msgstr "35팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "36 teams"
-msgstr "36팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "37 teams"
-msgstr "37팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "38 teams"
-msgstr "38팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "39 teams"
-msgstr "39팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "40 teams"
-msgstr "40팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "41 teams"
-msgstr "41팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "42 teams"
-msgstr "42팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "43 teams"
-msgstr "43팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "44 teams"
-msgstr "44팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "45 teams"
-msgstr "45팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "46 teams"
-msgstr "46팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "47 teams"
-msgstr "47팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "48 teams"
-msgstr "48팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "49 teams"
-msgstr "49팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "50 teams"
-msgstr "50팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "51 teams"
-msgstr "51팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "52 teams"
-msgstr "52팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "53 teams"
-msgstr "53팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "54 teams"
-msgstr "54팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "55 teams"
-msgstr "55팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "56 teams"
-msgstr "56팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "57 teams"
-msgstr "57팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "58 teams"
-msgstr "58팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "59teams"
-msgstr "59팀"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "60 teams"
-msgstr "60팀"
+msgid "team"
+msgstr "팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
@@ -1282,12 +976,6 @@ msgstr "(최근 30일)"
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
 msgid "Total visitors"
 msgstr "총 방문자"
-
-#. module: golfzon_dashboard
-#. odoo-javascript
-#: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "30 days prior to the inquiry date"
-msgstr "문의 날짜로부터 30일 전"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
