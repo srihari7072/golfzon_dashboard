@@ -10,8 +10,7 @@
                 <!-- ✅ Dashboard - Active by default with click handler that closes menu -->
                 <a class="drawer-item" 
                 t-att-class="state.activeMenuItem === 'dashboard' ? 'active' : ''" 
-                href="#" 
-                t-on-click="(ev) => this.handleMenuItemClick('dashboard', ev)">
+                t-on-click="(ev) => this.navigateToDashboard(ev)">
                     <t t-esc="_t('Dashboard')"/>
                 </a>
                 
@@ -26,8 +25,7 @@
                 <!-- ✅ Member Group - with click handler that closes menu -->
                 <a class="drawer-item" 
                 t-att-class="state.activeMenuItem === 'membergroup' ? 'active' : ''" 
-                href="#" 
-                t-on-click="(ev) => this.handleMenuItemClick('membergroup', ev)">
+                t-on-click="(ev) => this.navigateToMemberGroup(ev)">
                     <t t-esc="_t('Member Group')"/>
                 </a>
                 

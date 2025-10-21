@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.MemberGroup.KeyIndicators">
+        <div class="member-group-key-indicators">
+            <!-- Container for horizontal scroll -->
+            <div class="indicators-scroll-container">
+                <!-- Headings Row -->
+                <div class="indicators-headings">
+                    <div class="heading-section">
+                        <h3>Member Group Key Indicators</h3>
+                    </div>
+                    <div class="heading-section">
+                        <h3>Green Fee Unit Price Index</h3>
+                    </div>
+                </div>
+
+                <!-- All 6 Cards in One Row -->
+                <div class="indicators-cards-row">
+                    <!-- Card 1: Number of members -->
+                    <div class="indicator-card">
+                        <div class="indicator-label">Number of members</div>
+                        <div class="indicator-value">
+                            <t t-esc="state.statistics.totalMembers || '656,351'"/> people
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Number of times built-in -->
+                    <div class="indicator-card">
+                        <div class="indicator-label">Number of times built-in</div>
+                        <div class="indicator-value">
+                            <t t-esc="state.statistics.builtInTimes || '4,906,127'"/> times
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Total sales -->
+                    <div class="indicator-card">
+                        <div class="indicator-label">Total sales</div>
+                        <div class="indicator-value">
+                            <t t-esc="state.statistics.totalSales || '10,000,000'"/> won
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Payment Green Fee -->
+                    <div class="indicator-card">
+                        <div class="indicator-label">Payment Green Fee</div>
+                        <div class="indicator-value">
+                            <t t-esc="state.statistics.paymentGreenFee || '116,443'"/> won
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Open Green Fee -->
+                    <div class="indicator-card">
+                        <div class="indicator-label">Open Green Fee</div>
+                        <div class="indicator-value">
+                            <t t-esc="state.statistics.openGreenFee || '132,781'"/> won
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Average discount rate -->
+                    <div class="indicator-card">
+                        <div class="indicator-label">Average discount rate</div>
+                        <div class="indicator-value">
+                            <t t-esc="state.statistics.avgDiscountRate || '12.3'"/>%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

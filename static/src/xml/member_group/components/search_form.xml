@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.MemberGroup.SearchForm">
+        <div class="member-group-search-form">
+            <div class="search-row">
+                <!-- Creation Date Section -->
+                <div class="form-group">
+                    <label for="search-start-date" class="form-label">Creation date</label>
+                    <div class="date-range-inputs">
+                        <input 
+                            type="date" 
+                            id="search-start-date"
+                            name="start_date"
+                            class="date-input"
+                            t-model="state.searchForm.startDate"
+                            aria-label="Start date"
+                            autocomplete="off"
+                        />
+                        <span class="date-separator">~</span>
+                        <input 
+                            type="date" 
+                            id="search-end-date"
+                            name="end_date"
+                            class="date-input"
+                            t-model="state.searchForm.endDate"
+                            aria-label="End date"
+                            autocomplete="off"
+                        />
+                    </div>
+                </div>
+
+                <!-- Member Group Name Section -->
+                <div class="form-group">
+                    <label for="search-group-name" class="form-label">Member group name</label>
+                    <input 
+                        type="text" 
+                        id="search-group-name"
+                        name="group_name"
+                        class="text-input"
+                        t-model="state.searchForm.groupName"
+                        placeholder="Please enter the group name you want to search for."
+                        aria-label="Member group name"
+                        autocomplete="off"
+                    />
+                </div>
+
+                <!-- Search Button -->
+                <div class="form-group button-group">
+                    <button 
+                        type="button"
+                        class="btn btn-search" 
+                        t-on-click="() => this.performSearch()"
+                        aria-label="Search member groups"
+                    >
+                        search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

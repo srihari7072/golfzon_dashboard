@@ -40,7 +40,10 @@
         "views/payment_infos_views.xml",
         "views/members.xml",
         "views/time_table_has_bookg_infos.xml",
-        "views/time_table.xml"
+        "views/time_table.xml",
+        "views/group_info_views.xml",
+        "views/group_details_views.xml",
+        "views/group_members_views.xml",
     ],
 
     "assets": {
@@ -52,7 +55,7 @@
             'golfzon_dashboard/static/src/js/utils/loader_manager.js',
             'golfzon_dashboard/static/src/js/utils/dashboard_loader.js',
             
-            # External Libraries
+            # Charts Library
             "golfzon_dashboard/static/lib/chartjs/Chart.min.js",
             
             # XML Templates
@@ -83,6 +86,16 @@
             # Main JavaScript Component
             "golfzon_dashboard/static/src/js/dashboard_client.js",
             
+            # Member Group Assets
+            "golfzon_dashboard/static/src/xml/member_group/components/key_indicators.xml",
+            "golfzon_dashboard/static/src/xml/member_group/components/member_list.xml",   
+            "golfzon_dashboard/static/src/js/member_group/services/member_group_service.js",
+            "golfzon_dashboard/static/src/js/member_group/utils/date_range_utils.js",
+            "golfzon_dashboard/static/src/js/member_group/member_group_client.js",
+            "golfzon_dashboard/static/src/xml/member_group/components/search_form.xml",
+            "golfzon_dashboard/static/src/xml/member_group/components/group_list_table.xml",
+            "golfzon_dashboard/static/src/xml/member_group/member_group_templates.xml",
+            "golfzon_dashboard/static/src/scss/member_group.scss",
         ],
     },
     "installable": True,
