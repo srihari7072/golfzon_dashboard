@@ -5,3 +5,6 @@ from . import payment_infos
 from . import members
 from . import time_table_has_bookg_infos
 from . import time_table
+from . import group_info
+from . import group_details
+from . import group_members

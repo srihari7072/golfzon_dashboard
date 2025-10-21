@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.MemberGroupView">
+        <div class="golfzon-dashboard-container">
+            <!-- Reuse Navigation -->
+            <t t-call="golfzon_dashboard.Navigation"/>
+
+            <DashboardLoader isLoading="state.isLoading" />
+
+            <div class="main-content">
+                <!-- Reuse Header -->
+                <t t-call="golfzon_dashboard.Header"/>
+
+                <!-- Member Group Content -->
+                <div class="member-group-content">
+                    <!-- Search Form -->
+                    <t t-call="golfzon_dashboard.MemberGroup.SearchForm"/>
+
+                    <!-- Group List Table -->
+                    <t t-call="golfzon_dashboard.MemberGroup.GroupListTable"/>
+
+                    <!-- Key Indicators Section -->
+                    <t t-call="golfzon_dashboard.MemberGroup.KeyIndicators"/>
+
+                    <!-- Member List Section -->
+                    <t t-call="golfzon_dashboard.MemberGroup.MemberList"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

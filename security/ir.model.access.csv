@@ -8,3 +8,6 @@ access_payment_infos,access_payment_infos,model_payment_infos,base.group_user,1,
 access_members,access.members.members,model_members_members,,1,1,1,1
 access_time_table_has_bookg_infos_user,access.time.table.has.bookg.infos.user,model_time_table_has_bookg_infos,base.group_user,1,1,1,1
 access_time_table,time.table,model_time_table,base.group_user,1,1,1,1
+access_group_info,golf.group.info,model_golf_group_info,,1,1,1,1
+access_group_details,golf.group.details,model_golf_group_details,,1,1,1,1
+access_group_members,golf.group.member,model_golf_group_member,,1,1,1,1

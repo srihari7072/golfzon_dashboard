@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_group_details_list" model="ir.ui.view">
+        <field name="name">golf.group.details.list</field>
+        <field name="model">golf.group.details</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="group_id"/>  <!-- Now dropdown for Group Name -->
+                <field name="month_01_yn"/>
+                <field name="month_02_yn"/>
+                <field name="month_03_yn"/>
+                <field name="month_04_yn"/>
+                <field name="month_05_yn"/>
+                <field name="month_06_yn"/>
+                <field name="month_07_yn"/>
+                <field name="month_08_yn"/>
+                <field name="month_09_yn"/>
+                <field name="month_10_yn"/>
+                <field name="month_11_yn"/>
+                <field name="month_12_yn"/>
+                <field name="week_01_yn"/>
+                <field name="week_02_yn"/>
+                <field name="week_03_yn"/>
+                <field name="week_04_yn"/>
+                <field name="mon_yn"/>
+                <field name="tue_yn"/>
+                <field name="wed_yn"/>
+                <field name="thu_yn"/>
+                <field name="fri_yn"/>
+                <field name="sat_yn"/>
+                <field name="sun_yn"/>
+                <field name="created_at"/>
+                <field name="updated_at"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_group_details_form" model="ir.ui.view">
+        <field name="name">golf.group.details.form</field>
+        <field name="model">golf.group.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="group_id"/>  <!-- Now Many2one dropdown -->
+                        <group string="Monthly Availability">
+                            <field name="month_01_yn"/>
+                            <field name="month_02_yn"/>
+                            <field name="month_03_yn"/>
+                            <field name="month_04_yn"/>
+                            <field name="month_05_yn"/>
+                            <field name="month_06_yn"/>
+                            <field name="month_07_yn"/>
+                            <field name="month_08_yn"/>
+                            <field name="month_09_yn"/>
+                            <field name="month_10_yn"/>
+                            <field name="month_11_yn"/>
+                            <field name="month_12_yn"/>
+                        </group>
+                        <group string="Weekly Availability">
+                            <field name="week_01_yn"/>
+                            <field name="week_02_yn"/>
+                            <field name="week_03_yn"/>
+                            <field name="week_04_yn"/>
+                        </group>
+                        <group string="Day Availability">
+                            <field name="mon_yn"/>
+                            <field name="tue_yn"/>
+                            <field name="wed_yn"/>
+                            <field name="thu_yn"/>
+                            <field name="fri_yn"/>
+                            <field name="sat_yn"/>
+                            <field name="sun_yn"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="created_at"/>
+                        <field name="updated_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_group_details" model="ir.actions.act_window">
+        <field name="name">Group Details</field>
+        <field name="res_model">golf.group.details</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_golf_details" name="Group Details" action="action_group_details" parent="menu_golf_root" sequence="20"/>
+</odoo>

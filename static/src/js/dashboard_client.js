@@ -831,7 +831,7 @@ class GolfzonDashboard extends Component {
         }
     }
 
-    handleMenuItemClick(menuItem, event) {
+    navigateToDashboard(menuItem, event) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -846,23 +846,28 @@ class GolfzonDashboard extends Component {
             this.menuDrawer.el.classList.remove("open");
         }
         console.log(`✅ Active menu item set to: ${menuItem}, drawer closed`);
-
-        // ✅ If you want to navigate to different pages/views, add logic here:
-        // switch(menuItem) {
-        //     case 'dashboard':
-        //         // Show dashboard
-        //         break;
-        //     case 'member':
-        //         // Navigate to member view
-        //         break;
-        //     case 'membergroup':
-        //         // Navigate to member group view
-        //         break;
-        //     case 'crmcampaign':
-        //         // Navigate to CRM campaign view
-        //         break;
-        // }
     }
+
+    navigateToMemberGroup(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log('📍 Navigating to Member Group');
+
+        this.state.activeMenuItem = 'membergroup';
+        this.state.drawerOpen = false;
+
+        if (this.menuDrawer.el) {
+            this.menuDrawer.el.classList.remove("open");
+        }
+
+        // Navigate to member group action
+        this.env.services.action.doAction({
+            type: 'ir.actions.client',
+            tag: 'golfzon.member_group',
+            target: 'main',
+        });
+    }
+
     setActiveMenuItem(item) {
         this.state.activeMenuItem = item;
     }
