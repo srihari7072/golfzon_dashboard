@@ -1,0 +1,668 @@
+// ============================================
+// MEMBER SCREEN STYLES - CLEAN VERSION
+// ============================================
+
+.golfzon-member-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f5f7fa;
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    .content-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px 30px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8ebef 100%);
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #888;
+
+        &:hover {
+          background: #555;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// STICKY SEARCH SECTION
+// ============================================
+.member-search-section {
+  background: white;
+  padding: 20px 30px;
+  border: 1px solid black;
+  margin-bottom: 25px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .search-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+
+    .search-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+  }
+
+  .search-form-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .search-field {
+      flex: 1;
+
+      .search-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+
+        font-size: 14px;
+        transition: all 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: #3b82f6;
+        }
+
+        &::placeholder {
+          color: #9ca3af;
+        }
+      }
+    }
+
+    .search-btn {
+      padding: 12px 32px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+
+      &:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+}
+
+// ============================================
+// MEMBER DETAIL CARD
+// ============================================
+.member-detail-card {
+  background: white;
+  padding: 30px;
+
+  .member-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+
+    .member-name-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      .member-name {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 800;
+        color: #1f2937;
+      }
+    }
+
+    .member-type-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+      .type-label {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+
+    .member-actions {
+      display: flex;
+      gap: 10px;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: none;
+
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.btn-secondary {
+          background: #6b7280;
+          color: white;
+
+          &:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+          }
+        }
+
+        &.btn-info {
+          background: #10b981;
+          color: white;
+
+          &:hover {
+            background: #059669;
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+  }
+
+  .member-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 15px;
+        background: #f9fafb;
+
+        border-left: 4px solid #3b82f6;
+
+        .info-label {
+          font-size: 13px;
+          font-weight: 600;
+          color: #6b7280;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .info-value {
+          font-size: 16px;
+          font-weight: 700;
+          color: #1f2937;
+
+          &.penalty-active {
+            color: #ef4444;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Empty State
+.member-empty-state {
+  text-align: center;
+  padding: 80px 20px;
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+
+  .empty-message {
+    font-size: 18px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+}
+
+// ============================================
+// MODALS
+// ============================================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+
+  .modal-container {
+    background: white;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+
+    .modal-header {
+      padding: 20px 30px;
+      border-bottom: 2px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .modal-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .modal-close-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: #f3f4f6;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #e5e7eb;
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 30px;
+      overflow-y: auto;
+      flex: 1;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+      }
+    }
+
+    .modal-footer {
+      padding: 20px 30px;
+      border-top: 2px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+
+      button {
+        padding: 10px 24px;
+        border: none;
+
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &.btn-primary {
+          background: #3b82f6;
+          color: white;
+
+          &:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+          }
+        }
+
+        &.btn-secondary {
+          background: #e5e7eb;
+          color: #374151;
+
+          &:hover {
+            background: #d1d5db;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Member List Popup
+.member-list-popup {
+  width: 900px;
+
+  .member-list-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: #f9fafb;
+
+      th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover,
+        &.selected {
+          background: #eff6ff;
+        }
+
+        td {
+          padding: 12px;
+          color: #4b5563;
+        }
+      }
+    }
+  }
+}
+
+// Add to Group Modal
+.add-to-group-modal {
+  width: 700px;
+
+  .group-search-section {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .group-search-input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 2px solid #e5e7eb;
+
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+      }
+    }
+  }
+
+  .group-list-section {
+    .group-list-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+
+      h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    .group-list-table-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #e5e7eb;
+    }
+
+    .group-list-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background: #f9fafb;
+        position: sticky;
+        top: 0;
+
+        th {
+          padding: 12px;
+          text-align: left;
+          font-weight: 600;
+          color: #374151;
+          border-bottom: 2px solid #e5e7eb;
+
+          &.checkbox-col {
+            width: 60px;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid #e5e7eb;
+
+          &:hover {
+            background: #f9fafb;
+          }
+
+          td {
+            padding: 12px;
+            color: #4b5563;
+
+            &.checkbox-col {
+              text-align: center;
+            }
+
+            &.empty-row {
+              text-align: center;
+              padding: 40px;
+              color: #9ca3af;
+            }
+          }
+        }
+      }
+    }
+
+    .already-member-badge {
+      margin-left: 10px;
+      padding: 2px 8px;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .more-groups-section {
+      margin-top: 15px;
+      text-align: center;
+
+      .more-btn {
+        padding: 8px 24px;
+        background: transparent;
+        border: 2px solid #e5e7eb;
+
+        color: #374151;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #3b82f6;
+          color: #3b82f6;
+        }
+      }
+    }
+  }
+}
+
+// Memo Modal
+.memo-modal {
+  width: 600px;
+
+  .memo-input-section {
+    position: relative;
+    margin-bottom: 20px;
+
+    .memo-textarea {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #e5e7eb;
+
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+      }
+    }
+  }
+
+  .existing-memos-section {
+    margin-top: 30px;
+
+    .memos-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 15px;
+    }
+
+    .memo-list {
+      max-height: 300px;
+      overflow-y: auto;
+
+      .memo-item {
+        padding: 15px;
+        background: #f9fafb;
+
+        margin-bottom: 10px;
+        border-left: 4px solid #3b82f6;
+
+        .memo-header {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+          font-size: 12px;
+          color: #6b7280;
+
+          .memo-date {
+            font-weight: 600;
+          }
+
+          .memo-author {
+            font-style: italic;
+          }
+        }
+
+        .memo-content {
+          color: #374151;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ============================================
+// RESPONSIVE DESIGN
+// ============================================
+@media (max-width: 768px) {
+  .member-search-section {
+    .search-form-container {
+      flex-direction: column;
+
+      .search-btn {
+        width: 100%;
+      }
+    }
+  }
+
+  .member-detail-card {
+    .member-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+
+      .member-actions {
+        width: 100%;
+
+        button {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  .modal-overlay {
+    .modal-container {
+      width: 95vw;
+      max-width: none;
+    }
+  }
+}

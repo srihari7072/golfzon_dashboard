@@ -52,13 +52,13 @@
                             <field name="remark"/>
                         </group>
                         <group>
-                            <field name="created_by"/>
+                            <field name="created_id"/>
                             <field name="created_at"/>
-                            <field name="updated_by"/>
+                            <field name="updated_id"/>
                             <field name="updated_at"/>
-                            <field name="deleted_by"/>
+                            <field name="deleted_id"/>
                             <field name="deleted_at"/>
-                            <field name="ref_member_by"/>
+                            <field name="ref_member_id"/>
                         </group>
                     </group>
                 </sheet>

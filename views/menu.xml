@@ -6,6 +6,12 @@
         <field name="target">main</field>
     </record>
 
+    <record id="action_member" model="ir.actions.client">
+        <field name="name">Member</field>
+        <field name="tag">golfzon.member</field>
+        <field name="target">main</field>
+    </record>
+
     <record id="action_member_group" model="ir.actions.client">
         <field name="name">Member Group</field>
         <field name="tag">golfzon.member_group</field>
@@ -14,6 +20,7 @@
 
     <menuitem id="menu_golfzon_main" name="Golfzon" sequence="10"/>
     <menuitem id="menu_golfzon_dashboard" name="Dashboard" parent="menu_golfzon_main" action="action_golfzon_dashboard" sequence="1"/>
+    <menuitem id="menu_golfzon_member" name="Member" parent="menu_golfzon_main" action="action_member" sequence="2"/>
     <menuitem id="menu_golfzon_member_group" name="Member Group" parent="menu_golfzon_main" action="action_member_group" sequence="3"/>
 
 </odoo>

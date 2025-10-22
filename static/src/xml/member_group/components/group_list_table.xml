@@ -50,7 +50,7 @@
                                     <button class="btn-download" 
                                             t-on-click="(ev) => this.downloadExcel(group.group_id || group.id, group.group_name, ev)"
                                             title="Download Excel">
-                                        ↓
+                                        <img src="/golfzon_dashboard/static/src/img/download_icon.png" alt="Download" style="height: 25px; width: 25px;" />
                                     </button>
                                 </td>
                             </tr>

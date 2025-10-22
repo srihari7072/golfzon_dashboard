@@ -1,9 +1,7 @@
 /** @odoo-module **/
 
 export class DateRangeUtils {
-    /**
-     * Format date to YYYY-MM-DD
-     */
+    
     static formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -11,9 +9,6 @@ export class DateRangeUtils {
         return `${year}-${month}-${day}`;
     }
 
-    /**
-     * Get default date range (current month)
-     */
     static getDefaultDateRange() {
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -25,9 +20,6 @@ export class DateRangeUtils {
         };
     }
 
-    /**
-     * Format display date (Korean format)
-     */
     static formatDisplayDate(dateStr) {
         const date = new Date(dateStr);
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

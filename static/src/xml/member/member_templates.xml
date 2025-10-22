@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="golfzon_dashboard.MemberView">
+        <div class="golfzon-dashboard-container">
+            <!-- Reuse Navigation -->
+            <t t-call="golfzon_dashboard.Navigation"/>
+
+            <DashboardLoader isLoading="state.isLoading" />
+
+            <div class="main-content">
+                <!-- Reuse Header -->
+                <t t-call="golfzon_dashboard.Header"/>
+
+                <!-- Member Group Content -->
+                <div class="member-group-content">
+
+                    <!-- Member Search Form (Section A) -->
+                    <t t-call="golfzon_dashboard.MemberSearchForm"/>
+
+                    <!-- Member Detail Card (Sections B, C, D, E) -->
+                    <t t-call="golfzon_dashboard.MemberDetailCard"/>
+
+                </div>
+            </div>
+
+            <!-- Modals -->
+            <t t-call="golfzon_dashboard.MemberListPopup"/>
+            <t t-call="golfzon_dashboard.AddToGroupModal"/>
+            <t t-call="golfzon_dashboard.MemoModal"/>
+        </div>
+    </t>
+</templates>

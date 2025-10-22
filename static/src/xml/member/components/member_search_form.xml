@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Member Search Form Component (Section A) -->
+    <t t-name="golfzon_dashboard.MemberSearchForm">
+        <div class="member-search-section sticky-search">
+            <div class="search-header">
+                <h3 class="search-title">
+                    <t t-if="isKorean()">회원 검색</t>
+                    <t t-else="">Member Search</t>
+                </h3>
+            </div>
+            
+            <form class="search-form-container" autocomplete="on">
+                <!-- Member Name Input -->
+                <div class="search-field">
+                    <label for="member-name-search" class="visually-hidden">
+                        <t t-if="isKorean()">회원명</t>
+                        <t t-else="">Member Name</t>
+                    </label>
+                    <input 
+                        type="text"
+                        id="member-name-search"
+                        name="memberName"
+                        class="form-control search-input"
+                        t-att-placeholder="isKorean() ? '회원명' : 'Member Name'"
+                        t-model="state.searchForm.memberName"
+                        t-on-keyup="onEnterSearch"
+                        autocomplete="name"
+                    />
+                </div>
+                
+                <!-- Phone Number Input -->
+                <div class="search-field">
+                    <label for="member-phone-search" class="visually-hidden">
+                        <t t-if="isKorean()">전화번호</t>
+                        <t t-else="">Phone Number</t>
+                    </label>
+                    <input 
+                        type="tel"
+                        id="member-phone-search"
+                        name="phoneNumber"
+                        class="form-control search-input"
+                        t-att-placeholder="isKorean() ? '전화번호' : 'Phone Number'"
+                        t-model="state.searchForm.phoneNumber"
+                        t-on-keyup="onEnterSearch"
+                        autocomplete="tel"
+                    />
+                </div>
+                
+                <!-- Search Button -->
+                <button 
+                    type="button"
+                    class="btn btn-primary search-btn" 
+                    t-on-click="onSearchClick"
+                    t-att-disabled="state.isSearching"
+                >
+                    <t t-if="isKorean()">검색</t>
+                    <t t-else="">Search</t>
+                </button>
+            </form>
+        </div>
+    </t>
+
+</templates>

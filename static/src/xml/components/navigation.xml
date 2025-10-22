@@ -17,8 +17,7 @@
                 <!-- ✅ Member - with click handler that closes menu -->
                 <a class="drawer-item" 
                 t-att-class="state.activeMenuItem === 'member' ? 'active' : ''" 
-                href="#" 
-                t-on-click="(ev) => this.handleMenuItemClick('member', ev)">
+                t-on-click="(ev) => this.navigateToMember(ev)">
                     <t t-esc="_t('Member')"/>
                 </a>
                 

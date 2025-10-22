@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Member Detail Card Component (Section B) -->
+    <t t-name="golfzon_dashboard.MemberDetailCard">
+        <div class="member-detail-card" t-if="state.selectedMember">
+            
+            <!-- Member Header -->
+            <div class="member-header">
+                <div class="member-name-section">
+                    <h2 class="member-name">
+                        <t t-esc="state.selectedMember.name"/>
+                    </h2>
+                </div>
+                
+                <!-- Member Type Label -->
+                <div class="member-type-badge">
+                    <span class="type-label">
+                        <t t-esc="state.selectedMember.member_type_label"/>
+                    </span>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="member-actions">
+                    <!-- Add to Group Button -->
+                    <button 
+                        type="button"
+                        class="btn btn-secondary" 
+                        t-on-click="openAddToGroupModal"
+                        aria-label="Add member to group"
+                    >
+                        <t t-if="isKorean()">그룹에 추가</t>
+                        <t t-else="">Add to Group</t>
+                    </button>
+                    
+                    <!-- Memo Button -->
+                    <button 
+                        type="button"
+                        class="btn btn-info" 
+                        t-on-click="openMemoModal"
+                        aria-label="Add or view member memo"
+                    >
+                        <t t-if="isKorean()">메모</t>
+                        <t t-else="">Memo</t>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Member Information Grid -->
+            <div class="member-info-grid">
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">
+                            <t t-if="isKorean()">연령대</t>
+                            <t t-else="">Age Group</t>
+                        </span>
+                        <span class="info-value">
+                            <t t-esc="state.selectedMember.age_group"/>
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">
+                            <t t-if="isKorean()">성별</t>
+                            <t t-else="">Gender</t>
+                        </span>
+                        <span class="info-value">
+                            <t t-esc="state.selectedMember.gender"/>
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">
+                            <t t-if="isKorean()">전화번호</t>
+                            <t t-else="">Phone Number</t>
+                        </span>
+                        <span class="info-value">
+                            <t t-esc="state.selectedMember.phone"/>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">
+                            <t t-if="isKorean()">최근 방문일</t>
+                            <t t-else="">Last Visit Date</t>
+                        </span>
+                        <span class="info-value">
+                            <t t-esc="state.selectedMember.last_visit_date_formatted"/>
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">
+                            <t t-if="isKorean()">다음 예약일</t>
+                            <t t-else="">Next Scheduled Visit</t>
+                        </span>
+                        <span class="info-value">
+                            <t t-esc="state.selectedMember.next_scheduled_visit_formatted"/>
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">
+                            <t t-if="isKorean()">페널티 상태</t>
+                            <t t-else="">Penalty Status</t>
+                        </span>
+                        <span class="info-value" t-att-class="{'penalty-active': state.selectedMember.has_active_penalty}">
+                            <t t-esc="state.selectedMember.penalty_status"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div class="member-empty-state" t-else="">
+            <div class="empty-icon" role="img" aria-label="Search icon">🔍</div>
+            <p class="empty-message">
+                <t t-if="isKorean()">회원을 검색해주세요</t>
+                <t t-else="">Please search for a member</t>
+            </p>
+        </div>
+    </t>
+
+</templates>

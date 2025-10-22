@@ -19,11 +19,14 @@
                     <!-- Group List Table -->
                     <t t-call="golfzon_dashboard.MemberGroup.GroupListTable"/>
 
-                    <!-- Key Indicators Section -->
-                    <t t-call="golfzon_dashboard.MemberGroup.KeyIndicators"/>
+                    <!-- Inline Registration Form (Always Visible) -->
+                    <t t-call="golfzon_dashboard.RegisterFormInline"/>
 
-                    <!-- Member List Section -->
-                    <t t-call="golfzon_dashboard.MemberGroup.MemberList"/>
+                    <!-- Condition-Based Form -->
+                    <t t-call="golfzon_dashboard.ConditionBasedForm"/>
+
+                    <!-- ✅ Inquiry Results Display -->
+                    <t t-call="golfzon_dashboard.MemberInquiryResults"/>
                 </div>
             </div>
         </div>

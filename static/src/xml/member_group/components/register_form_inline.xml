@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Inline Registration Form -->
+    <t t-name="golfzon_dashboard.RegisterFormInline">
+        <div class="register-member-group-section">
+            
+            <!-- Section Title -->
+            <div class="section-title-bar">
+                <h2 class="section-title">
+                    <t t-if="isKorean()">회원 그룹 회원 목록 등록</t>
+                    <t t-else="">Register member group member list</t>
+                </h2>
+            </div>
+            
+            <!-- Section 1: Member Group Title -->
+            <div class="form-section">
+                <div class="form-row">
+                    <label for="group-title-input" class="form-label">
+                        <t t-if="isKorean()">회원 그룹 제목</t>
+                        <t t-else="">Member Group Title</t>
+                    </label>
+                    <input 
+                        type="text"
+                        id="group-title-input"
+                        name="groupTitle"
+                        class="form-control group-title-input"
+                        t-att-placeholder="isKorean() ? '회원 그룹 이름을 입력하세요' : 'Please enter the member group name.'"
+                        t-model="state.registerForm.groupTitle"
+                        autocomplete="off"
+                    />
+                </div>
+            </div>
+            
+            <!-- Section 2: Member List File Upload -->
+            <div class="form-section">
+                <div class="form-row">
+                    <label class="form-label">
+                        <t t-if="isKorean()">회원 목록 파일</t>
+                        <t t-else="">Member list file</t>
+                    </label>
+                    
+                    <!-- ✅ FIX: Only show custom button, hide default file input completely -->
+                    <div class="file-upload-wrapper">
+                        <!-- Hidden file input -->
+                        <input 
+                            type="file"
+                            id="member-file-input"
+                            name="memberListFile"
+                            class="file-input-hidden"
+                            accept=".xls,.xlsx"
+                            t-on-change="onFileSelected"
+                            t-ref="fileInput"
+                            style="display: none !important;"
+                        />
+                        
+                        <!-- Custom Select File Button -->
+                        <button 
+                            type="button" 
+                            class="btn-select-file"
+                            t-on-click="triggerFileSelect"
+                        >
+                            <t t-if="isKorean()">파일 선택</t>
+                            <t t-else="">Select File</t>
+                        </button>
+                        
+                        <!-- File Status Display -->
+                        <span class="file-status">
+                            <t t-if="state.registerForm.fileName">
+                                <t t-esc="state.registerForm.fileName"/>
+                            </t>
+                            <t t-else="">
+                                <t t-if="isKorean()">선택된 파일 없음</t>
+                                <t t-else="">No files selected</t>
+                            </t>
+                        </span>
+                    </div>
+                    
+                    <p class="help-text">
+                        <t t-if="isKorean()">
+                            엑셀 파일(.xls, .xlsx)만 업로드 가능합니다.
+                        </t>
+                        <t t-else="">
+                            Only Excel files (.xls, .xlsx) can be uploaded.
+                        </t>
+                    </p>
+                    
+                    <!-- Upload Status Message -->
+                    <div class="upload-status-message" t-if="state.registerForm.statusMessage">
+                        <div t-att-class="'status-alert status-' + state.registerForm.uploadStatus">
+                            <t t-esc="state.registerForm.statusMessage"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 3: Download Template -->
+            <div class="form-section template-section">
+                <div class="template-download-area">
+                    <div class="template-header">
+                        <t t-if="isKorean()">회원 가입 등록 엑셀 양식 다운로드</t>
+                        <t t-else="">Download the membership registration Excel form</t>
+                    </div>
+                    
+                    <p class="template-description">
+                        <t t-if="isKorean()">
+                            회원 목록 등록을 위한 표준 엑셀 양식을 제공합니다. 양식에 따라 회원 정보를 입력하고 업로드해주세요.
+                        </t>
+                        <t t-else="">
+                            Download the standard Excel template for registering your membership list. Enter your membership information according to the format and upload it.
+                        </t>
+                    </p>
+                    
+                    <button 
+                        type="button"
+                        class="btn-download-template" 
+                        t-on-click="downloadTemplate"
+                    >
+                        <span class="download-icon"><img src="/golfzon_dashboard/static/src/img/download_icon.png" alt="Download" style="height: 25px; width: 25px;" /></span>
+                        <t t-if="isKorean()">양식 다운로드</t>
+                        <t t-else="">Download the form</t>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Registration Button -->
+            <div class="form-actions">
+                <button 
+                    type="button"
+                    class="btn-register-submit" 
+                    t-on-click="confirmRegistration"
+                    t-att-disabled="!state.registerForm.groupTitle || !state.registerForm.file || state.isUploading"
+                >
+                    <t t-if="state.isUploading">
+                        <t t-if="isKorean()">등록 중...</t>
+                        <t t-else="">Registering...</t>
+                    </t>
+                    <t t-else="">
+                        <t t-if="isKorean()">등록</t>
+                        <t t-else="">registration</t>
+                    </t>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>
