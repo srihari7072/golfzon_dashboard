@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Member List Popup (Section 1.2 - Multiple Members Same Name) -->
+    <t t-name="golfzon_dashboard.MemberListPopup">
+        <div class="modal-overlay" t-if="state.showMemberListPopup" t-on-click="closeMemberListPopup">
+            <div class="modal-container member-list-popup" t-on-click.stop="">
+                
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <t t-if="isKorean()">회원 목록</t>
+                        <t t-else="">Member List</t>
+                    </h3>
+                    <button 
+                        type="button"
+                        class="modal-close-btn" 
+                        t-on-click="closeMemberListPopup"
+                        aria-label="Close"
+                    >×</button>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Member List Table -->
+                    <div class="member-list-table-wrapper">
+                        <table class="member-list-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">선택</t>
+                                        <t t-else="">Select</t>
+                                    </th>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">이름</t>
+                                        <t t-else="">Name</t>
+                                    </th>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">회원번호</t>
+                                        <t t-else="">Membership No.</t>
+                                    </th>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">성별</t>
+                                        <t t-else="">Gender</t>
+                                    </th>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">전화번호</t>
+                                        <t t-else="">Phone Number</t>
+                                    </th>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">ID</t>
+                                        <t t-else="">ID</t>
+                                    </th>
+                                    <th scope="col">
+                                        <t t-if="isKorean()">가입일</t>
+                                        <t t-else="">Join Date</t>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.duplicateMembers" t-as="member" t-key="member.id">
+                                    <tr 
+                                        class="member-row" 
+                                        t-att-class="{'selected': state.selectedDuplicateMemberId === member.id}"
+                                        t-on-click="() => this.selectDuplicateMember(member.id)"
+                                    >
+                                        <td>
+                                            <label t-att-for="'member-radio-' + member.id" class="visually-hidden">
+                                                Select <t t-esc="member.name"/>
+                                            </label>
+                                            <input 
+                                                type="radio"
+                                                t-att-id="'member-radio-' + member.id"
+                                                name="member-select"
+                                                t-att-value="member.id"
+                                                t-att-checked="state.selectedDuplicateMemberId === member.id"
+                                                t-on-change="() => this.selectDuplicateMember(member.id)"
+                                            />
+                                        </td>
+                                        <td><t t-esc="member.name"/></td>
+                                        <td><t t-esc="member.membership_no"/></td>
+                                        <td><t t-esc="member.gender"/></td>
+                                        <td><t t-esc="member.phone"/></td>
+                                        <td><t t-esc="member.login_id"/></td>
+                                        <td><t t-esc="member.join_date"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button 
+                        type="button"
+                        class="btn btn-primary" 
+                        t-on-click="confirmMemberSelection"
+                    >
+                        <t t-if="isKorean()">선택</t>
+                        <t t-else="">Select</t>
+                    </button>
+                    <button 
+                        type="button"
+                        class="btn btn-secondary" 
+                        t-on-click="closeMemberListPopup"
+                    >
+                        <t t-if="isKorean()">닫기</t>
+                        <t t-else="">Close</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

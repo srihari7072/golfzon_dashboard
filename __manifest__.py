@@ -87,8 +87,9 @@
             "golfzon_dashboard/static/src/js/dashboard_client.js",
             
             # Member Group Assets
-            "golfzon_dashboard/static/src/xml/member_group/components/key_indicators.xml",
-            "golfzon_dashboard/static/src/xml/member_group/components/member_list.xml",   
+            "golfzon_dashboard/static/src/xml/member_group/components/inquiry_results.xml",
+            "golfzon_dashboard/static/src/xml/member_group/components/condition_based_form.xml",
+            "golfzon_dashboard/static/src/xml/member_group/components/register_form_inline.xml", 
             "golfzon_dashboard/static/src/js/member_group/services/member_group_service.js",
             "golfzon_dashboard/static/src/js/member_group/utils/date_range_utils.js",
             "golfzon_dashboard/static/src/js/member_group/member_group_client.js",
@@ -96,6 +97,17 @@
             "golfzon_dashboard/static/src/xml/member_group/components/group_list_table.xml",
             "golfzon_dashboard/static/src/xml/member_group/member_group_templates.xml",
             "golfzon_dashboard/static/src/scss/member_group.scss",
+
+            # Member Assets
+            "golfzon_dashboard/static/src/js/member/services/member_service.js",
+            "golfzon_dashboard/static/src/js/member/member_client.js",
+            "golfzon_dashboard/static/src/xml/member/components/member_search_form.xml",
+            "golfzon_dashboard/static/src/xml/member/components/member_detail_card.xml",
+            "golfzon_dashboard/static/src/xml/member/components/member_list_popup.xml",
+            "golfzon_dashboard/static/src/xml/member/components/add_to_group_modal.xml",
+            "golfzon_dashboard/static/src/xml/member/components/memo_modal.xml",
+            "golfzon_dashboard/static/src/xml/member/member_templates.xml",
+            "golfzon_dashboard/static/src/scss/member.scss",
         ],
     },
     "installable": True,

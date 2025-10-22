@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Condition-Based Group Creation Form -->
+    <t t-name="golfzon_dashboard.ConditionBasedForm">
+        <div class="condition-based-group-section">
+            
+            <!-- Section Title Bar -->
+            <div class="section-title-bar">
+                <h2 class="section-title">
+                    <t t-if="isKorean()">조건 기반 회원 그룹 생성</t>
+                    <t t-else="">Create member group conditions based on</t>
+                </h2>
+            </div>
+            
+            <!-- Member Group Title -->
+            <div class="form-section title-section">
+                <label for="member-group-title" class="form-label">
+                    <t t-if="isKorean()">회원 그룹 제목</t>
+                    <t t-else="">Member Group Title</t>
+                </label>
+                <input 
+                    type="text"
+                    id="member-group-title"
+                    name="member_group_title"
+                    class="form-control" 
+                    t-model="state.conditionForm.groupTitle"
+                    placeholder="Enter group title"
+                    aria-label="Member Group Title"
+                    aria-required="true"
+                    autocomplete="off"
+                />
+            </div>
+            
+            <!-- Membership Conditions Section -->
+            <div class="form-section membership-conditions-section">
+                <div class="section-indicator">
+                    <h3 class="section-heading">
+                        <t t-if="isKorean()">회원 조건</t>
+                        <t t-else="">Membership Conditions</t>
+                    </h3>
+                </div>
+                
+                <!-- Gender -->
+                <div class="filter-row">
+                    <label class="filter-label" id="gender-label">
+                        <t t-if="isKorean()">성별</t>
+                        <t t-else="">gender</t>
+                    </label>
+                    <div class="button-group" role="group" aria-labelledby="gender-label">
+                        <button 
+                            type="button"
+                            id="gender-male"
+                            name="gender_male"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.gender === 'male'}"
+                            t-on-click="() => this.toggleFilter('gender', 'male')"
+                            aria-label="Select Male"
+                            aria-pressed="false"
+                        >
+                            <t t-if="isKorean()">남성</t>
+                            <t t-else="">male</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="gender-female"
+                            name="gender_female"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.gender === 'female'}"
+                            t-on-click="() => this.toggleFilter('gender', 'female')"
+                            aria-label="Select Female"
+                            aria-pressed="false"
+                        >
+                            <t t-if="isKorean()">여성</t>
+                            <t t-else="">Female</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="gender-all"
+                            name="gender_all"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.gender === 'all'}"
+                            t-on-click="() => this.toggleFilter('gender', 'all')"
+                            aria-label="Select All Genders"
+                            aria-pressed="true"
+                        >
+                            <t t-if="isKorean()">선택</t>
+                            <t t-else="">selection</t>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Age Group -->
+                <div class="filter-row">
+                    <label class="filter-label" id="age-group-label">
+                        <t t-if="isKorean()">연령대</t>
+                        <t t-else="">Age group</t>
+                    </label>
+                    <div class="button-group" role="group" aria-labelledby="age-group-label">
+                        <button 
+                            type="button"
+                            id="age-20s-under"
+                            name="age_20s_under"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.ageGroup === '20s_under'}"
+                            t-on-click="() => this.toggleFilter('ageGroup', '20s_under')"
+                            aria-label="Select 20s and under"
+                        >
+                            <t t-if="isKorean()">20대 이하</t>
+                            <t t-else="">20s under</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="age-20s"
+                            name="age_20s"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.ageGroup === '20s'}"
+                            t-on-click="() => this.toggleFilter('ageGroup', '20s')"
+                            aria-label="Select 20s"
+                        >
+                            <t t-if="isKorean()">20대</t>
+                            <t t-else="">20s</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="age-30s"
+                            name="age_30s"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.ageGroup === '30s'}"
+                            t-on-click="() => this.toggleFilter('ageGroup', '30s')"
+                            aria-label="Select 30s"
+                        >
+                            <t t-if="isKorean()">30대</t>
+                            <t t-else="">30s</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="age-40s"
+                            name="age_40s"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.ageGroup === '40s'}"
+                            t-on-click="() => this.toggleFilter('ageGroup', '40s')"
+                            aria-label="Select 40s"
+                        >
+                            <t t-if="isKorean()">40대</t>
+                            <t t-else="">40s</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="age-50s-more"
+                            name="age_50s_more"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.ageGroup === '50s_more'}"
+                            t-on-click="() => this.toggleFilter('ageGroup', '50s_more')"
+                            aria-label="Select 50s and above"
+                        >
+                            <t t-if="isKorean()">50대 이상</t>
+                            <t t-else="">50s more</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="age-unselected"
+                            name="age_unselected"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.ageGroup === 'unselected'}"
+                            t-on-click="() => this.toggleFilter('ageGroup', 'unselected')"
+                            aria-label="Unselect Age Group"
+                        >
+                            <t t-if="isKorean()">미선택</t>
+                            <t t-else="">Unselected</t>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Marketing Consent -->
+                <div class="filter-row">
+                    <label class="filter-label" id="marketing-consent-label">
+                        <t t-if="isKorean()">마케팅 수신 동의</t>
+                        <t t-else="">Consent to receive marketing communications</t>
+                    </label>
+                    <div class="button-group" role="group" aria-labelledby="marketing-consent-label">
+                        <button 
+                            type="button"
+                            id="marketing-agree"
+                            name="marketing_agree"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.marketingConsent === 'agreement'}"
+                            t-on-click="() => this.toggleFilter('marketingConsent', 'agreement')"
+                            aria-label="Marketing Agreement"
+                        >
+                            <t t-if="isKorean()">동의</t>
+                            <t t-else="">agreement</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="marketing-not-doing"
+                            name="marketing_not_doing"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.marketingConsent === 'not_doing'}"
+                            t-on-click="() => this.toggleFilter('marketingConsent', 'not_doing')"
+                            aria-label="Not Doing Marketing"
+                        >
+                            <t t-if="isKorean()">미동의</t>
+                            <t t-else="">Not doing it</t>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Membership Type -->
+                <div class="filter-row">
+                    <label class="filter-label" id="membership-type-label">
+                        <t t-if="isKorean()">회원 유형</t>
+                        <t t-else="">Membership Type</t>
+                    </label>
+                    <div class="button-group" role="group" aria-labelledby="membership-type-label">
+                        <button 
+                            type="button"
+                            id="membership-non-member"
+                            name="membership_non_member"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.membershipType === 'non_member'}"
+                            t-on-click="() => this.toggleFilter('membershipType', 'non_member')"
+                            aria-label="Non-member"
+                        >
+                            <t t-if="isKorean()">비회원</t>
+                            <t t-else="">Non-member</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="membership-member"
+                            name="membership_member"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.membershipType === 'member'}"
+                            t-on-click="() => this.toggleFilter('membershipType', 'member')"
+                            aria-label="Member"
+                        >
+                            <t t-if="isKorean()">회원</t>
+                            <t t-else="">member</t>
+                        </button>
+                        <button 
+                            type="button"
+                            id="membership-corporation"
+                            name="membership_corporation"
+                            class="btn-option"
+                            t-att-class="{'active': state.conditionForm.membershipType === 'corporation'}"
+                            t-on-click="() => this.toggleFilter('membershipType', 'corporation')"
+                            aria-label="Corporation"
+                        >
+                            <t t-if="isKorean()">법인</t>
+                            <t t-else="">corporation</t>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Membership Period -->
+                <div class="filter-row">
+                    <label class="filter-label" for="membership-start-date">
+                        <t t-if="isKorean()">회원 가입 기간</t>
+                        <t t-else="">Membership period</t>
+                    </label>
+                    <div class="date-range-group">
+                        <input 
+                            type="date"
+                            id="membership-start-date"
+                            name="membership_start_date"
+                            class="date-input"
+                            t-model="state.conditionForm.membershipStartDate"
+                            aria-label="Membership Start Date"
+                            autocomplete="off"
+                        />
+                        <span class="range-separator">~</span>
+                        <input 
+                            type="date"
+                            id="membership-end-date"
+                            name="membership_end_date"
+                            class="date-input"
+                            t-model="state.conditionForm.membershipEndDate"
+                            aria-label="Membership End Date"
+                            autocomplete="off"
+                        />
+                        <div class="quick-period-buttons">
+                            <button 
+                                type="button"
+                                id="membership-this-month"
+                                name="membership_this_month"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('membership', 'this_month')"
+                                aria-label="This Month"
+                            >
+                                <t t-if="isKorean()">이번 달</t>
+                                <t t-else="">This month</t>
+                            </button>
+                            <button 
+                                type="button"
+                                id="membership-1-month"
+                                name="membership_1_month"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('membership', '1_month')"
+                                aria-label="1 Month"
+                            >
+                                <t t-if="isKorean()">1개월</t>
+                                <t t-else="">1 month</t>
+                            </button>
+                            <button 
+                                type="button"
+                                id="membership-3-months"
+                                name="membership_3_months"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('membership', '3_months')"
+                                aria-label="3 Months"
+                            >
+                                <t t-if="isKorean()">3개월</t>
+                                <t t-else="">3 months</t>
+                            </button>
+                            <button 
+                                type="button"
+                                id="membership-6-months"
+                                name="membership_6_months"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('membership', '6_months')"
+                                aria-label="6 Months"
+                            >
+                                <t t-if="isKorean()">6개월</t>
+                                <t t-else="">6 months</t>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Built-in Period -->
+                <div class="filter-row">
+                    <label class="filter-label" for="builtin-start-date">
+                        <t t-if="isKorean()">내장 기간</t>
+                        <t t-else="">Built-in period</t>
+                    </label>
+                    <div class="date-range-group">
+                        <input 
+                            type="date"
+                            id="builtin-start-date"
+                            name="builtin_start_date"
+                            class="date-input"
+                            t-model="state.conditionForm.builtInStartDate"
+                            aria-label="Built-in Start Date"
+                            autocomplete="off"
+                        />
+                        <span class="range-separator">~</span>
+                        <input 
+                            type="date"
+                            id="builtin-end-date"
+                            name="builtin_end_date"
+                            class="date-input"
+                            t-model="state.conditionForm.builtInEndDate"
+                            aria-label="Built-in End Date"
+                            autocomplete="off"
+                        />
+                        <div class="quick-period-buttons">
+                            <button 
+                                type="button"
+                                id="builtin-this-month"
+                                name="builtin_this_month"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('builtin', 'this_month')"
+                                aria-label="This Month"
+                            >
+                                <t t-if="isKorean()">이번 달</t>
+                                <t t-else="">This month</t>
+                            </button>
+                            <button 
+                                type="button"
+                                id="builtin-1-month"
+                                name="builtin_1_month"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('builtin', '1_month')"
+                                aria-label="1 Month"
+                            >
+                                <t t-if="isKorean()">1개월</t>
+                                <t t-else="">1 month</t>
+                            </button>
+                            <button 
+                                type="button"
+                                id="builtin-3-months"
+                                name="builtin_3_months"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('builtin', '3_months')"
+                                aria-label="3 Months"
+                            >
+                                <t t-if="isKorean()">3개월</t>
+                                <t t-else="">3 months</t>
+                            </button>
+                            <button 
+                                type="button"
+                                id="builtin-6-months"
+                                name="builtin_6_months"
+                                class="btn-period"
+                                t-on-click="() => this.setQuickPeriod('builtin', '6_months')"
+                                aria-label="6 Months"
+                            >
+                                <t t-if="isKorean()">6개월</t>
+                                <t t-else="">6 months</t>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Subdivision Conditions Section -->
+            <div class="form-section subdivision-conditions-section">
+                <div class="section-indicator">
+                    <h3 class="section-heading">
+                        <t t-if="isKorean()">세분화 조건</t>
+                        <t t-else="">Subdivision Conditions</t>
+                    </h3>
+                </div>
+                
+                <div class="subdivision-grid">
+                    <div class="filter-col">
+                        <label for="days-of-use" class="filter-label-sub">
+                            <t t-if="isKorean()">이용 요일</t>
+                            <t t-else="">Days of use</t>
+                        </label>
+                        <select 
+                            id="days-of-use"
+                            name="days_of_use"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.daysOfUse"
+                            aria-label="Days of Use"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="usage-time-zone" class="filter-label-sub">
+                            <t t-if="isKorean()">이용 시간대</t>
+                            <t t-else="">Usage time zone</t>
+                        </label>
+                        <select 
+                            id="usage-time-zone"
+                            name="usage_time_zone"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.usageTimeZone"
+                            aria-label="Usage Time Zone"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="inflow-channel" class="filter-label-sub">
+                            <t t-if="isKorean()">유입 채널</t>
+                            <t t-else="">Inflow channel</t>
+                        </label>
+                        <select 
+                            id="inflow-channel"
+                            name="inflow_channel"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.inflowChannel"
+                            aria-label="Inflow Channel"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="organization" class="filter-label-sub">
+                            <t t-if="isKorean()">소속</t>
+                            <t t-else="">organization</t>
+                        </label>
+                        <select 
+                            id="organization"
+                            name="organization"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.organization"
+                            aria-label="Organization"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="number-of-rounds" class="filter-label-sub">
+                            <t t-if="isKorean()">라운드 수</t>
+                            <t t-else="">Number of rounds</t>
+                        </label>
+                        <select 
+                            id="number-of-rounds"
+                            name="number_of_rounds"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.numberOfRounds"
+                            aria-label="Number of Rounds"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="rainy-round" class="filter-label-sub">
+                            <t t-if="isKorean()">우천 라운드</t>
+                            <t t-else="">Rainy round</t>
+                        </label>
+                        <select 
+                            id="rainy-round"
+                            name="rainy_round"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.rainyRound"
+                            aria-label="Rainy Round"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="self-rounding" class="filter-label-sub">
+                            <t t-if="isKorean()">셀프 라운딩</t>
+                            <t t-else="">Self-rounding</t>
+                        </label>
+                        <select 
+                            id="self-rounding"
+                            name="self_rounding"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.selfRounding"
+                            aria-label="Self Rounding"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-col">
+                        <label for="use-green-fee" class="filter-label-sub">
+                            <t t-if="isKorean()">그린피 이용</t>
+                            <t t-else="">Use Green Fee</t>
+                        </label>
+                        <select 
+                            id="use-green-fee"
+                            name="use_green_fee"
+                            class="form-select-sub"
+                            t-model="state.conditionForm.useGreenFee"
+                            aria-label="Use Green Fee"
+                        >
+                            <option value="entire">
+                                <t t-if="isKorean()">전체</t>
+                                <t t-else="">entire</t>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button 
+                    type="button"
+                    id="member-inquiry-submit"
+                    name="member_inquiry_submit"
+                    class="btn-member-inquiry"
+                    t-on-click="submitMemberInquiry"
+                    t-att-disabled="state.isSubmitting"
+                    aria-label="Submit Member Inquiry"
+                >
+                    <t t-if="state.isSubmitting">
+                        <t t-if="isKorean()">조회 중...</t>
+                        <t t-else="">Searching...</t>
+                    </t>
+                    <t t-else="">
+                        <t t-if="isKorean()">회원 조회</t>
+                        <t t-else="">Member Inquiry</t>
+                    </t>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

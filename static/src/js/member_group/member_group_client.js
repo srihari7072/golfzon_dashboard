@@ -3,6 +3,7 @@
 import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
+import { rpc } from "@web/core/network/rpc";
 import { MemberGroupService } from "./services/member_group_service";
 import { DateRangeUtils } from "./utils/date_range_utils";
 import { DashboardLoader } from "../utils/dashboard_loader";
@@ -11,10 +12,12 @@ class MemberGroupView extends Component {
     static template = "golfzon_dashboard.MemberGroupView";
 
     setup() {
+        this.rpc = rpc;
         this._t = _t;
         this.menuDrawer = useRef("menuDrawer");
         this.memberGroupService = new MemberGroupService();
         const defaultDates = DateRangeUtils.getDefaultDateRange();
+        this.fileInput = useRef("fileInput");
 
         this.state = useState({
             activeMenuItem: 'membergroup',
@@ -46,10 +49,65 @@ class MemberGroupView extends Component {
 
             memberList: [],
             isLoadingMembers: false,
-            memberSortBy: 'membership_number',
-            memberSortOrder: 'asc',
+            memberOffset: 0,
+            memberDisplayLimit: 10,
+            memberTotal: 0,
+            hasMoreMembers: false,
+            selectedGroupId: null,
 
             groupList: [],
+
+            conditionForm: {
+                groupTitle: '',
+
+                // Membership Conditions
+                gender: 'all',
+                ageGroup: 'unselected',
+                marketingConsent: '',
+                membershipType: 'member',
+                residence1: '',
+                residence2: '',
+                residence3: '',
+                membershipStartDate: '',
+                membershipEndDate: '',
+                builtInStartDate: '',
+                builtInEndDate: '',
+
+                // Subdivision Conditions
+                daysOfUse: 'entire',
+                usageTimeZone: 'entire',
+                inflowChannel: 'entire',
+                organization: 'entire',
+                numberOfRounds: 'entire',
+                rainyRound: 'entire',
+                selfRounding: 'entire',
+                useGreenFee: 'entire'
+            },
+
+            // Inquiry Results State
+            inquiryResults: {
+                indicators: {
+                    number_of_members: '0 people',
+                    number_of_times_builtin: '0 times',
+                    total_sales: '0 won',
+                    payment_green_fee: '0 won',
+                    open_green_fee: '0 won',
+                    average_discount_rate: '0%'
+                },
+                members: [],
+                group_id: null
+            },
+            showInquiryResults: false,
+
+            // Register Form State
+            registerForm: {
+                groupTitle: '',
+                file: null,
+                fileName: '',
+                uploadStatus: '',
+                statusMessage: ''
+            },
+            isUploading: false
         });
 
         onMounted(() => this.onMounted());
@@ -243,15 +301,56 @@ class MemberGroupView extends Component {
         }
     }
 
-    // Load member list for selected group
-    async loadMemberList(groupId = null) {
-        this.state.isLoadingMembers = true;
+    // Add this method to load more members in inquiry results
+    loadMoreInquiryMembers() {
+        console.log('📊 Loading more inquiry members');
+        const increment = 10;
+        const currentLimit = this.state.memberDisplayLimit || 10;
+        const totalMembers = this.state.inquiryResults.members.length;
+
+        if (currentLimit < totalMembers) {
+            this.state.memberDisplayLimit = Math.min(currentLimit + increment, totalMembers);
+            console.log(`✅ Displaying ${this.state.memberDisplayLimit} of ${totalMembers} members`);
+        }
+    }
+
+    // ✅ NEW: Load member list with pagination
+    async loadMemberList(groupId = null, loadMore = false) {
         try {
-            const response = await this.memberGroupService.fetchMemberList(groupId);
+            // If not loading more, reset pagination
+            if (!loadMore) {
+                this.state.memberOffset = 0;
+                this.state.memberList = [];
+                this.state.selectedGroupId = groupId;
+            }
+
+            this.state.isLoadingMembers = true;
+
+            console.log(`📡 Fetching member list for group: ${groupId}, offset: ${this.state.memberOffset}`);
+
+            const response = await this.rpc('/golfzon/member_group/get_members', {
+                group_id: groupId,
+                offset: this.state.memberOffset,
+                limit: this.state.memberLimit
+            });
+
+            console.log('✅ Member list response:', response);
+
             if (response.status === 'success') {
-                this.state.memberList = response.data || [];
-                console.log(`✅ Loaded ${this.state.memberList.length} members`);
+                // Append new members if loading more, otherwise replace
+                if (loadMore) {
+                    this.state.memberList = [...this.state.memberList, ...response.data];
+                } else {
+                    this.state.memberList = response.data;
+                }
+
+                this.state.memberTotal = response.total;
+                this.state.hasMoreMembers = response.has_more;
+                this.state.memberOffset += response.data.length;
+
+                console.log(`✅ Loaded ${this.state.memberList.length}/${this.state.memberTotal} members`);
             } else {
+                console.error('Failed to load members:', response.message);
                 this.state.memberList = [];
             }
         } catch (error) {
@@ -260,6 +359,29 @@ class MemberGroupView extends Component {
         } finally {
             this.state.isLoadingMembers = false;
         }
+    }
+
+    // ✅ NEW: Load more members
+    async loadMoreMembers() {
+        if (!this.state.hasMoreMembers || this.state.isLoadingMembers) {
+            return;
+        }
+
+        await this.loadMemberList(this.state.selectedGroupId, true);
+    }
+
+    // ✅ UPDATE: When clicking on a group, load its members
+    async selectGroup(groupId) {
+        console.log('Selected group:', groupId);
+        await this.loadMemberList(groupId, false);
+
+        // Scroll to member list
+        setTimeout(() => {
+            const memberSection = document.querySelector('.member-list-section');
+            if (memberSection) {
+                memberSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
     }
 
     // Sort member table
@@ -281,6 +403,453 @@ class MemberGroupView extends Component {
             }
         });
     }
+
+    triggerFileSelect() {
+        console.log('📁 Triggering file select');
+
+        // Check if fileInput ref exists
+        if (this.fileInput && this.fileInput.el) {
+            this.fileInput.el.click();
+            console.log('✅ File input clicked');
+        } else {
+            console.error('❌ File input ref not found');
+
+            // Fallback: Try to find by ID
+            const fileInput = document.getElementById('member-file-input');
+            if (fileInput) {
+                fileInput.click();
+                console.log('✅ File input found by ID and clicked');
+            } else {
+                console.error('❌ File input element not found in DOM');
+            }
+        }
+    }
+
+    onFileSelected(event) {
+        const file = event.target.files[0];
+
+        if (!file) {
+            console.log('⚠️ No file selected');
+            return;
+        }
+
+        console.log('📁 File selected:', file.name, 'Size:', file.size, 'bytes', 'Type:', file.type);
+
+        // Validate file type
+        const validExtensions = ['.xls', '.xlsx'];
+        const fileName = file.name.toLowerCase();
+        const isValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+
+        if (!isValidExtension) {
+            this.state.registerForm.uploadStatus = 'error';
+            this.state.registerForm.statusMessage = this.isKorean()
+                ? '엑셀 파일만 업로드 가능합니다 (.xls, .xlsx)'
+                : 'Only Excel files are allowed (.xls, .xlsx)';
+            this.state.registerForm.file = null;
+            this.state.registerForm.fileName = '';
+            return;
+        }
+
+        // Validate file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+            this.state.registerForm.uploadStatus = 'error';
+            this.state.registerForm.statusMessage = this.isKorean()
+                ? '파일 크기는 10MB 이하여야 합니다'
+                : 'File size must be less than 10MB';
+            this.state.registerForm.file = null;
+            this.state.registerForm.fileName = '';
+            return;
+        }
+
+        // Store file
+        this.state.registerForm.file = file;
+        this.state.registerForm.fileName = file.name;
+        this.state.registerForm.uploadStatus = 'success';
+        this.state.registerForm.statusMessage = this.isKorean()
+            ? '파일이 성공적으로 선택되었습니다'
+            : 'File selected successfully';
+
+        console.log('✅ File validation passed');
+    }
+
+    // ✅ FIX: Download template with correct headers
+    async downloadTemplate() {
+        console.log('📥 Downloading member registration template');
+
+        try {
+            // Create a link element
+            const link = document.createElement('a');
+            link.href = '/golfzon/member_group/download_template';
+            link.download = 'member_registration_template.xlsx';
+
+            // Add to DOM, click, and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            console.log('✅ Template download initiated');
+
+            // Show success message
+            setTimeout(() => {
+                alert(this.isKorean()
+                    ? '템플릿 다운로드가 시작되었습니다.'
+                    : 'Template download started.');
+            }, 100);
+
+        } catch (error) {
+            console.error('❌ Error downloading template:', error);
+            alert(this.isKorean()
+                ? '템플릿 다운로드 실패. 다시 시도해주세요.'
+                : 'Failed to download template. Please try again.');
+        }
+    }
+
+    // ✅ FIX: Confirm registration
+    async confirmRegistration() {
+        if (!this.state.registerForm.groupTitle) {
+            alert(this.isKorean()
+                ? '그룹명을 입력해주세요'
+                : 'Please enter a group name');
+            return;
+        }
+
+        if (!this.state.registerForm.file) {
+            alert(this.isKorean()
+                ? '파일을 선택해주세요'
+                : 'Please select a file');
+            return;
+        }
+
+        this.state.isUploading = true;
+        this.state.registerForm.uploadStatus = 'uploading';
+        this.state.registerForm.statusMessage = this.isKorean()
+            ? '업로드 중입니다...'
+            : 'Uploading...';
+
+        try {
+            console.log('📤 Uploading member group registration');
+
+            // Create FormData
+            const formData = new FormData();
+            formData.append('group_title', this.state.registerForm.groupTitle);
+            formData.append('member_list_file', this.state.registerForm.file);
+
+            // Upload file
+            const response = await fetch('/golfzon/member_group/upload_member_list', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                console.log('✅ Registration successful');
+
+                this.state.registerForm.uploadStatus = 'success';
+                this.state.registerForm.statusMessage = result.message || (this.isKorean()
+                    ? '회원 그룹이 성공적으로 등록되었습니다'
+                    : 'Member group registered successfully');
+
+                // Reset form after delay
+                setTimeout(() => {
+                    this.resetRegisterForm();
+                    this.searchMemberGroups(); // Refresh list
+                }, 2000);
+            } else {
+                console.error('❌ Registration failed:', result.message);
+
+                this.state.registerForm.uploadStatus = 'error';
+                this.state.registerForm.statusMessage = result.message || (this.isKorean()
+                    ? '등록 실패. 다시 시도해주세요.'
+                    : 'Registration failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('❌ Error during registration:', error);
+
+            this.state.registerForm.uploadStatus = 'error';
+            this.state.registerForm.statusMessage = this.isKorean()
+                ? '오류가 발생했습니다. 다시 시도해주세요.'
+                : 'An error occurred. Please try again.';
+        } finally {
+            this.state.isUploading = false;
+        }
+    }
+
+    resetRegisterForm() {
+        this.state.registerForm = {
+            groupTitle: '',
+            file: null,
+            fileName: '',
+            uploadStatus: '',
+            statusMessage: ''
+        };
+
+        // Reset file input
+        if (this.fileInput && this.fileInput.el) {
+            this.fileInput.el.value = '';
+        }
+    }
+
+
+    /**
+      * Toggle filter selection
+      */
+    toggleFilter(filterName, value) {
+        console.log(`🔄 Toggle filter: ${filterName} = ${value}`);
+        this.state.conditionForm[filterName] = value;
+    }
+
+    /**
+     * Set quick date period
+     */
+    setQuickPeriod(periodType, range) {
+        console.log(`📅 Set quick period: ${periodType} - ${range}`);
+
+        const today = new Date();
+        let startDate, endDate;
+
+        switch (range) {
+            case 'this_month':
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                break;
+            case '1_month':
+                startDate = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                endDate = today;
+                break;
+            case '3_months':
+                startDate = new Date(today.getFullYear(), today.getMonth() - 3, today.getDate());
+                endDate = today;
+                break;
+            case '6_months':
+                startDate = new Date(today.getFullYear(), today.getMonth() - 6, today.getDate());
+                endDate = today;
+                break;
+            default:
+                return;
+        }
+
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        if (periodType === 'membership') {
+            this.state.conditionForm.membershipStartDate = formatDate(startDate);
+            this.state.conditionForm.membershipEndDate = formatDate(endDate);
+        } else if (periodType === 'builtin') {
+            this.state.conditionForm.builtInStartDate = formatDate(startDate);
+            this.state.conditionForm.builtInEndDate = formatDate(endDate);
+        }
+
+        console.log(`✅ Period set: ${formatDate(startDate)} ~ ${formatDate(endDate)}`);
+    }
+
+    async submitMemberInquiry() {
+        if (!this.state.conditionForm.groupTitle) {
+            return;
+        }
+
+        this.state.isSubmitting = true;
+
+        try {
+            console.log('='.repeat(80));
+            console.log('🔍 SUBMITTING MEMBER INQUIRY');
+            console.log('='.repeat(80));
+            console.log('Conditions:', this.state.conditionForm);
+
+            // Prepare payload
+            const payload = {
+                group_title: this.state.conditionForm.groupTitle,
+
+                // Membership Conditions
+                gender: this.state.conditionForm.gender,
+                age_group: this.state.conditionForm.ageGroup,
+                marketing_consent: this.state.conditionForm.marketingConsent,
+                membership_type: this.state.conditionForm.membershipType,
+                residence_1: this.state.conditionForm.residence1,
+                residence_2: this.state.conditionForm.residence2,
+                residence_3: this.state.conditionForm.residence3,
+                membership_start_date: this.state.conditionForm.membershipStartDate,
+                membership_end_date: this.state.conditionForm.membershipEndDate,
+                builtin_start_date: this.state.conditionForm.builtInStartDate,
+                builtin_end_date: this.state.conditionForm.builtInEndDate,
+
+                // Subdivision Conditions
+                days_of_use: this.state.conditionForm.daysOfUse,
+                usage_time_zone: this.state.conditionForm.usageTimeZone,
+                inflow_channel: this.state.conditionForm.inflowChannel,
+                organization: this.state.conditionForm.organization,
+                number_of_rounds: this.state.conditionForm.numberOfRounds,
+                rainy_round: this.state.conditionForm.rainyRound,
+                self_rounding: this.state.conditionForm.selfRounding,
+                use_green_fee: this.state.conditionForm.useGreenFee
+            };
+
+            console.log('📤 Sending payload:', payload);
+
+            // Call backend
+            const response = await this.rpc('/golfzon/member_group/condition_inquiry', payload);
+
+            console.log('📥 Response:', response);
+
+            if (response.status === 'success') {
+                console.log('✅ INQUIRY SUCCESSFUL');
+
+                this.state.memberDisplayLimit = 10;
+
+                // Update inquiry results
+                this.state.inquiryResults = {
+                    indicators: response.indicators || {
+                        number_of_members: '0 people',
+                        number_of_times_builtin: '0 times',
+                        total_sales: '0 won',
+                        payment_green_fee: '0 won',
+                        open_green_fee: '0 won',
+                        average_discount_rate: '0%'
+                    },
+                    members: response.members || [],
+                    group_id: response.group_id,
+                    member_count: response.member_count || 0
+                };
+
+                // Show results
+                this.state.showInquiryResults = true;
+
+                // ✅ FIX: Use setTimeout to ensure DOM is updated before scrolling
+                setTimeout(() => {
+                    try {
+                        const resultsSection = document.querySelector('.inquiry-results-section');
+                        if (resultsSection) {
+                            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            console.log('✅ Scrolled to results section');
+                        } else {
+                            console.warn('⚠️ Results section not found in DOM');
+                        }
+                    } catch (scrollError) {
+                        console.error('❌ Error scrolling:', scrollError);
+                    }
+
+                    // ✅ FIX: Show notification AFTER scroll attempt
+                    try {
+                        this.isKorean()
+                            ? `${response.member_count}명의 회원이 조회되었습니다.`
+                            : `${response.member_count} members found.`
+                    } catch (notifError) {
+                        console.error('❌ Error showing notification:', notifError);
+                    }
+                }, 200);
+
+                console.log('='.repeat(80));
+
+            } else {
+                console.error('❌ INQUIRY FAILED:', response.message);
+            }
+
+        } catch (error) {
+            console.error('❌ ERROR DURING MEMBER INQUIRY:', error);
+        }
+    }
+
+    /**
+     * Confirm group creation from inquiry results
+     */
+    async confirmGroupCreation() {
+        if (!this.state.inquiryResults.group_id) {
+            this.notification.add(
+                this.isKorean()
+                    ? '생성할 그룹 정보가 없습니다.'
+                    : 'No group information to create.',
+                { type: 'warning' }
+            );
+            return;
+        }
+
+        const confirmed = confirm(
+            this.isKorean()
+                ? `조회된 ${this.state.inquiryResults.member_count}명의 회원으로 그룹을 등록하시겠습니까?`
+                : `Would you like to register a group with ${this.state.inquiryResults.member_count} members?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            console.log('📝 Confirming group creation:', this.state.inquiryResults.group_id);
+
+            // Refresh group list
+            await this.searchMemberGroups();
+
+            // Reset forms and hide results
+            this.resetConditionForm();
+            this.state.showInquiryResults = false;
+
+            this.notification.add(
+                this.isKorean()
+                    ? '그룹이 성공적으로 등록되었습니다.'
+                    : 'Group registered successfully.',
+                { type: 'success' }
+            );
+
+        } catch (error) {
+            console.error('❌ Error confirming group:', error);
+
+            this.notification.add(
+                this.isKorean()
+                    ? '그룹 등록 중 오류가 발생했습니다.'
+                    : 'An error occurred during group registration.',
+                { type: 'danger' }
+            );
+        }
+    }
+
+    /**
+     * Reset condition form
+     */
+    resetConditionForm() {
+        this.state.conditionForm = {
+            groupTitle: '',
+            gender: 'all',
+            ageGroup: 'unselected',
+            marketingConsent: '',
+            membershipType: 'member',
+            residence1: '',
+            residence2: '',
+            residence3: '',
+            membershipStartDate: '',
+            membershipEndDate: '',
+            builtInStartDate: '',
+            builtInEndDate: '',
+            daysOfUse: 'entire',
+            usageTimeZone: 'entire',
+            inflowChannel: 'entire',
+            organization: 'entire',
+            numberOfRounds: 'entire',
+            rainyRound: 'entire',
+            selfRounding: 'entire',
+            useGreenFee: 'entire'
+        };
+
+        this.state.inquiryResults = {
+            indicators: {
+                number_of_members: '0 people',
+                number_of_times_builtin: '0 times',
+                total_sales: '0 won',
+                payment_green_fee: '0 won',
+                open_green_fee: '0 won',
+                average_discount_rate: '0%'
+            },
+            members: [],
+            group_id: null
+        };
+
+        console.log('🔄 Condition form reset');
+    }
+
 
     async loadCurrentDate() {
         try {
@@ -334,7 +903,20 @@ class MemberGroupView extends Component {
         this.env.services.action.doAction({
             type: 'ir.actions.client',
             tag: 'golfzon.dashboard',
-            target: 'fullscreen',
+            target: 'main',
+        });
+    }
+
+    navigateToMember(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.state.activeMenuItem = 'member';
+        this.state.drawerOpen = false;
+        if (this.menuDrawer.el) this.menuDrawer.el.classList.remove("open");
+        this.env.services.action.doAction({
+            type: 'ir.actions.client',
+            tag: 'golfzon.member',
+            target: 'main',
         });
     }
 

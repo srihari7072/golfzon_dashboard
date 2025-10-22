@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Member Inquiry Results Display -->
+    <t t-name="golfzon_dashboard.MemberInquiryResults">
+        <div class="inquiry-results-section" t-if="state.showInquiryResults">
+            
+            <!-- Point 1: Key Indicators -->
+            <div class="key-indicators-result">
+                <div class="indicators-header">
+                    <div class="indicators-titles">
+                        <h3 class="indicator-title">
+                            <t t-if="isKorean()">회원 그룹 핵심 지표</t>
+                            <t t-else="">Member Group Key Indicators</t>
+                        </h3>
+                    </div>
+                </div>
+                
+                <div class="indicators-grid">
+                    <!-- Number of Members -->
+                    <div class="indicator-card">
+                        <div class="card-label">
+                            <t t-if="isKorean()">회원 수</t>
+                            <t t-else="">Number of members</t>
+                        </div>
+                        <div class="card-value">
+                            <t t-esc="state.inquiryResults.indicators.number_of_members || '0 people'"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Number of Times Built-in -->
+                    <div class="indicator-card">
+                        <div class="card-label">
+                            <t t-if="isKorean()">내장 횟수</t>
+                            <t t-else="">Number of times built-in</t>
+                        </div>
+                        <div class="card-value">
+                            <t t-esc="state.inquiryResults.indicators.number_of_times_builtin || '0 times'"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Sales -->
+                    <div class="indicator-card">
+                        <div class="card-label">
+                            <t t-if="isKorean()">총 매출</t>
+                            <t t-else="">Total sales</t>
+                        </div>
+                        <div class="card-value">
+                            <t t-esc="state.inquiryResults.indicators.total_sales || '0 won'"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Green Fee -->
+                    <div class="indicator-card green-fee">
+                        <div class="card-label">
+                            <t t-if="isKorean()">결제 그린피</t>
+                            <t t-else="">Payment Green Fee</t>
+                        </div>
+                        <div class="card-value">
+                            <t t-esc="state.inquiryResults.indicators.payment_green_fee || '0 won'"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Open Green Fee -->
+                    <div class="indicator-card green-fee">
+                        <div class="card-label">
+                            <t t-if="isKorean()">오픈 그린피</t>
+                            <t t-else="">Open Green Fee</t>
+                        </div>
+                        <div class="card-value">
+                            <t t-esc="state.inquiryResults.indicators.open_green_fee || '0 won'"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Average Discount Rate -->
+                    <div class="indicator-card green-fee">
+                        <div class="card-label">
+                            <t t-if="isKorean()">평균 할인율</t>
+                            <t t-else="">Average discount rate</t>
+                        </div>
+                        <div class="card-value">
+                            <t t-esc="state.inquiryResults.indicators.average_discount_rate || '0%'"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Point 2: Member List with Scrollable Container -->
+            <div class="member-list-result">
+                <div class="list-header">
+                    <h3 class="list-title">
+                        <t t-if="isKorean()">회원 목록</t>
+                        <t t-else="">Member List</t>
+                    </h3>
+                </div>
+                
+                <!-- Add scrollable container wrapper -->
+                <div class="member-table-scrollable-wrapper">
+                    <div class="member-table-container">
+                        <table class="member-results-table">
+                            <thead>
+                                <tr>
+                                    <th><t t-if="isKorean()">회원번호</t><t t-else="">Membership number</t></th>
+                                    <th><t t-if="isKorean()">이름</t><t t-else="">name</t></th>
+                                    <th><t t-if="isKorean()">가입일</t><t t-else="">Date of joining</t></th>
+                                    <th><t t-if="isKorean()">연락처</t><t t-else="">contact</t></th>
+                                    <th><t t-if="isKorean()">이메일</t><t t-else="">email</t></th>
+                                    <th><t t-if="isKorean()">거주지</t><t t-else="">Residence</t></th>
+                                    <th><t t-if="isKorean()">내장횟수</t><t t-else="">Number of times built-in</t></th>
+                                    <th><t t-if="isKorean()">최근내장일</t><t t-else="">Recent interior date</t></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="state.inquiryResults.members.length > 0">
+                                    <tr t-foreach="state.inquiryResults.members.slice(0, state.memberDisplayLimit || 10)" t-as="member" t-key="member.membership_number">
+                                        <td><t t-esc="member.membership_number"/></td>
+                                        <td><t t-esc="member.name"/></td>
+                                        <td><t t-esc="member.date_of_joining"/></td>
+                                        <td><t t-esc="member.contact"/></td>
+                                        <td><t t-esc="member.email"/></td>
+                                        <td><t t-esc="member.residence"/></td>
+                                        <td class="text-center"><t t-esc="member.number_of_times_builtin"/></td>
+                                        <td><t t-esc="member.recent_interior_date"/></td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr>
+                                        <td colspan="8" class="no-data">
+                                            <t t-if="isKorean()">회원 데이터가 없습니다</t>
+                                            <t t-else="">No member data available</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="load-more-container" t-if="state.inquiryResults.members.length > (state.memberDisplayLimit || 10)">
+                    <button 
+                        class="btn-load-more" 
+                        t-on-click="loadMoreInquiryMembers"
+                        t-att-disabled="state.memberDisplayLimit >= state.inquiryResults.members.length">
+                        <t t-if="isKorean()">더 보기 </t>
+                        <t t-else="">Load More </t>
+                        <t t-esc="state.memberDisplayLimit || 10"/> / <t t-esc="state.inquiryResults.members.length"/>)
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Registration Button -->
+            <div class="results-actions">
+                <button 
+                    type="button"
+                    class="btn-register-group" 
+                    t-on-click="confirmGroupCreation"
+                >
+                    <t t-if="isKorean()">그룹 등록</t>
+                    <t t-else="">registration</t>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Add to Group Modal (Section 1.3) -->
+    <t t-name="golfzon_dashboard.AddToGroupModal">
+        <div class="modal-overlay" t-if="state.showAddToGroupModal" t-on-click="closeAddToGroupModal">
+            <div class="modal-container add-to-group-modal" t-on-click.stop="">
+                
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <t t-if="isKorean()">그룹에 추가</t>
+                        <t t-else="">Add to Group</t>
+                    </h3>
+                    <button 
+                        type="button"
+                        class="modal-close-btn" 
+                        t-on-click="closeAddToGroupModal"
+                        aria-label="Close"
+                    >×</button>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Group Search -->
+                    <form class="group-search-section" autocomplete="on">
+                        <label for="group-search-input" class="visually-hidden">
+                            <t t-if="isKorean()">그룹명 검색</t>
+                            <t t-else="">Search Group Name</t>
+                        </label>
+                        <input 
+                            type="text"
+                            id="group-search-input"
+                            name="groupSearch"
+                            class="form-control group-search-input"
+                            t-att-placeholder="isKorean() ? '그룹명 검색' : 'Search Group Name'"
+                            t-model="state.groupSearchText"
+                            t-on-input="onGroupSearchChange"
+                            autocomplete="off"
+                        />
+                        <button 
+                            type="button"
+                            class="btn btn-primary" 
+                            t-on-click="searchGroups"
+                        >
+                            <t t-if="isKorean()">검색</t>
+                            <t t-else="">Search</t>
+                        </button>
+                    </form>
+                    
+                    <!-- Group List -->
+                    <div class="group-list-section">
+                        <div class="group-list-header">
+                            <h4>
+                                <t t-if="isKorean()">그룹 목록</t>
+                                <t t-else="">Group List</t>
+                            </h4>
+                        </div>
+                        
+                        <div class="group-list-table-wrapper">
+                            <table class="group-list-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="checkbox-col">
+                                            <t t-if="isKorean()">선택</t>
+                                            <t t-else="">Select</t>
+                                        </th>
+                                        <th scope="col">
+                                            <t t-if="isKorean()">그룹명</t>
+                                            <t t-else="">Group Name</t>
+                                        </th>
+                                        <th scope="col">
+                                            <t t-if="isKorean()">생성일</t>
+                                            <t t-else="">Created On</t>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="state.availableGroups.length === 0">
+                                        <tr>
+                                            <td colspan="3" class="empty-row">
+                                                <t t-if="isKorean()">그룹이 없습니다</t>
+                                                <t t-else="">No groups available</t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-foreach="state.availableGroups" t-as="group" t-key="group.id">
+                                            <tr>
+                                                <td class="checkbox-col">
+                                                    <label t-att-for="'group-checkbox-' + group.id" class="visually-hidden">
+                                                        Select <t t-esc="group.name"/>
+                                                    </label>
+                                                    <input 
+                                                        type="checkbox"
+                                                        t-att-id="'group-checkbox-' + group.id"
+                                                        t-att-name="'groupSelect_' + group.id"
+                                                        t-att-value="group.id"
+                                                        t-att-checked="state.selectedGroupIds.includes(group.id)"
+                                                        t-att-disabled="group.already_member"
+                                                        t-on-change="() => this.toggleGroupSelection(group.id)"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <label t-att-for="'group-checkbox-' + group.id" class="group-name-label">
+                                                        <t t-esc="group.name"/>
+                                                        <t t-if="group.already_member">
+                                                            <span class="already-member-badge">
+                                                                <t t-if="isKorean()">이미 포함됨</t>
+                                                                <t t-else="">Already Added</t>
+                                                            </span>
+                                                        </t>
+                                                    </label>
+                                                </td>
+                                                <td><t t-esc="group.created_date"/></td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- More Button -->
+                        <div class="more-groups-section" t-if="state.hasMoreGroups">
+                            <button 
+                                type="button"
+                                class="btn btn-link more-btn" 
+                                t-on-click="loadMoreGroups"
+                            >
+                                <t t-if="isKorean()">더보기</t>
+                                <t t-else="">More</t>
+                                <span class="icon-down">▼</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <!-- Add Member Button -->
+                    <button 
+                        type="button"
+                        class="btn btn-primary" 
+                        t-on-click="confirmAddToGroups"
+                        t-att-disabled="state.selectedGroupIds.length === 0"
+                    >
+                        <t t-if="isKorean()">회원 추가</t>
+                        <t t-else="">Add Member</t>
+                    </button>
+                    
+                    <!-- Close Button -->
+                    <button 
+                        type="button"
+                        class="btn btn-secondary" 
+                        t-on-click="closeAddToGroupModal"
+                    >
+                        <t t-if="isKorean()">닫기</t>
+                        <t t-else="">Close</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

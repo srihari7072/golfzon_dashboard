@@ -7,13 +7,6 @@ export class MemberGroupService {
         this.rpc = rpcService || rpc;
     }
 
-    /**
-     * Search member groups based on criteria
-     * @param {string} startDate - Start date in YYYY-MM-DD format
-     * @param {string} endDate - End date in YYYY-MM-DD format
-     * @param {string} groupName - Optional group name filter
-     * @returns {Promise} Response from server
-     */
     async searchMemberGroups(startDate, endDate, groupName = '') {
         try {
             console.log('📡 Searching member groups:', { startDate, endDate, groupName });
@@ -37,17 +30,10 @@ export class MemberGroupService {
         }
     }
 
-    /**
-     * Fetch member groups (alias for searchMemberGroups)
-     */
     async fetchMemberGroups(startDate, endDate, groupName = '') {
         return this.searchMemberGroups(startDate, endDate, groupName);
     }
 
-    /**
-     * Fetch statistics for dashboard
-     * @returns {Promise} Statistics data
-     */
     async fetchStatistics() {
         try {
             console.log('📊 Fetching statistics...');
@@ -74,11 +60,6 @@ export class MemberGroupService {
         }
     }
 
-    /**
-     * Fetch member list for a specific group
-     * @param {number|null} groupId - Group ID (null for all members)
-     * @returns {Promise} Member list
-     */
     async fetchMemberList(groupId = null) {
         try {
             console.log('📡 Fetching member list for group:', groupId);
@@ -100,10 +81,6 @@ export class MemberGroupService {
         }
     }
 
-    /**
-     * Download Excel report for a group
-     * @param {number} groupId - Group ID to download
-     */
     async downloadExcel(groupId) {
         try {
             console.log('📥 Downloading Excel for group:', groupId);
@@ -114,11 +91,6 @@ export class MemberGroupService {
         }
     }
 
-    /**
-     * Get group details by ID
-     * @param {number} groupId - Group ID
-     * @returns {Promise} Group details
-     */
     async getGroupDetails(groupId) {
         try {
             const response = await this.rpc("/golfzon/member_group/get_group_details", {

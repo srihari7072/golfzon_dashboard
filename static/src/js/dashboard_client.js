@@ -868,6 +868,26 @@ class GolfzonDashboard extends Component {
         });
     }
 
+    navigateToMember(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log('📍 Navigating to Member');
+
+        this.state.activeMenuItem = 'member';
+        this.state.drawerOpen = false;
+
+        if (this.menuDrawer.el) {
+            this.menuDrawer.el.classList.remove("open");
+        }
+
+        // Navigate to member action
+        this.env.services.action.doAction({
+            type: 'ir.actions.client',
+            tag: 'golfzon.member',
+            target: 'main',
+        });
+    }
+
     setActiveMenuItem(item) {
         this.state.activeMenuItem = item;
     }
