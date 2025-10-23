@@ -574,8 +574,7 @@ $desktop: 1920px;
 .golf-info-card {
   @include card;
   margin: 30px 30px 70px 30px;
-  padding: 23px 50px;
-  position: relative;
+  padding: 23px 30px;
   overflow: hidden;
   box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
 
@@ -595,46 +594,14 @@ $desktop: 1920px;
 
   .golf-info-main {
     @include flex(row, space-between, center);
-    // gap: 60px;
+    gap: 50px;
     flex-wrap: nowrap;
-    position: relative;
 
     .vertical-line {
-      height: 44px;
+      height: 40px;
       border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
       display: inline-block;
-      position: absolute; // ✅ Position absolutely
-      left: 44%;
-      top: 50%; // ✅ Center vertically
-      transform: translate(-50%, -50%); // ✅ Perfect center alignment
       z-index: 1; // ✅ Ensure it's visible
-    }
-
-    .date-weather-container {
-      display: flex;
-      gap: 75px;
-      // margin-right: 70px;
-      @include laptop-sm {
-        gap: 30px;
-      }
-      @media (min-width: 1440px) and (max-width: 1700px) {
-        width: 40%;
-        gap: 50px;
-        justify-content: space-between;
-      }
-
-      @media (min-width: 1700px) and (max-width: 1910px) {
-        width: 50%;
-        margin-right: 180px;
-        gap: 50px;
-      }
-
-      @media (min-width: 2200px) and (max-width: 2560px) {
-        width: 42%;
-        justify-content: space-between;
-        margin-right: 180px;
-        gap: 0px;
-      }
     }
 
     .multi-info-container {
@@ -650,12 +617,6 @@ $desktop: 1920px;
       @media (min-width: 2200px) and (max-width: 2560px) {
         width: 40%;
         margin-right: 120px;
-      }
-
-      .vertical-seperator {
-        height: 44px;
-        border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
-        display: inline-block;
       }
     }
 
@@ -681,12 +642,20 @@ $desktop: 1920px;
         color: #2788fc;
       }
 
+      .info-box {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0px;
+      }
+
       .info-content {
         @include flex(row, flex-start, center);
         gap: 2px;
 
         .custom-gap {
-          gap: 8px;
+          gap: 20px;
         }
 
         .info-label {
@@ -697,16 +666,23 @@ $desktop: 1920px;
           font-size: 18px;
           color: black;
           margin-right: 5px;
-          // line-height: 125%;
+          line-height: 125%;
+          display: inline-block;
+          width: fit-content;
+          flex: 0 0 auto; /* prevent flex stretching */
         }
 
         .info-value {
           color: #555555;
           font-weight: 600;
           font-family: Pretendard;
-          font-size: 16px;
+          font-size: 14px;
           letter-spacing: 0;
-          text-align: center;
+          text-align: left;
+          line-height: 120%;
+          display: inline-block;
+          width: fit-content;
+          flex: 0 0 auto; /* prevent flex stretching */
           // margin-right: 8px;
         }
 
@@ -717,7 +693,7 @@ $desktop: 1920px;
           letter-spacing: 0;
           text-align: center;
           color: black;
-          line-height: 1.2;
+          line-height: 125%;
         }
 
         @include laptop-sm {
@@ -852,16 +828,12 @@ $desktop: 1920px;
       @include flex(row, space-between, stretch);
       padding: 24px 0 36px;
       height: 250px;
-      position: relative;
 
       .vertical-line {
         height: 65%;
         border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
         display: inline-block;
-        position: absolute; // ✅ Position absolutely
-        left: 44%;
-        top: 47%; // ✅ Center vertically
-        transform: translate(-50%, -50%); // ✅ Perfect center alignment
+
         z-index: 1; // ✅ Ensure it's visible
       }
 
@@ -1432,7 +1404,7 @@ $desktop: 1920px;
     font-weight: 700;
     color: #060606;
     font-family: "Pretendard", sans-serif;
-    margin: 0 8px 14px;
+    margin: 0 8px 30px;
     padding: 0;
     letter-spacing: 0%;
 
@@ -1467,9 +1439,9 @@ $desktop: 1920px;
     }
 
     .performance-card {
-      flex: 0 1 calc(33.333% - 30px);
+      flex: 0 1 calc(33.333% - 22px);
       min-width: 280px;
-      max-width: calc(33.333% - 30px);
+      max-width: calc(33.333% - 22px);
       box-sizing: border-box;
       background: $white;
       border-radius: 10px;
@@ -1555,34 +1527,34 @@ $desktop: 1920px;
             background: #fff;
             border: 1px solid #e3e8f2;
             border-radius: 12px;
-            padding: 10px 10px;
+            padding: 20px;
             // margin: 0 8px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: flex-start;
             min-width: 0;
             height: auto;
-            gap: 8px;
+            // gap: 10px;
+            min-height: 159.6px;
 
             .metric-label {
-              font-size: 18px;
+              font-size: 15px;
               color: #555555;
               font-weight: 600;
-              margin-bottom: 2px;
-              text-transform: uppercase;
-              letter-spacing: 0px;
-              line-height: 1.3;
+              text-transform: capitalize;
+              letter-spacing: -0.15px;
+              line-height: 120%;
               font-family: "Pretendard", sans-serif;
             }
 
             .metric-value {
-              font-size: 22px;
-              font-weight: 700;
+              font-size: 24px;
+              font-weight: 800;
               color: #060606;
-              margin-bottom: 22px;
-              line-height: 1.1;
-              letter-spacing: -0.5px;
+              margin-bottom: 20px;
+              line-height: 125%;
+              letter-spacing: -0.24px;
               font-family: "Pretendard", sans-serif;
             }
 
@@ -1650,7 +1622,7 @@ $desktop: 1920px;
                 font-size: 12px;
                 color: #a5a5a5;
                 font-weight: 500;
-                // margin-left: 2px;
+                line-height: 120%;
                 font-family: "Pretendard", sans-serif;
               }
             }
@@ -1861,7 +1833,7 @@ $desktop: 1920px;
                   font-size: 14px;
                   font-weight: 500;
                   white-space: nowrap;
-                  box-shadow: 0xp 0px 8px 0px #0000001A;
+                  box-shadow: 0xp 0px 8px 0px #0000001a;
                   z-index: 10;
 
                   &::after {
@@ -2022,7 +1994,7 @@ $desktop: 1920px;
                     font-size: 14px;
                     font-weight: 500;
                     white-space: nowrap;
-                    box-shadow: 0 0px 8px 0px #0000001A;
+                    box-shadow: 0 0px 8px 0px #0000001a;
                     z-index: 10;
 
                     @include laptop-sm {
@@ -2143,13 +2115,19 @@ $desktop: 1920px;
               &.horizontal-parts {
                 @include flex(row, flex-end, center);
                 gap: 20px;
-            
+
                 span {
                   font-size: 16px;
                   font-weight: 600;
                   color: #6f6f6f;
                   font-family: "Pretendard", sans-serif;
-            
+
+                  .part-label {
+                    font-family: "Pretendard", sans-serif;
+                    font-weight: 500;
+                    font-size: 14px;
+                    line-height: 120%;
+                  }
                   @include laptop-sm {
                     font-size: 14px !important;
                   }
@@ -2161,7 +2139,7 @@ $desktop: 1920px;
                   }
                 }
               }
-            }                       
+            }
           }
         }
       }
@@ -2284,7 +2262,7 @@ $desktop: 1920px;
                   font-size: 14px;
                   color: #495057;
                   padding: 8px 12px;
-                  white-space: nowrap;
+                  // white-space: nowrap;
                   font-family: "Pretendard", sans-serif;
                   @include mobile {
                     font-size: 10px;
@@ -2445,7 +2423,7 @@ $desktop: 1920px;
                 .default-title {
                   font-size: 14px;
                   font-weight: 600;
-                  color: #495057;
+                  color: #333333;
                   font-family: "Pretendard", sans-serif;
 
                   @include laptop-sm {
@@ -2504,15 +2482,15 @@ $desktop: 1920px;
                   }
 
                   &.highest {
-                    background: #FFE8EB;
+                    background: #ffe8eb;
                     border: 1px solid #f48fb1;
-                    color: #F23A2F;
+                    color: #f23a2f;
                   }
 
                   &.lowest {
-                    background: #BEDBFE;
+                    background: #bedbfe;
                     border: 1px solid #90caf9;
-                    color: #046DEC;
+                    color: #046dec;
                   }
 
                   @include laptop-sm {
@@ -2639,7 +2617,7 @@ $desktop: 1920px;
         background: $white;
         border-radius: 10px;
         box-shadow: 1px 0px 6px 0px rgba(0, 0, 0, 0.05);
-        padding: 20px;
+        padding: 30px;
         min-height: 396px;
 
         // flex: 1;
@@ -2668,8 +2646,7 @@ $desktop: 1920px;
           flex-wrap: wrap;
           justify-content: space-around;
           align-items: flex-start;
-          gap: 40px;
-          padding: 40px 0;
+          gap: 50px;
 
           @include laptop-sm {
             gap: 32px;
@@ -2706,6 +2683,9 @@ $desktop: 1920px;
             .chart-and-legend {
               display: flex;
               gap: 20px;
+              flex-direction: column;
+              flex-wrap: wrap;
+              align-items: center;
 
               @media (min-width: 2000px) and (max-width: 2560px) {
                 gap: 30px;
@@ -2716,7 +2696,7 @@ $desktop: 1920px;
                 flex-direction: column;
                 align-items: center;
                 gap: 12px;
-                max-width: 150px;
+                min-width: 180px;
 
                 @include laptop-sm {
                   max-width: 130px;
@@ -2725,8 +2705,8 @@ $desktop: 1920px;
 
               .pie-chart-wrapper {
                 position: relative;
-                width: 160px;
-                height: 160px;
+                width: 180px;
+                height: 180px;
                 flex-shrink: 0;
 
                 @include laptop-sm {
@@ -2738,13 +2718,13 @@ $desktop: 1920px;
                   height: 150px !important;
                 }
                 @media (min-width: 2000px) and (max-width: 2560px) {
-                  width: 180px !important;
-                  height: 180px !important;
+                  width: 200px !important;
+                  height: 200px !important;
                 }
 
                 canvas {
-                  width: 160px !important;
-                  height: 160px !important;
+                  width: 180px !important;
+                  height: 180px !important;
 
                   @include laptop-sm {
                     width: 130px !important;
@@ -2755,8 +2735,8 @@ $desktop: 1920px;
                     height: 150px !important;
                   }
                   @media (min-width: 2000px) and (max-width: 2560px) {
-                    width: 180px !important;
-                    height: 180px !important;
+                    width: 200px !important;
+                    height: 200px !important;
                   }
                 }
 
@@ -2767,12 +2747,10 @@ $desktop: 1920px;
 
               .chart-legend {
                 flex: 1;
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-                justify-content: center;
-                min-width: 80px;
-                // max-width: 80px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                // min-width: 80px; 
 
                 .legend-entry {
                   display: flex;
@@ -2983,14 +2961,13 @@ $desktop: 1920px;
 
   // Individual stat card
   .visitor-trend-card {
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    border: 1px solid var(--Gray-gray-200, rgba(239, 239, 239, 1));
+    border-radius: 8px;
     padding: 16px;
-    display: flex;
+    @include flex(row, space-between, center);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
     font-family: "Pretendard", "Segoe UI", Arial, sans-serif;
 
     @include mobile {
@@ -3033,7 +3010,8 @@ $desktop: 1920px;
         color: #060606;
         gap: 4px;
         min-width: 160px;
-        
+        line-height: 125%;
+
         @include laptop-sm {
           font-size: 14px;
         }
@@ -3053,12 +3031,13 @@ $desktop: 1920px;
             display: inline-block;
             vertical-align: middle;
             margin-left: 2px;
-            width: 19px;
-            height: 19px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
             background: none;
             border: none;
             padding: 0;
+            line-height: 125%;
 
             @include laptop-sm {
               width: 15px;
@@ -3070,8 +3049,6 @@ $desktop: 1920px;
             }
 
             img {
-              width: 100%;
-              height: 100%;
               display: block;
             }
           }
@@ -3090,7 +3067,7 @@ $desktop: 1920px;
             font-size: 14px;
             font-weight: 400;
             white-space: nowrap;
-            box-shadow: 0 0px 8px 0px #0000001A;
+            box-shadow: 0 0px 8px 0px #0000001a;
             z-index: 10;
 
             &::after {
@@ -3113,11 +3090,28 @@ $desktop: 1920px;
       }
 
       // Stat value
-      .trend-card-title:last-child {
-        font-size: 20px;
-        font-weight: 700;
+      .part-value {
+        font-size: 23px;
+        font-weight: 800;
+        line-height: 120%;
+        letter-spacing: -0.23px;
         color: #060606;
         font-family: "Pretendard", sans-serif;
+      }
+
+      .part-container {
+        color: #060606;
+        font-family: "Pretendard", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .part-label {
+          font-weight: 400;
+          font-size: 20px;
+          line-height: 120%;
+          letter-spacing: -0.2px;
+        }
 
         @include laptop-sm {
           font-size: 14px;
@@ -3126,7 +3120,7 @@ $desktop: 1920px;
           font-size: 14px;
         }
         @include laptop-lg {
-          font-size: 14px;
+          font-size: 16px;
         }
       }
     }
@@ -3270,7 +3264,7 @@ $desktop: 1920px;
             font-size: 14px;
             font-weight: 500;
             white-space: nowrap;
-            box-shadow: 0 0px 8px 0px #0000001A;
+            box-shadow: 0 0px 8px 0px #0000001a;
             z-index: 1000;
 
             &::after {
@@ -3502,7 +3496,7 @@ $desktop: 1920px;
           font-size: 14px;
           font-weight: 500;
           white-space: nowrap;
-          box-shadow: 0 0px 8px 0px #0000001A;
+          box-shadow: 0 0px 8px 0px #0000001a;
           &::after {
             content: "";
             position: absolute;
@@ -3623,7 +3617,7 @@ $desktop: 1920px;
       position: relative;
       display: inline-flex;
       align-items: center;
-      margin-right: 60px;
+      margin-right: 10px;
 
       .help-icon {
         display: inline-flex;
@@ -3667,7 +3661,7 @@ $desktop: 1920px;
         font-size: 14px;
         font-weight: 500;
         white-space: nowrap;
-        box-shadow: 0 0px 8px 0px #0000001A;
+        box-shadow: 0 0px 8px 0px #0000001a;
         z-index: 10;
 
         &::after {

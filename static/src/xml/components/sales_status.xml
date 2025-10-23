@@ -26,8 +26,8 @@
                                 <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                             </span>
                             <div class="tooltip-content">
-                                <t t-if="state.salesPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')" />
-                                <t t-else="" t-esc="_t('30 Days Before the Reference Date')" />
+                                <t t-if="state.salesPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')"/>
+                                <t t-else="" t-esc="_t('30 Days Before the Reference Date')"/>
                             </div>
                         </span>
                     </div>

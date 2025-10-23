@@ -29,8 +29,8 @@
                                     <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                 </span>
                                 <div class="tooltip-content">
-                                    <t t-if="state.reservationPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')" />
-                                    <t t-else="" t-esc="_t('30 Days Before the Reference Date')" />
+                                    <t t-if="state.reservationPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')"/>
+                                    <t t-else="" t-esc="_t('30 Days Before the Reference Date')"/>
                                 </div>
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                                         <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                                     </span>
                                     <div class="tooltip-content">
-                                        <t t-esc="_t('Total Number of Reservations Based on Visit date')"/>
+                                        <t t-esc="_t('Total Number of Reservations Based on Visit Date')"/>
                                     </div>
                                 </span>
                             </span>
@@ -109,24 +109,29 @@
                         </div>
                         <div class="stat-breakdown horizontal-parts">
                             <span>
-                                <t t-esc="_t('Part 1 ')"/>
-                                    <t t-esc="state.reservationData?.operation_rate?.part1_percentage?.toFixed(1) || '0.0'"/>%
+                                <span class="part-label">
+                                    <t t-esc="_t('Part 1 ')"/>
                                 </span>
+                                <t t-esc="state.reservationData?.operation_rate?.part1_percentage?.toFixed(1) || '0.0'"/>%
+                            </span>
                             <span>
-                                <t t-esc="_t('Part 2 ')"/>
-                                    <t t-esc="state.reservationData?.operation_rate?.part2_percentage?.toFixed(1) || '0.0'"/>%
+                                <span class="part-label">
+                                    <t t-esc="_t('Part 2 ')"/>
                                 </span>
+                                <t t-esc="state.reservationData?.operation_rate?.part2_percentage?.toFixed(1) || '0.0'"/>%
+                            </span>
                             <span>
-                                <t t-esc="_t('Part 3 ')"/>
-                                    <t t-esc="state.reservationData?.operation_rate?.part3_percentage?.toFixed(1) || '0.0'"/>%
+                                <span class="part-label">
+                                    <t t-esc="_t('Part 3 ')"/>
                                 </span>
+                                <t t-esc="state.reservationData?.operation_rate?.part3_percentage?.toFixed(1) || '0.0'"/>%
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </t>
-    
     <!-- 🆕 FIXED: No-shift layout with always-visible sidebar -->
     <t t-name="golfzon_dashboard.FixedHeatmapLayout">
         <div class="forecast-right-side">
@@ -142,7 +147,6 @@
                                 <t t-esc="_t('Reservation Trend')"/>
                             </h3>
                         </div>
-                        
                         <!-- Days Header -->
                         <div class="heatmap-days-header">
                             <div class="time-label-spacer"></div>
@@ -150,12 +154,11 @@
                                 <div class="day-header" t-esc="day"/>
                             </t>
                         </div>
-                        
                         <!-- Heatmap Grid -->
                         <div class="heatmap-grid-container">
                             <t t-foreach="state.heatmapData.rows" t-as="timeRow" t-key="timeRow_index">
                                 <div class="heatmap-row">
-                                    <div class="time-row-label" t-esc="timeRow.label"/>
+                                    <div class="time-row-label"><t t-esc="timeRow.label"/></div>
                                     <div class="heatmap-boxes-row">
                                         <t t-foreach="timeRow.data" t-as="value" t-key="value_index">
                                             <div class="heatmap-box"
@@ -177,34 +180,42 @@
                                 </div>
                             </t>
                         </div>
-                        
                         <!-- Legend Section (below the 28 boxes) -->
                         <div class="heatmap-legend-section">
                             <div class="heatmap-legend">
                                 <div class="legend-item">
                                     <div class="legend-dot top-20"></div>
-                                    <span><t t-esc="_t('Top 20%')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Top 20%')"/>
+                                    </span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-dot top-20-40"></div>
-                                    <span><t t-esc="_t('Top 20-40%')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Top 20-40%')"/>
+                                    </span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-dot median-20"></div>
-                                    <span><t t-esc="_t('Median 20%')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Median 20%')"/>
+                                    </span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-dot bottom-20-40"></div>
-                                    <span><t t-esc="_t('Bottom 20-40%')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Bottom 20-40%')"/>
+                                    </span>
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-dot bottom-20"></div>
-                                    <span><t t-esc="_t('Bottom 20%')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Bottom 20%')"/>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Right: Details Sidebar -->
                     <div class="heatmap-details-sidebar">
                         <!-- Default content when no box is selected -->
@@ -221,7 +232,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <!-- Selected box details -->
                         <div class="sidebar-selected-content" t-if="state.selectedHeatmapBox.isVisible">
                             <!-- Alert Messages -->
@@ -243,7 +253,6 @@
                                     </span>
                                 </div>
                             </div>
-                            
                             <!-- Sidebar Header (no duplicate day, no timeslot) -->
                             <div class="sidebar-header-section">
                                 <h2 class="sidebar-title" t-esc="state.selectedHeatmapBox.combinedTitle"/>
@@ -251,7 +260,6 @@
                                     <t t-esc="_t('Number of reservations by time zone')"/>
                                 </p>
                             </div>
-                            
                             <!-- Hourly Breakdown in Columns -->
                             <div class="hourly-breakdown-section">
                                 <div class="hourly-columns-row">
@@ -266,7 +274,6 @@
                                             </div>
                                         </t>
                                     </div>
-
                                     <!-- Bottom Row: Next 5 time slots -->
                                     <div class="hourly-row-bottom" t-if="state.selectedHeatmapBox.hourlyBreakdown.length > 5">
                                         <t t-foreach="state.selectedHeatmapBox.hourlyBreakdown.slice(5, 10)" 
@@ -288,7 +295,6 @@
             <t t-call="golfzon_dashboard.PieChartsCard"/>
         </div>
     </t>
-
     <!-- Pie Charts Section -->
     <t t-name="golfzon_dashboard.PieChartsCard">
         <div class="pie-charts-card">
@@ -302,20 +308,22 @@
                 <div class="pie-chart-item">
                     <div class="chart-and-legend">
                         <div class="pie-chart-and-title-wrapper">
+                            <div class="pie-chart-wrapper">
+                                <canvas t-ref="memberTypeChart"/>
+                            </div>
                             <div class="chart-title-wrapper">
                                 <div class="chart-title">
                                     <t t-esc="_t('Reservation Proportion by Type')"/>
                                 </div>
-                            </div>
-                            <div class="pie-chart-wrapper">
-                                <canvas t-ref="memberTypeChart"/>
                             </div>
                         </div>
                         <div class="chart-legend">
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot individual"></span>
-                                    <span><t t-esc="_t('Individual')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Individual')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_type?.individual?.percentage || 0"/>%
@@ -324,7 +332,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot joint"></span>
-                                    <span><t t-esc="_t('Joint Organization')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Joint Organization')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_type?.joint_organization?.percentage || 0"/>%
@@ -333,7 +343,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot general"></span>
-                                    <span><t t-esc="_t('General Organization')"/></span>
+                                    <span>
+                                        <t t-esc="_t('General Organization')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_type?.general_organization?.percentage || 0"/>%
@@ -342,7 +354,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot temporary"></span>
-                                    <span><t t-esc="_t('Temporary Organization')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Temporary Organization')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_type?.temporary_organization?.percentage || 0"/>%
@@ -351,18 +365,17 @@
                         </div>
                     </div>
                 </div>
-                
                 <!-- Advance Booking Chart -->
                 <div class="pie-chart-item">
                     <div class="chart-and-legend">
                         <div class="pie-chart-and-title-wrapper">
+                            <div class="pie-chart-wrapper">
+                                <canvas t-ref="advanceBookingChart"/>
+                            </div>
                             <div class="chart-title-wrapper">
                                 <div class="chart-title">
                                     <t t-esc="_t('Reservation Proportion by Time')"/>
                                 </div>
-                            </div>
-                            <div class="pie-chart-wrapper">
-                                <canvas t-ref="advanceBookingChart"/>
                             </div>
                         </div>
                         <div class="chart-legend">
@@ -423,25 +436,26 @@
                         </div>
                     </div>
                 </div>
-                
                 <!-- Regional Distribution Chart -->
                 <div class="pie-chart-item">
                     <div class="chart-and-legend">
                         <div class="pie-chart-and-title-wrapper">
+                            <div class="pie-chart-wrapper">
+                                <canvas t-ref="regionalChart"/>
+                            </div>
                             <div class="chart-title-wrapper">
                                 <div class="chart-title">
                                     <t t-esc="_t('Reservation Proportion by Channel')"/>
                                 </div>
-                            </div>
-                            <div class="pie-chart-wrapper">
-                                <canvas t-ref="regionalChart"/>
                             </div>
                         </div>
                         <div class="chart-legend">
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot phone"></span>
-                                    <span><t t-esc="_t('Phone')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Phone')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_channel?.phone?.percentage || 0"/>%
@@ -450,7 +464,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot internet"></span>
-                                    <span><t t-esc="_t('Internet')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Internet')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_channel?.internet?.percentage || 0"/>%
@@ -459,7 +475,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot agency1"></span>
-                                    <span><t t-esc="_t('Agency')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Agency')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_channel?.agency?.percentage || 0"/>%
@@ -468,7 +486,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot agent"></span>
-                                    <span><t t-esc="_t('Agent')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Agent')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_channel?.agent?.percentage || 0"/>%
@@ -477,7 +497,9 @@
                             <div class="legend-entry">
                                 <div class="legend-label">
                                     <span class="dot other"></span>
-                                    <span><t t-esc="_t('Others')"/></span>
+                                    <span>
+                                        <t t-esc="_t('Others')"/>
+                                    </span>
                                 </div>
                                 <span class="legend-value">
                                     <t t-esc="state.memberCompositionData?.by_channel?.others?.percentage || 0"/>%

@@ -6,13 +6,13 @@
                 <!-- Date Section -->
                 <div class="date-weather-container">
                     <t t-call="golfzon_dashboard.DateSection"/>
-                    <t t-call="golfzon_dashboard.WeatherSection"/>
                 </div>
-                <div class="vertical-line"></div>
                 <!-- Weather and Info Container -->
                 <div class="multi-info-container">
+                    <t t-call="golfzon_dashboard.WeatherSection"/>
+                    <div class="vertical-line"></div>
                     <t t-call="golfzon_dashboard.ReservationInfo"/>
-                    <div class="vertical-seperator"></div>
+                    <div class="vertical-line"></div>
                     <t t-call="golfzon_dashboard.TeeTimeInfo"/>
                 </div>
                 <!-- Dropdown Button -->
@@ -44,23 +44,29 @@
                     <t t-esc="_t('WEATHER')"/>
                 </div>
                 <div class="d-flex custom-gap">
-                    <div class="info-value">
-                        <t t-esc="_t('Temperature')"/>
+                    <div class="info-box">
+                        <div class="info-value">
+                            <t t-esc="_t('Temperature')"/>
+                        </div>
+                        <div class="info-numbers">
+                            <t t-esc="state.weather.temperature"/>°C
+                        </div>
                     </div>
-                    <div class="info-numbers">
-                        <t t-esc="state.weather.temperature"/>°C
+                    <div class="info-box">
+                        <div class="info-value">
+                            <t t-esc="_t('Chance of precipitation')"/>
+                        </div>
+                        <div class="info-numbers">
+                            <t t-esc="state.weather.chance"/>%
+                        </div>
                     </div>
-                    <div class="info-value">
-                        <t t-esc="_t('Chance of precipitation')"/>
-                    </div>
-                    <div class="info-numbers">
-                        <t t-esc="state.weather.chance"/>%
-                    </div>
-                    <div class="info-value">
-                        <t t-esc="_t('Precipitation')"/>
-                    </div>
-                    <div class="info-numbers">
-                        <t t-esc="state.weather.precipitation"/>mm
+                    <div class="info-box">
+                        <div class="info-value">
+                            <t t-esc="_t('Precipitation')"/>
+                        </div>
+                        <div class="info-numbers">
+                            <t t-esc="state.weather.precipitation"/>mm
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,29 +99,35 @@
                     <t t-esc="_t('FULL TEE TIME')"/>
                 </div>
                 <div class="d-flex custom-gap">
-                    <div class="info-value">
-                        <t t-esc="_t('Part1')"/>
+                    <div class="info-box">
+                        <div class="info-value">
+                            <t t-esc="_t('Part1')"/>
+                        </div>
+                        <div class="info-numbers">
+                            <t t-esc="state.teeTime.part1.current"/>
+                            <span> / </span>
+                            <t t-esc="state.teeTime.part1.total"/>
+                        </div>
                     </div>
-                    <div class="info-numbers">
-                        <t t-esc="state.teeTime.part1.current"/>
-                        <span> / </span>
-                        <t t-esc="state.teeTime.part1.total"/>
+                    <div class="info-box">
+                        <div class="info-value">
+                            <t t-esc="_t('Part2')"/>
+                        </div>
+                        <div class="info-numbers">
+                            <t t-esc="state.teeTime.part2.current"/>
+                            <span> / </span>
+                            <t t-esc="state.teeTime.part2.total"/>
+                        </div>
                     </div>
-                    <div class="info-value">
-                        <t t-esc="_t('Part2')"/>
-                    </div>
-                    <div class="info-numbers">
-                        <t t-esc="state.teeTime.part2.current"/>
-                        <span> / </span>
-                        <t t-esc="state.teeTime.part2.total"/>
-                    </div>
-                    <div class="info-value">
-                        <t t-esc="_t('Part3')"/>
-                    </div>
-                    <div class="info-numbers">
-                        <t t-esc="state.teeTime.part3.current"/>
-                        <span> / </span>
-                        <t t-esc="state.teeTime.part3.total"/>
+                    <div class="info-box">
+                        <div class="info-value">
+                            <t t-esc="_t('Part3')"/>
+                        </div>
+                        <div class="info-numbers">
+                            <t t-esc="state.teeTime.part3.current"/>
+                            <span> / </span>
+                            <t t-esc="state.teeTime.part3.total"/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -162,14 +174,12 @@
                                             fill="none" 
                                             stroke="#8B8B8B" 
                                             stroke-width="1"/>
-                                        
                                         <!-- Clip path for water fill -->
                                         <defs>
                                             <clipPath t-attf-id="dropClip_{{hour_index}}">
                                                 <path d="M6 1C4.5 3 2 6 2 9C2 11.76 3.79 14 6 14C8.21 14 10 11.76 10 9C10 6 7.5 3 6 1Z"/>
                                             </clipPath>
                                         </defs>
-                                        
                                         <!-- Water fill (dynamic based on percentage) -->
                                         <rect class="water-fill" 
                                             x="2" 
