@@ -10,8 +10,8 @@
                             <img src="/golfzon_dashboard/static/src/img/help-icon.svg" alt="Help"/>
                         </span>
                         <div class="tooltip-content">
-                            <t t-if="state.visitorPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')" />
-                            <t t-else="" t-esc="_t('30 Days Before the Reference Date')" />
+                            <t t-if="state.visitorPeriod === '7days'" t-esc="_t('7 Days Before the Reference Date')"/>
+                            <t t-else="" t-esc="_t('30 Days Before the Reference Date')"/>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                                 </div>
                             </span>
                         </span>
-                        <span class="trend-card-title">
+                        <span class="part-value">
                             <t t-esc="state.visitorData.total_visitors.toLocaleString()"/>
                         </span>
                     </div>
@@ -102,15 +102,30 @@
                                 </div>
                             </span>
                         </span>
-                        <div class="trend-card-title">
-                            <span>
-                                <t t-esc="_t('Part 1')"/> <t t-esc="state.visitorData.sections.part1.toLocaleString()"/>
+                        <div class="part-container">
+                            <span class="d-flex align-items-center gap-1">
+                                <span class="part-label">
+                                    <t t-esc="_t('Part 1')"/>
+                                </span>
+                                <span class="part-value">
+                                    <t t-esc="state.visitorData.sections.part1.toLocaleString()"/>
+                                </span>
                             </span>
-                            <span>
-                                <t t-esc="_t('Part 2')"/> <t t-esc="state.visitorData.sections.part2.toLocaleString()"/>
+                            <span class="d-flex align-items-center gap-1">
+                                <span class="part-label">
+                                    <t t-esc="_t('Part 2')"/>
+                                </span>
+                                <span class="part-value">
+                                    <t t-esc="state.visitorData.sections.part2.toLocaleString()"/>
+                                </span>
                             </span>
-                            <span>
-                                <t t-esc="_t('Part 3')"/> <t t-esc="state.visitorData.sections.part3.toLocaleString()"/>
+                            <span class="d-flex align-items-center gap-1">
+                                <span class="part-label">
+                                    <t t-esc="_t('Part 3')"/>
+                                </span>
+                                <span class="part-value">
+                                    <t t-esc="state.visitorData.sections.part3.toLocaleString()"/>
+                                </span>
                             </span>
                         </div>
                     </div>

@@ -518,7 +518,7 @@ msgstr "조회일 이후 30일"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/js/dashboard_client.js:0
-msgid "Total Number of Reservations Based on Visit date"
+msgid "Total Number of Reservations Based on Visit Date"
 msgstr "내장일 기준 예약된 전체 예약 건수"
 
 #. module: golfzon_dashboard
