@@ -2396,7 +2396,8 @@ $desktop: 1920px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            padding: 34px;
+            /* reduce horizontal padding so sidebar content can use full width */
+            padding: 16px 12px;
             background: $white;
             border: 1px solid #e0e6ed;
             border-radius: 12px;
@@ -2525,34 +2526,45 @@ $desktop: 1920px;
 
               // Hourly Breakdown Section (in columns)
               .hourly-breakdown-section {
-                margin-top: 20px;
+                margin-top: 12px;
                 padding: 0;
                 background-color: transparent;
                 width: 100%;
+                box-sizing: border-box;
               }
 
+              /* Force columns to lay out side-by-side; prevent wrapping */
               .hourly-columns-row {
                 display: flex;
-                flex-direction: column;
-                gap: 20px;
+                flex-direction: row;
+                gap: 12px;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                flex-wrap: nowrap; /* prevent a single column from dropping */
+                overflow-x: auto; /* allow horizontal scroll on very small screens */
+                // -webkit-overflow-scrolling: touch;
+                padding: 0 4px; /* tiny inner padding to avoid clipping */
               }
 
-              // ✅ Top row (first 5 items)
+              // Top row (first set of items) - keep centered when fewer items
               .hourly-row-top {
                 display: flex;
-                justify-content: center;
+                justify-content: space-between;
                 align-items: center;
-                // gap: 8px;
-                flex-wrap: wrap;
+                gap: 8px;
+                flex-wrap: nowrap;
+                width: 100%;
               }
 
-              // ✅ Bottom row (next 5 items)
+              // Bottom row (next set of items)
               .hourly-row-bottom {
                 display: flex;
-                justify-content: space-around;
+                justify-content: space-between;
                 align-items: center;
-                gap: 15px;
-                flex-wrap: wrap;
+                gap: 8px;
+                flex-wrap: nowrap;
+                width: 100%;
               }
 
               .hourly-column {
@@ -2560,15 +2572,21 @@ $desktop: 1920px;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                padding: 0;
+                padding: 0 6px;
                 background-color: transparent;
                 border: none;
                 box-shadow: none;
-                min-width: 50px;
-                border-right: 1px solid var(--Gray-gray-200, #efefef);
+                flex: 1 1 0; /* distribute available space evenly */
+                min-width: 48px; /* keep readable on small screens */
+                max-width: 120px;
+
+                /* show divider between columns but not on the last child */
+                &:not(:last-child) {
+                  border-right: 1px solid var(--Gray-gray-200, #efefef);
+                }
 
                 &:hover {
-                  border-color: none;
+                  border-color: transparent;
                   box-shadow: none;
                   transform: none;
                 }
@@ -2750,7 +2768,7 @@ $desktop: 1920px;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
-                // min-width: 80px; 
+                // min-width: 80px;
 
                 .legend-entry {
                   display: flex;

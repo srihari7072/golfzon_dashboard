@@ -19,7 +19,6 @@ class MemberView extends Component {
         this.action = useService("action");
 
         this.state = useState({
-            // UI State
             isLoading: false,
             isSearching: false,
             isSavingMemo: false,
@@ -29,21 +28,17 @@ class MemberView extends Component {
             drawerOpen: false,
             currentDate: null,
 
-            // Search Form
             searchForm: {
                 memberName: '',
                 phoneNumber: ''
             },
 
-            // Selected Member Data
             selectedMember: null,
 
-            // Duplicate Members (Section 1.2)
             showMemberListPopup: false,
             duplicateMembers: [],
             selectedDuplicateMemberId: null,
 
-            // Add to Group Modal (Section 1.3)
             showAddToGroupModal: false,
             groupSearchText: '',
             availableGroups: [],
@@ -51,7 +46,6 @@ class MemberView extends Component {
             hasMoreGroups: false,
             groupsOffset: 0,
 
-            // Memo Modal (Section 1.3)
             showMemoModal: false,
             memoText: '',
             existingMemos: []
@@ -75,10 +69,6 @@ class MemberView extends Component {
             document.addEventListener("click", this.handleOutsideDrawer.bind(this));
         }
     }
-
-    // ============================================
-    // SEARCH FUNCTIONALITY (Section A)
-    // ============================================
 
     async onSearchClick() {
         const { memberName, phoneNumber } = this.state.searchForm;
@@ -133,10 +123,6 @@ class MemberView extends Component {
         }
     }
 
-    // ============================================
-    // MEMBER DETAILS (Section B)
-    // ============================================
-
     async loadMemberDetails(memberId) {
         this.state.isLoading = true;
 
@@ -177,10 +163,6 @@ class MemberView extends Component {
         }
     }
 
-    // ============================================
-    // DUPLICATE MEMBERS POPUP (Section 1.2)
-    // ============================================
-
     showDuplicateMembersPopup(members) {
         this.state.duplicateMembers = members;
         this.state.selectedDuplicateMemberId = null;
@@ -208,10 +190,6 @@ class MemberView extends Component {
         this.state.duplicateMembers = [];
         this.state.selectedDuplicateMemberId = null;
     }
-
-    // ============================================
-    // ADD TO GROUP MODAL (Section 1.3 & D)
-    // ============================================
 
     async openAddToGroupModal() {
         if (!this.state.selectedMember) {
@@ -312,10 +290,6 @@ class MemberView extends Component {
         this.state.selectedGroupIds = [];
     }
 
-    // ============================================
-    // MEMO MODAL (Section 1.3 & E)
-    // ============================================
-
     async openMemoModal() {
         if (!this.state.selectedMember) {
             this.notification.add(_t("Please select a member first"), {
@@ -381,10 +355,6 @@ class MemberView extends Component {
         this.state.memoText = '';
         this.state.existingMemos = [];
     }
-
-    // ============================================
-    // UTILITY METHODS
-    // ============================================
 
     async loadCurrentLanguage() {
         try {

@@ -30,9 +30,6 @@
   box-sizing: border-box;
   position: relative;
 
-  // ============================================================
-  // SEARCH FORM - WITH PROPER LABELS
-  // ============================================================
   .member-group-search-form {
     background: #ffffff;
     padding: 25px;
@@ -157,9 +154,6 @@
     }
   }
 
-  // ============================================================
-  // GROUP LIST SECTION
-  // ============================================================
   .member-group-list {
     background: #ffffff;
     padding: 20px;
@@ -179,8 +173,29 @@
     }
 
     .table-container {
+      max-height: 400px;
+      overflow-y: auto;
       overflow-x: auto;
       width: 100%;
+
+      &::-webkit-scrollbar {
+            width: 4px;
+            height: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 3px;
+            
+            &:hover {
+                background: #b0b0b0;
+            }
+        }
 
       .group-table {
         width: 100%;
@@ -189,6 +204,9 @@
 
         thead {
           background-color: #f8f9fa;
+          position: sticky;
+          top: 0;
+          z-index: 10;
 
           th {
             padding: 12px 10px;
@@ -270,9 +288,6 @@
     }
   }
 
-  // ============================================================
-  // KEY INDICATORS - HORIZONTAL LAYOUT WITH SCROLL
-  // ============================================================
   .member-group-key-indicators {
     background: #ffffff;
     padding: 25px;
@@ -496,9 +511,6 @@
     }
   }
 
-  // ============================================================
-  // MEMBER LIST SECTION
-  // ============================================================
   .member-list-section {
     background: #ffffff;
     padding: 25px 20px;
@@ -590,9 +602,6 @@
   }
 }
 
-// ============================================================
-// INLINE REGISTRATION FORM - WITH FILE INPUT FIX
-// ============================================================
 .register-member-group-section {
   background: white;
   padding: 0;
@@ -878,10 +887,6 @@
   }
 }
 
-// ============================================================
-// RESPONSIVE BREAKPOINTS
-// ============================================================
-
 // Large Desktop (1920px+)
 @media (min-width: 1920px) {
   .member-group-content {
@@ -1007,11 +1012,6 @@
     }
   }
 }
-
-
-// ============================================================
-// CONDITION-BASED GROUP CREATION FORM
-// ============================================================
 
 .condition-based-group-section {
   background: white;
@@ -1346,18 +1346,10 @@
   }
 }
 
-
-// ============================================================
-// MEMBER INQUIRY RESULTS DISPLAY
-// ============================================================
-
 .inquiry-results-section {
   margin-top: 30px;
   margin-bottom: 30px;
   
-  // ============================================
-  // POINT 1: KEY INDICATORS
-  // ============================================
   .key-indicators-result {
     background: white;
     border: 1px solid #dee2e6;
@@ -1440,9 +1432,6 @@
     }
   }
   
-  // ============================================
-  // POINT 2: MEMBER LIST
-  // ============================================
   .member-list-result {
     background: white;
     border: 1px solid #dee2e6;
@@ -1535,9 +1524,6 @@
     }
   }
   
-  // ============================================
-  // REGISTRATION BUTTON
-  // ============================================
   .results-actions {
     text-align: right;
     margin-top: 20px;
@@ -1569,10 +1555,6 @@
     }
   }
 }
-
-// ============================================
-// RESPONSIVE BREAKPOINTS
-// ============================================
 
 @media (max-width: 1440px) {
   .inquiry-results-section {
@@ -1670,11 +1652,6 @@
     }
   }
 }
-
-
-// ============================================================
-// CUSTOM NOTIFICATION ANIMATIONS
-// ============================================================
 
 @keyframes slideInRight {
   from {
@@ -1799,8 +1776,8 @@
     
     // Custom scrollbar
     &::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
+      width: 4px;
+      height: 6px;
     }
     
     &::-webkit-scrollbar-track {

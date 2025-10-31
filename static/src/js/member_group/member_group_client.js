@@ -56,6 +56,7 @@ class MemberGroupView extends Component {
             selectedGroupId: null,
 
             groupList: [],
+            isSubmittingInquiry: false,
 
             conditionForm: {
                 groupTitle: '',
@@ -649,108 +650,96 @@ class MemberGroupView extends Component {
     }
 
     async submitMemberInquiry() {
-        if (!this.state.conditionForm.groupTitle) {
-            return;
-        }
-
-        this.state.isSubmitting = true;
-
         try {
             console.log('='.repeat(80));
             console.log('🔍 SUBMITTING MEMBER INQUIRY');
             console.log('='.repeat(80));
-            console.log('Conditions:', this.state.conditionForm);
+
+            // Get all conditions from state
+            const conditions = this.state.conditionForm;
+            console.log('Conditions:', conditions);
+
+            // Validate group title
+            if (!conditions.groupTitle || conditions.groupTitle.trim() === '') {
+                alert('Please enter a group title');
+                return;
+            }
+
+            // ✅ Set loading state
+            this.state.isSubmittingInquiry = true;
 
             // Prepare payload
             const payload = {
-                group_title: this.state.conditionForm.groupTitle,
-
-                // Membership Conditions
-                gender: this.state.conditionForm.gender,
-                age_group: this.state.conditionForm.ageGroup,
-                marketing_consent: this.state.conditionForm.marketingConsent,
-                membership_type: this.state.conditionForm.membershipType,
-                residence_1: this.state.conditionForm.residence1,
-                residence_2: this.state.conditionForm.residence2,
-                residence_3: this.state.conditionForm.residence3,
-                membership_start_date: this.state.conditionForm.membershipStartDate,
-                membership_end_date: this.state.conditionForm.membershipEndDate,
-                builtin_start_date: this.state.conditionForm.builtInStartDate,
-                builtin_end_date: this.state.conditionForm.builtInEndDate,
-
-                // Subdivision Conditions
-                days_of_use: this.state.conditionForm.daysOfUse,
-                usage_time_zone: this.state.conditionForm.usageTimeZone,
-                inflow_channel: this.state.conditionForm.inflowChannel,
-                organization: this.state.conditionForm.organization,
-                number_of_rounds: this.state.conditionForm.numberOfRounds,
-                rainy_round: this.state.conditionForm.rainyRound,
-                self_rounding: this.state.conditionForm.selfRounding,
-                use_green_fee: this.state.conditionForm.useGreenFee
+                group_title: conditions.groupTitle,
+                gender: conditions.gender,
+                age_group: conditions.ageGroup,
+                marketing_consent: conditions.marketingConsent,
+                membership_type: conditions.membershipType,
+                residence_1: conditions.residence1,
+                residence_2: conditions.residence2,
+                residence_3: conditions.residence3,
+                membership_start_date: conditions.membershipStartDate,
+                membership_end_date: conditions.membershipEndDate,
+                builtin_start_date: conditions.builtinStartDate,
+                builtin_end_date: conditions.builtinEndDate,
+                days_of_use: conditions.daysOfUse,
+                usage_time_zone: conditions.usageTimeZone,
+                inflow_channel: conditions.inflowChannel,
+                organization: conditions.organization,
+                number_of_rounds: conditions.numberOfRounds,
+                rainy_round: conditions.rainyRound,
+                self_rounding: conditions.selfRounding,
+                use_green_fee: conditions.useGreenFee,
             };
 
             console.log('📤 Sending payload:', payload);
 
-            // Call backend
+            // Make API call
             const response = await this.rpc('/golfzon/member_group/condition_inquiry', payload);
 
             console.log('📥 Response:', response);
 
+            // ✅ ALWAYS reset loading state in try block
+            this.state.isSubmittingInquiry = false;
+
+            // Handle response
             if (response.status === 'success') {
-                console.log('✅ INQUIRY SUCCESSFUL');
-
-                this.state.memberDisplayLimit = 10;
-
                 // Update inquiry results
+                let indicators = response.indicators || {};
+                indicators.number_of_members = (response.member_count ?? response.number_of_members ?? 0) + ' people';
                 this.state.inquiryResults = {
-                    indicators: response.indicators || {
-                        number_of_members: '0 people',
-                        number_of_times_builtin: '0 times',
-                        total_sales: '0 won',
-                        payment_green_fee: '0 won',
-                        open_green_fee: '0 won',
-                        average_discount_rate: '0%'
-                    },
-                    members: response.members || [],
-                    group_id: response.group_id,
-                    member_count: response.member_count || 0
+                    indicators: indicators,
+                    members: response.members,
+                    memberCount: response.member_count,
+                    groupId: response.group_id,
                 };
-
-                // Show results
                 this.state.showInquiryResults = true;
 
-                // ✅ FIX: Use setTimeout to ensure DOM is updated before scrolling
+                // Scroll to results
                 setTimeout(() => {
-                    try {
-                        const resultsSection = document.querySelector('.inquiry-results-section');
-                        if (resultsSection) {
-                            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            console.log('✅ Scrolled to results section');
-                        } else {
-                            console.warn('⚠️ Results section not found in DOM');
-                        }
-                    } catch (scrollError) {
-                        console.error('❌ Error scrolling:', scrollError);
+                    const resultsSection = document.querySelector('.inquiry-results-section');
+                    if (resultsSection) {
+                        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
+                }, 100);
 
-                    // ✅ FIX: Show notification AFTER scroll attempt
-                    try {
-                        this.isKorean()
-                            ? `${response.member_count}명의 회원이 조회되었습니다.`
-                            : `${response.member_count} members found.`
-                    } catch (notifError) {
-                        console.error('❌ Error showing notification:', notifError);
-                    }
-                }, 200);
+                // Show success message
+                alert(`Successfully created group with ${response.member_count} members!`);
 
-                console.log('='.repeat(80));
+                // Refresh group list
+                await this.searchMemberGroups();
 
             } else {
                 console.error('❌ INQUIRY FAILED:', response.message);
+                alert('Error: ' + (response.message || 'Failed to create group'));
             }
 
         } catch (error) {
-            console.error('❌ ERROR DURING MEMBER INQUIRY:', error);
+            // ✅ ALWAYS reset loading state in catch block
+            this.state.isSubmittingInquiry = false;
+
+            console.error('❌ Error submitting member inquiry:', error);
+            alert('Error creating group: ' + (error.message || 'Unknown error'));
         }
     }
 

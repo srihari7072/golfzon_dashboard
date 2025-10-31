@@ -10,6 +10,25 @@ _logger = logging.getLogger(__name__)
 
 class SalesStatusController(http.Controller):
 
+    @http.route('/golfzon/settings/location', type='json', auth='user')
+    def get_configured_location(self, **kwargs):
+        """Get configured location from company settings"""
+        try:
+            company = request.env.company
+            
+            # Get from company settings (you can add these fields)
+            # For now, hardcode your golf course location
+            return {
+                'status': 'success',
+                'lat': '16.0006886',
+                'lon': '80.9522102',
+                'location_name': 'Golf Course Location',
+                'use_gps': True  # Set to True if you want to try GPS first
+            }
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+
     @http.route('/golfzon/dashboard/set_lang', type='http', auth='user', methods=['GET'], csrf=False)
     def set_language(self, lang='ko_KR', **kwargs):
         """Handle language switching for dashboard"""
