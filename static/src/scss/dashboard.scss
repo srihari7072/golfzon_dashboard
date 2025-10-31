@@ -2149,8 +2149,8 @@ $desktop: 1920px;
     .forecast-right-side {
       width: 55%;
       @include flex(column, flex-start, stretch);
-
       gap: 20px;
+
       @include mobile {
         width: 100%;
       }
@@ -2200,6 +2200,7 @@ $desktop: 1920px;
             // Header Section (inside the card)
             .heatmap-header-section {
               margin-bottom: 20px;
+
               .heatmap-title {
                 font-size: 20px;
                 font-weight: 700;
@@ -2222,7 +2223,8 @@ $desktop: 1920px;
               display: grid;
               grid-template-columns: 140px repeat(7, 1fr);
               gap: 2px;
-              // margin-bottom: 8px;
+              margin-bottom: 2px;
+
               @include mobile {
                 grid-template-columns: 100px repeat(7, 1fr);
               }
@@ -2232,7 +2234,7 @@ $desktop: 1920px;
                 font-weight: 600;
                 font-size: 14px;
                 color: #495057;
-                // padding: 8px;
+                padding: 8px;
                 font-family: "Pretendard", sans-serif;
               }
             }
@@ -2257,13 +2259,15 @@ $desktop: 1920px;
 
                 .time-row-label {
                   display: flex;
+                  justify-content: flex-end;
                   align-items: center;
                   font-weight: 600;
                   font-size: 14px;
                   color: #495057;
                   padding: 8px 12px;
-                  // white-space: nowrap;
                   font-family: "Pretendard", sans-serif;
+                  text-align: right;
+
                   @include mobile {
                     font-size: 10px;
                     padding: 6px 8px;
@@ -2274,7 +2278,7 @@ $desktop: 1920px;
                   display: grid;
                   grid-template-columns: repeat(7, 1fr);
                   gap: 2px;
-                  margin-left: -25px;
+                  // margin-left: -25px;
 
                   .heatmap-box {
                     aspect-ratio: 1;
@@ -2348,7 +2352,7 @@ $desktop: 1920px;
                 justify-content: space-between;
                 gap: 12px;
                 flex-wrap: wrap;
-                margin-left: 115px;
+                margin-left: 130px;
 
                 @include mobile {
                   gap: 12px;
@@ -2533,7 +2537,6 @@ $desktop: 1920px;
                 box-sizing: border-box;
               }
 
-              /* Force columns to lay out side-by-side; prevent wrapping */
               .hourly-columns-row {
                 display: flex;
                 flex-direction: row;
@@ -2541,10 +2544,9 @@ $desktop: 1920px;
                 justify-content: space-between;
                 align-items: center;
                 width: 100%;
-                flex-wrap: nowrap; /* prevent a single column from dropping */
-                overflow-x: auto; /* allow horizontal scroll on very small screens */
-                // -webkit-overflow-scrolling: touch;
-                padding: 0 4px; /* tiny inner padding to avoid clipping */
+                flex-wrap: nowrap;
+                overflow: visible;
+                padding: 0 4px;
               }
 
               // Top row (first set of items) - keep centered when fewer items

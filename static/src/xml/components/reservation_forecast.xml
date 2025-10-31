@@ -147,38 +147,138 @@
                                 <t t-esc="_t('Reservation Trend')"/>
                             </h3>
                         </div>
-                        <!-- Days Header -->
-                        <div class="heatmap-days-header">
-                            <div class="time-label-spacer"></div>
-                            <t t-foreach="state.heatmapData.headers" t-as="day" t-key="day">
-                                <div class="day-header" t-esc="day"/>
-                            </t>
-                        </div>
                         <!-- Heatmap Grid -->
                         <div class="heatmap-grid-container">
-                            <t t-foreach="state.heatmapData.rows" t-as="timeRow" t-key="timeRow_index">
+                            <!-- Fixed Headers -->
+                            <div class="heatmap-days-header">
+                                <div class="time-label-header"></div>
+                                <div class="day-header">Sun</div>
+                                <div class="day-header">Mon</div>
+                                <div class="day-header">Tue</div>
+                                <div class="day-header">Wed</div>
+                                <div class="day-header">Thu</div>
+                                <div class="day-header">Fri</div>
+                                <div class="day-header">Sat</div>
+                            </div>
+
+                            <!-- Fixed Time Slots with Data Rows -->
+                            <div class="heatmap-rows">
+                                <!-- Early Morning Row -->
                                 <div class="heatmap-row">
-                                    <div class="time-row-label"><t t-esc="timeRow.label"/></div>
+                                    <div class="time-row-label">
+                                        <t t-if="isKorean()">새벽(5~7시)</t>
+                                        <t t-else="">
+                                            Early Morning<br/>
+                                            (5 AM -7 AM)
+                                        </t>
+                                    </div>
                                     <div class="heatmap-boxes-row">
-                                        <t t-foreach="timeRow.data" t-as="value" t-key="value_index">
+                                        <t t-foreach="state.earlyMorningData" t-as="value" t-key="value_index">
                                             <div class="heatmap-box"
                                                 t-att-class="this.getHeatmapCellClass(value)"
                                                 t-att-data-day-index="value_index"
-                                                t-att-data-time-index="timeRow_index"
+                                                t-att-data-time-index="0"
                                                 t-att-data-value="value"
                                                 t-on-click="(ev) => this.selectHeatmapBox({
                                                     dayIndex: value_index,
-                                                    timeIndex: timeRow_index,
+                                                    timeIndex: 0,
                                                     value: value,
-                                                    day: state.heatmapData.headers[value_index],
-                                                    timeSlot: timeRow.label
+                                                    day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][value_index],
+                                                    timeSlot: 'Early Morning(5 AM -7 AM)'
                                                 }, ev)">
                                                 <span class="box-value" t-esc="value"/>
                                             </div>
                                         </t>
                                     </div>
                                 </div>
-                            </t>
+
+                                <!-- Morning Row -->
+                                <div class="heatmap-row">
+                                    <div class="time-row-label">
+                                    <t t-if="isKorean()">오전(8~12시)</t>
+                                        <t t-else="">
+                                            Morning<br/>
+                                            (8 AM -12 PM)
+                                        </t>
+                                    </div>
+                                    <div class="heatmap-boxes-row">
+                                        <t t-foreach="state.morningData" t-as="value" t-key="value_index">
+                                            <div class="heatmap-box"
+                                                t-att-class="this.getHeatmapCellClass(value)"
+                                                t-att-data-day-index="value_index"
+                                                t-att-data-time-index="1"
+                                                t-att-data-value="value"
+                                                t-on-click="(ev) => this.selectHeatmapBox({
+                                                    dayIndex: value_index,
+                                                    timeIndex: 1,
+                                                    value: value,
+                                                    day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][value_index],
+                                                    timeSlot: 'Morning(8 AM -12 PM)'
+                                                }, ev)">
+                                                <span class="box-value" t-esc="value"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Afternoon Row -->
+                                <div class="heatmap-row">
+                                    <div class="time-row-label">
+                                    <t t-if="isKorean()">오후(13~16시)</t>
+                                        <t t-else="">
+                                            Afternoon<br/>
+                                            (13 PM -16 PM)
+                                        </t>
+                                    </div>
+                                    <div class="heatmap-boxes-row">
+                                        <t t-foreach="state.afternoonData" t-as="value" t-key="value_index">
+                                            <div class="heatmap-box"
+                                                t-att-class="this.getHeatmapCellClass(value)"
+                                                t-att-data-day-index="value_index"
+                                                t-att-data-time-index="2"
+                                                t-att-data-value="value"
+                                                t-on-click="(ev) => this.selectHeatmapBox({
+                                                    dayIndex: value_index,
+                                                    timeIndex: 2,
+                                                    value: value,
+                                                    day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][value_index],
+                                                    timeSlot: 'Afternoon(13 PM -16 PM)'
+                                                }, ev)">
+                                                <span class="box-value" t-esc="value"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Night Row -->
+                                <div class="heatmap-row">
+                                    <div class="time-row-label">
+                                        <t t-if="isKorean()">야간(17~19시)</t>
+                                        <t t-else="">
+                                            Night<br/>
+                                            (5 PM -7 PM)
+                                        </t>
+                                    </div>
+                                    <div class="heatmap-boxes-row">
+                                        <t t-foreach="state.nightData" t-as="value" t-key="value_index">
+                                            <div class="heatmap-box"
+                                                t-att-class="this.getHeatmapCellClass(value)"
+                                                t-att-data-day-index="value_index"
+                                                t-att-data-time-index="3"
+                                                t-att-data-value="value"
+                                                t-on-click="(ev) => this.selectHeatmapBox({
+                                                    dayIndex: value_index,
+                                                    timeIndex: 3,
+                                                    value: value,
+                                                    day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][value_index],
+                                                    timeSlot: 'Night(17 PM -19 PM)'
+                                                }, ev)">
+                                                <span class="box-value" t-esc="value"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- Legend Section (below the 28 boxes) -->
                         <div class="heatmap-legend-section">
@@ -270,7 +370,7 @@
                                         t-key="hourSlot_index + '_top'">
                                             <div class="hourly-column">
                                                 <div class="time-header" t-esc="hourSlot.hour"/>
-                                                <div class="team-value" t-esc="hourSlot.teams"/>
+                                                <div class="team-value" t-esc="hourSlot.team"/>
                                             </div>
                                         </t>
                                     </div>
@@ -281,7 +381,7 @@
                                         t-key="hourSlot_index + '_bottom'">
                                             <div class="hourly-column">
                                                 <div class="time-header" t-esc="hourSlot.hour"/>
-                                                <div class="team-value" t-esc="hourSlot.teams"/>
+                                                <div class="team-value" t-esc="hourSlot.team"/>
                                             </div>
                                         </t>
                                     </div>

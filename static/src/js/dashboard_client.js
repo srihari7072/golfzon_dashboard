@@ -118,7 +118,11 @@ class GolfzonDashboard extends Component {
             reservationPeriod: '30days',
             showReservationDetails: false,
             selectedSlot: { day: "", period: "", count: 0 },
-            heatmapData: this.getInitialHeatmapData(),
+            earlyMorningData: [0, 0, 0, 0, 0, 0, 0],
+            morningData: [0, 0, 0, 0, 0, 0, 0],
+            afternoonData: [0, 0, 0, 0, 0, 0, 0],
+            nightData: [0, 0, 0, 0, 0, 0, 0],
+            hourlyBreakdownData: {},
             selectedHeatmapBox: this.getDefaultHeatmapBox(),
             salesData: {
                 total_sales: 0,
@@ -279,42 +283,6 @@ class GolfzonDashboard extends Component {
         return this.state.currentLanguage && this.state.currentLanguage.includes('en');
     }
 
-    getInitialHeatmapData() {
-        return {
-            headers: [
-                _t("Sun"),
-                _t("Mon"),
-                _t("Tue"),
-                _t("Wed"),
-                _t("Thu"),
-                _t("Fri"),
-                _t("Sat"),
-            ],
-            rows: [
-                {
-                    label: _t("Early Morning(5 AM -7 AM)"),
-                    slot_key: 'early morning',
-                    data: [0, 0, 0, 0, 0, 0, 0]
-                },
-                {
-                    label: _t("Morning(8 AM -12 PM)"),
-                    slot_key: 'morning',
-                    data: [0, 0, 0, 0, 0, 0, 0]
-                },
-                {
-                    label: _t("Afternoon(13 PM -16 PM)"),
-                    slot_key: 'afternoon',
-                    data: [0, 0, 0, 0, 0, 0, 0]
-                },
-                {
-                    label: _t("Night(17 PM -19 PM)"),
-                    slot_key: 'night',
-                    data: [0, 0, 0, 0, 0, 0, 0]
-                },
-            ],
-        };
-    }
-
     getDefaultHeatmapBox() {
         return {
             dayIndex: null,
@@ -386,7 +354,6 @@ class GolfzonDashboard extends Component {
         document.addEventListener("click", this.handleOutsideDrawer.bind(this));
     }
 
-
     async loadSalesData(period = this.state.salesPeriod) {
         try {
             console.log(`Loading sales data for period: ${period}`);
@@ -447,39 +414,44 @@ class GolfzonDashboard extends Component {
             const response = await this.rpc('/golfzon/heatmap/data', {});
 
             if (response.success) {
-                console.log('Heatmap data received:', response);
+                // Transform the data into the new format
+                const data = response.heatmap;
 
-                if (response.heatmap && response.heatmap.rows) {
-                    response.heatmap.rows = response.heatmap.rows.map(row => ({
-                        ...row,
-                        label: this.getTranslatedTimeSlotLabel(row.slot_key || this.getSlotKeyFromLabel(row.label)),
-                        slot_key: row.slot_key || this.getSlotKeyFromLabel(row.label)
-                    }));
+                data.rows.forEach((row) => {
+                    switch (row.slot_key) {
+                        case 'early morning':
+                            this.state.earlyMorningData = [...row.data];
+                            break;
+                        case 'morning':
+                            this.state.morningData = [...row.data];
+                            break;
+                        case 'afternoon':
+                            this.state.afternoonData = [...row.data];
+                            break;
+                        case 'night':
+                            this.state.nightData = [...row.data];
+                            break;
+                    }
+                });
 
-                    response.heatmap.headers = [
-                        _t("Sun"),
-                        _t("Mon"),
-                        _t("Tue"),
-                        _t("Wed"),
-                        _t("Thu"),
-                        _t("Fri"),
-                        _t("Sat"),
-                    ];
-                }
-
-                this.state.heatmapData = response.heatmap;
                 this.state.hourlyBreakdownData = response.hourly_breakdown || {};
-                console.log('Heatmap structure:', this.state.heatmapData);
-                console.log('Hourly breakdown keys:', Object.keys(this.state.hourlyBreakdownData));
-                console.log(`Heatmap loaded in ${response.execution_time_ms}ms`);
+                console.log('Heatmap data loaded successfully');
             } else {
                 console.error('Failed to load heatmap:', response.error);
-                this.state.heatmapData = this.getInitialHeatmapData();
+                // Reset to default zeros
+                this.state.earlyMorningData = [0, 0, 0, 0, 0, 0, 0];
+                this.state.morningData = [0, 0, 0, 0, 0, 0, 0];
+                this.state.afternoonData = [0, 0, 0, 0, 0, 0, 0];
+                this.state.nightData = [0, 0, 0, 0, 0, 0, 0];
                 this.state.hourlyBreakdownData = {};
             }
         } catch (error) {
             console.error('Error loading heatmap data:', error);
-            this.state.heatmapData = this.getInitialHeatmapData();
+            // Reset to default zeros on error
+            this.state.earlyMorningData = [0, 0, 0, 0, 0, 0, 0];
+            this.state.morningData = [0, 0, 0, 0, 0, 0, 0];
+            this.state.afternoonData = [0, 0, 0, 0, 0, 0, 0];
+            this.state.nightData = [0, 0, 0, 0, 0, 0, 0];
             this.state.hourlyBreakdownData = {};
         }
     }
@@ -622,25 +594,6 @@ class GolfzonDashboard extends Component {
         } catch (error) {
             console.error("Error updating pie charts:", error);
         }
-    }
-
-    getTranslatedTimeSlotLabel(slotKey) {
-        const labelMap = {
-            'early morning': _t("Early Morning(5 AM -7 AM)"),
-            'morning': _t("Morning(8 AM -12 PM)"),
-            'afternoon': _t("Afternoon(13 PM -16 PM)"),
-            'night': _t("Night(17 PM -19 PM)")
-        };
-        return labelMap[slotKey] || slotKey;
-    }
-
-    getSlotKeyFromLabel(label) {
-        const lowerLabel = label.toLowerCase();
-        if (lowerLabel.includes('early morning') || lowerLabel.includes('5 am') || lowerLabel.includes('early morning')) return 'early morning';
-        if (lowerLabel.includes('morning') || lowerLabel.includes('8 am') || lowerLabel.includes('morning')) return 'morning';
-        if (lowerLabel.includes('afternoon') || lowerLabel.includes('13 pm') || lowerLabel.includes('afternoon')) return 'afternoon';
-        if (lowerLabel.includes('night') || lowerLabel.includes('17 pm') || lowerLabel.includes('night')) return 'night';
-        return 'morning';
     }
 
     async initializeLocation() {
@@ -969,95 +922,24 @@ class GolfzonDashboard extends Component {
     }
 
     getAllHeatmapValues() {
-        const allValues = [];
-        if (this.state.heatmapData && this.state.heatmapData.rows) {
-            this.state.heatmapData.rows.forEach((row) => {
-                if (row.data && Array.isArray(row.data)) {
-                    row.data.forEach((cellValue) => {
-                        if (typeof cellValue === "number" && cellValue > 0) {
-                            allValues.push(cellValue);
-                        }
-                    });
-                }
-            });
-        }
+        const allValues = [
+            ...this.state.earlyMorningData,
+            ...this.state.morningData,
+            ...this.state.afternoonData,
+            ...this.state.nightData
+        ].filter(value => typeof value === "number" && value > 0);
         return allValues;
     }
-
-    // ✅ CORRECTED FUNCTION: Generate Day + Time Slot Title with Korean Translation
-    generateDayTimeSlotTitle(day, timeSlot) {
-        // Map Korean single character days to full Korean day names
-        const dayMap = {
-            '일': '일',
-            '월': '월',
-            '화': '화',
-            '수': '수',
-            '목': '목',
-            '금': '금',
-            '토': '토'
-        };
-
-        // Map time slots to Korean names (remove time portions)
-        const timeSlotMap = {
-            // English versions with time
-            'Early Morning(5 AM -7 AM)': 'Early Morning',
-            'Morning(8 AM -12 PM)': 'Morning',
-            'Afternoon(13 PM -16 PM)': 'Afternoon',
-            'Night(17 PM -19 PM)': 'Night',
-            // Korean versions with time
-            '새벽(5~7시)': '새벽',
-            '오전(8~12시)': '오전',
-            '오후(13~16시)': '오후',
-            '야간(17~19시)': '야간',
-            // Lowercase English versions
-            'early morning': 'early morning',
-            'morning': 'morning',
-            'afternoon': 'afternoon',
-            'night': 'night',
-            // Clean versions (already translated)
-            '새벽': '새벽',
-            '오전': '오전',
-            '오후': '오후',
-            '야간': '야간'
-        };
-
-        const koreanDay = dayMap[day] || day;
-        const koreanTimeSlot = timeSlotMap[timeSlot] || timeSlot;
-
-        return `${koreanDay} ${koreanTimeSlot}`;
-    }
-
 
     selectHeatmapBox(box, event) {
         event.stopPropagation();
         document.querySelectorAll('.heatmap-box.selected').forEach(el => el.classList.remove('selected'));
         event.target.closest('.heatmap-box').classList.add('selected');
 
-        console.log('Heatmap Box Clicked:');
-        console.log('Selected Box:', box);
-
-        if (!this.state.heatmapData || !this.state.heatmapData.rows || !this.state.heatmapData.rows[box.timeIndex]) {
-            console.error('Heatmap data structure is invalid');
-            return;
-        }
-
-        const row = this.state.heatmapData.rows[box.timeIndex];
-        console.log('Row Data:', row);
-
-        const slotKey = row.slot_key;
-        console.log('Slot Key from row:', slotKey);
-
-        if (!slotKey) {
-            console.error('Slot key is undefined for row:', row);
-            return;
-        }
-
+        const slotKey = ['early morning', 'morning', 'afternoon', 'night'][box.timeIndex];
         const key = `${box.dayIndex}_${slotKey}`;
-        console.log('Lookup Key:', key);
 
         const hourlyData = this.state.hourlyBreakdownData?.[key];
-        console.log('Hourly Data for this slot:', hourlyData);
-
         const hourlyBreakdown = this.generateHourlyBreakdownBySlot(hourlyData, slotKey);
 
         const allValues = this.getAllHeatmapValues();
@@ -1072,67 +954,136 @@ class GolfzonDashboard extends Component {
             isHighest: box.value === maxValue && box.value > 0,
             isLowest: box.value === minValue && box.value > 0,
             displayDay: this.formatDayDisplay(box.day),
-            displayTime: this.formatTimeSlotDisplay(row.label),
-            combinedTitle: combinedTitle,  // ✅ ADD THIS LINE
+            displayTime: this.formatTimeSlotDisplay(box.timeSlot),
+            combinedTitle: combinedTitle,
             isVisible: true
         };
-
-        console.log('Final Selected Heatmap Box State:', this.state.selectedHeatmapBox);
     }
 
-    generateHourlyBreakdownBySlot(hourlyData, slotKey) {
-        // ✅ FIXED: Normalize slot key first
-        const normalizedSlotKey = slotKey.toLowerCase().replace(/\s+/g, '_');
+    // ✅ FIXED: Generate Day + Time Slot Title with Full Day Names
+    generateDayTimeSlotTitle(day, timeSlot) {
+        // Map single-character days to FULL day names
+        const dayMap = {
+            // English short to full
+            'Sun': this.isKorean() ? '일요일' : 'Sunday',
+            'Mon': this.isKorean() ? '월요일' : 'Monday',
+            'Tue': this.isKorean() ? '화요일' : 'Tuesday',
+            'Wed': this.isKorean() ? '수요일' : 'Wednesday',
+            'Thu': this.isKorean() ? '목요일' : 'Thursday',
+            'Fri': this.isKorean() ? '금요일' : 'Friday',
+            'Sat': this.isKorean() ? '토요일' : 'Saturday',
+            // Korean short to full
+            '일': '일요일',
+            '월': '월요일',
+            '화': '화요일',
+            '수': '수요일',
+            '목': '목요일',
+            '금': '금요일',
+            '토': '토요일'
+        };
 
-        // ✅ Define hour ranges for each time slot
+        // Map time slots (remove time ranges, keep just period name)
+        const timeSlotMap = {
+            // English versions with time ranges
+            'Early Morning(5 AM -7 AM)': this.isKorean() ? '새벽' : 'Early Morning',
+            'Morning(8 AM -12 PM)': this.isKorean() ? '오전' : 'Morning',
+            'Afternoon(13 PM -16 PM)': this.isKorean() ? '오후' : 'Afternoon',
+            'Night(17 PM -19 PM)': this.isKorean() ? '야간' : 'Night',
+            // Korean versions with time
+            '새벽(5~7시)': '새벽',
+            '오전(8~12시)': '오전',
+            '오후(13~16시)': '오후',
+            '야간(17~19시)': '야간',
+            // Already clean versions
+            'Early Morning': this.isKorean() ? '새벽' : 'Early Morning',
+            'Morning': this.isKorean() ? '오전' : 'Morning',
+            'Afternoon': this.isKorean() ? '오후' : 'Afternoon',
+            'Night': this.isKorean() ? '야간' : 'Night',
+            '새벽': '새벽',
+            '오전': '오전',
+            '오후': '오후',
+            '야간': '야간'
+        };
+
+        const fullDay = dayMap[day] || day;
+        const cleanTimeSlot = timeSlotMap[timeSlot] || timeSlot;
+
+        // Return format: "Sunday Morning" or "일요일 오전"
+        return `${fullDay} ${cleanTimeSlot}`;
+    }
+
+    // ✅ FIXED: Format Hour Display with Proper Translation
+    formatHourDisplay(hour) {
+        const hourLabels = {
+            5: this.isKorean() ? '5시' : '5AM',
+            6: this.isKorean() ? '6시' : '6AM',
+            7: this.isKorean() ? '7시' : '7AM',
+            8: this.isKorean() ? '8시' : '8AM',
+            9: this.isKorean() ? '9시' : '9AM',
+            10: this.isKorean() ? '10시' : '10AM',
+            11: this.isKorean() ? '11시' : '11AM',
+            12: this.isKorean() ? '12시' : '12PM',
+            13: this.isKorean() ? '13시' : '13PM',
+            14: this.isKorean() ? '14시' : '14PM',
+            15: this.isKorean() ? '15시' : '15PM',
+            16: this.isKorean() ? '16시' : '16PM',
+            17: this.isKorean() ? '17시' : '17PM',
+            18: this.isKorean() ? '18시' : '18PM',
+            19: this.isKorean() ? '19시' : '19PM'
+        };
+
+        return hourLabels[hour] || `${hour}:00`;
+    }
+
+    // ✅ FIXED: Generate Hourly Breakdown with Proper Team Text
+    generateHourlyBreakdownBySlot(hourlyData, slotKey) {
+        // Normalize slot key
+        const normalizedSlotKey = slotKey.toLowerCase().replace(/\s+/g, '');
+
+        // Define hour ranges for each time slot
         const slotHourRanges = {
-            'early_morning': [5, 6, 7],
+            'earlymorning': [5, 6, 7],
             'morning': [8, 9, 10, 11, 12],
             'afternoon': [13, 14, 15, 16],
             'night': [17, 18, 19]
         };
 
-        // ✅ Get hours for the selected slot with fallback
+        // Get hours for the selected slot
         let hoursToDisplay = slotHourRanges[normalizedSlotKey];
         if (!hoursToDisplay) {
             hoursToDisplay = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
         }
 
-        console.log(`Filtering hours for slot: ${normalizedSlotKey}`, hoursToDisplay);
+        console.log('Filtering hours for slot:', normalizedSlotKey, hoursToDisplay);
 
-        // ✅ Generate breakdown only for relevant hours
+        // Generate breakdown only for relevant hours
         const breakdown = hoursToDisplay.map(hour => {
             const count = hourlyData?.[hour] || 0;
             const formattedHour = this.formatHourDisplay(hour);
 
+            // Format team text based on language
             let teamText;
-            if (count === 0) {
-                teamText = _t('0 team');
-            } else if (count === 1) {
-                teamText = _t('1 team');
+            if (this.isKorean()) {
+                teamText = `${count}팀`;
             } else {
-                teamText = `${count}${_t('team')}`;
+                if (count === 0) {
+                    teamText = '0team';
+                } else if (count === 1) {
+                    teamText = '1team';
+                } else {
+                    teamText = `${count}team`;
+                }
             }
 
             return {
                 hour: formattedHour,
-                teams: teamText,
+                team: teamText,
                 count: count
             };
         });
 
         console.log('Generated hourly breakdown:', breakdown);
         return breakdown;
-    }
-
-    formatHourDisplay(hour) {
-        const hourLabels = {
-            5: _t("5 AM"), 6: _t("6 AM"), 7: _t("7 AM"), 8: _t("8 AM"),
-            9: _t("9 AM"), 10: _t("10 AM"), 11: _t("11 AM"), 12: _t("12 PM"),
-            13: _t("13 PM"), 14: _t("14 PM"), 15: _t("15 PM"), 16: _t("16 PM"),
-            17: _t("17 PM"), 18: _t("18 PM"), 19: _t("19 PM"),
-        };
-        return hourLabels[hour] || `${hour}:00`;
     }
 
     formatDayDisplay(day) {
