@@ -570,22 +570,11 @@
             <!-- Form Actions -->
             <div class="form-actions">
                 <button 
-                    type="button"
-                    id="member-inquiry-submit"
-                    name="member_inquiry_submit"
                     class="btn-member-inquiry"
                     t-on-click="submitMemberInquiry"
-                    t-att-disabled="state.isSubmitting"
-                    aria-label="Submit Member Inquiry"
-                >
-                    <t t-if="state.isSubmitting">
-                        <t t-if="isKorean()">조회 중...</t>
-                        <t t-else="">Searching...</t>
-                    </t>
-                    <t t-else="">
-                        <t t-if="isKorean()">회원 조회</t>
-                        <t t-else="">Member Inquiry</t>
-                    </t>
+                    t-att-disabled="state.isSubmittingInquiry ? 'disabled' : undefined">
+                    <t t-if="state.isSubmittingInquiry">Searching...</t>
+                    <t t-else="">Member Inquiry</t>
                 </button>
             </div>
         </div>

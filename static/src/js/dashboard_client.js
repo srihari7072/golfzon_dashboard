@@ -302,7 +302,7 @@ class GolfzonDashboard extends Component {
                     data: [0, 0, 0, 0, 0, 0, 0]
                 },
                 {
-                    label: _t("Afternoon(13 PM -6 PM)"),
+                    label: _t("Afternoon(13 PM -16 PM)"),
                     slot_key: 'afternoon',
                     data: [0, 0, 0, 0, 0, 0, 0]
                 },
@@ -636,25 +636,45 @@ class GolfzonDashboard extends Component {
 
     getSlotKeyFromLabel(label) {
         const lowerLabel = label.toLowerCase();
-        if (lowerLabel.includes('early morning') || lowerLabel.includes('5 am') || lowerLabel.includes('새벽')) return 'early morning';
-        if (lowerLabel.includes('morning') || lowerLabel.includes('8 am') || lowerLabel.includes('오전')) return 'morning';
-        if (lowerLabel.includes('afternoon') || lowerLabel.includes('1 pm') || lowerLabel.includes('오후')) return 'afternoon';
-        if (lowerLabel.includes('night') || lowerLabel.includes('5 pm') || lowerLabel.includes('야간')) return 'night';
+        if (lowerLabel.includes('early morning') || lowerLabel.includes('5 am') || lowerLabel.includes('early morning')) return 'early morning';
+        if (lowerLabel.includes('morning') || lowerLabel.includes('8 am') || lowerLabel.includes('morning')) return 'morning';
+        if (lowerLabel.includes('afternoon') || lowerLabel.includes('13 pm') || lowerLabel.includes('afternoon')) return 'afternoon';
+        if (lowerLabel.includes('night') || lowerLabel.includes('17 pm') || lowerLabel.includes('night')) return 'night';
         return 'morning';
     }
 
     async initializeLocation() {
         try {
+            console.log("🌍 Initializing location detection...");
+
             const locationData = await this.weatherService.detectUserLocation();
+
             this.state.userLocation = {
                 lat: locationData.lat,
                 lon: locationData.lon,
+                accuracy: locationData.accuracy,
+                source: locationData.source
             };
+
             this.state.weather.location = locationData.locationName;
+
+            // Log location source
+            if (locationData.source === 'GPS') {
+                console.log(`✅ Using GPS location: ${locationData.locationName}`);
+                console.log(`📍 Coordinates: ${locationData.lat}, ${locationData.lon}`);
+                console.log(`🎯 Accuracy: ${locationData.accuracy.toFixed(0)} meters`);
+            } else {
+                console.log(`✅ Using default location: ${locationData.locationName}`);
+            }
+
             await this.loadWeatherAndGolfData(locationData.lat, locationData.lon);
+
         } catch (error) {
-            console.error("Location initialization failed:", error);
-            await this.loadWeatherAndGolfData();
+            console.error("❌ Location initialization failed:", error.message);
+            this.state.weather.location = "Seoul, KR (default)";
+
+            // Still try to load weather for Seoul
+            await this.loadWeatherAndGolfData("37.5665", "126.9780");
         }
     }
 
@@ -980,20 +1000,20 @@ class GolfzonDashboard extends Component {
         // Map time slots to Korean names (remove time portions)
         const timeSlotMap = {
             // English versions with time
-            'Early Morning(5 AM -7 AM)': '새벽',
-            'Morning(8 AM -12 PM)': '오전',
-            'Afternoon(13 PM -16 PM)': '오후',
-            'Night(17 PM -19 PM)': '야간',
+            'Early Morning(5 AM -7 AM)': 'Early Morning',
+            'Morning(8 AM -12 PM)': 'Morning',
+            'Afternoon(13 PM -16 PM)': 'Afternoon',
+            'Night(17 PM -19 PM)': 'Night',
             // Korean versions with time
             '새벽(5~7시)': '새벽',
             '오전(8~12시)': '오전',
             '오후(13~16시)': '오후',
             '야간(17~19시)': '야간',
             // Lowercase English versions
-            'early morning': '새벽',
-            'morning': '오전',
-            'afternoon': '오후',
-            'night': '야간',
+            'early morning': 'early morning',
+            'morning': 'morning',
+            'afternoon': 'afternoon',
+            'night': 'night',
             // Clean versions (already translated)
             '새벽': '새벽',
             '오전': '오전',
@@ -1087,11 +1107,11 @@ class GolfzonDashboard extends Component {
 
             let teamText;
             if (count === 0) {
-                teamText = _t('0 teams');
+                teamText = _t('0 team');
             } else if (count === 1) {
                 teamText = _t('1 team');
             } else {
-                teamText = `${count}${_t('teams')}`;
+                teamText = `${count}${_t('team')}`;
             }
 
             return {
@@ -1109,17 +1129,17 @@ class GolfzonDashboard extends Component {
         const hourLabels = {
             5: _t("5 AM"), 6: _t("6 AM"), 7: _t("7 AM"), 8: _t("8 AM"),
             9: _t("9 AM"), 10: _t("10 AM"), 11: _t("11 AM"), 12: _t("12 PM"),
-            13: _t("1 PM"), 14: _t("2 PM"), 15: _t("3 PM"), 16: _t("4 PM"),
-            17: _t("5 PM"), 18: _t("6 PM"), 19: _t("7 PM"),
+            13: _t("13 PM"), 14: _t("14 PM"), 15: _t("15 PM"), 16: _t("16 PM"),
+            17: _t("17 PM"), 18: _t("18 PM"), 19: _t("19 PM"),
         };
         return hourLabels[hour] || `${hour}:00`;
     }
 
     formatDayDisplay(day) {
         const dayMap = {
-            "Sun": _t("Sunday"), "Mon": _t("Monday"), "Tue": _t("Tuesday"),
-            "Wed": _t("Wednesday"), "Thu": _t("Thursday"), "Fri": _t("Friday"),
-            "Sat": _t("Saturday"),
+            "Sunday": _t("Sunday"), "Monday": _t("Monday"), "Tuesday": _t("Tuesday"),
+            "Wednesday": _t("Wednesday"), "Thursday": _t("Thursday"), "Friday": _t("Friday"),
+            "Saturday": _t("Saturday"),
         };
         return dayMap[day] || day;
     }

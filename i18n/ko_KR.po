@@ -794,67 +794,67 @@ msgstr "12시"
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "1 PM"
-msgstr "1시"
+msgid "13 PM"
+msgstr "13시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "2 PM"
-msgstr "2시"
+msgid "14 PM"
+msgstr "14시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "3 PM"
-msgstr "3시"
+msgid "15 PM"
+msgstr "15시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "4 PM"
-msgstr "4시"
+msgid "16 PM"
+msgstr "16시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "5 PM"
-msgstr "5시"
+msgid "17 PM"
+msgstr "17시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "6 PM"
-msgstr "6시"
+msgid "18 PM"
+msgstr "18시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "7 PM"
-msgstr "7시"
+msgid "19 PM"
+msgstr "19시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "8 PM"
-msgstr "8시"
+msgid "20 PM"
+msgstr "20시"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "0 teams"
+msgid "0 team"
 msgstr "0팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "teams"
+msgid "team"
 msgstr "팀"
 
 #. module: golfzon_dashboard
 #. odoo-javascript
 #: code:addons/golfzon_dashboard/static/src/xml/components/reservation_forecast.xml:0
-msgid "1 teams"
+msgid "1 team"
 msgstr "1팀"
 
 #. module: golfzon_dashboard
